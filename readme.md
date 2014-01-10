@@ -12,5 +12,5 @@ of RDF systems. The benchmark workload consists of (a) editorial operations that
 operations that retrieve content according to various criteria. The aggregation queries define different "choke points", that is technical 
 challenges that a standard RDF store must overcome thus giving opportunities for improvement regarding query optimization.
 
-The benchmark also tests conformance of RDF stores to the OWL2-RL rule-set.
+The benchmark also tests conformance for various rules inside the OWL2-RL rule-set.
 
