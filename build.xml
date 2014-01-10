@@ -1,0 +1,235 @@
+<project name="semanticpublishingbenchmark" basedir="." default="show-usage">
+	<property name="version.number.major" value="0" />
+	<property name="version.number.minor" value="1" />
+	
+	<property name="dir.src" location="src"/>
+	<property name="dir.bin" location="bin"/>
+	<property name="dir.dist" location="dist"/>
+	<property name="dir.data" location="data"/>
+	<property name="dir.lib" location="lib/"/>
+	<property name="jar.file.name" value="semantic_publishing_benchmark"/>
+	
+	<path id="classpath-lib">
+    <fileset dir="${dir.lib}">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
+	
+	<target name="clean">
+		<delete dir="${dir.bin}" />
+		<delete file="${dir.dist}/${jar.file.name}*.jar" />
+	</target>
+
+	<target name="compile" depends="clean">
+		<mkdir dir="${dir.bin}"/>
+		<mkdir dir="${dir.dist}"/>		
+		<javac srcdir="${dir.src}" 
+			   destdir="${dir.bin}"
+			   debug="off"
+			   source="1.6"
+			   includeantruntime="false">
+			<classpath refid="classpath-lib"/>
+		</javac>
+	</target>
+	
+	<target name="rebuild" depends="clean, compile">
+	</target>
+	
+	<target name="clear-conformance-queries">
+    <delete>
+      <fileset dir="./data/sparql/conformance/cardinalities/" includes="*.txt"/>
+      <fileset dir="./data/sparql/conformance/disjointness/" includes="*.txt"/>
+      <fileset dir="./data/sparql/conformance/inverseOf/" includes="*.txt"/>
+      <fileset dir="./data/sparql/conformance/keys/" includes="*.txt"/>
+      <fileset dir="./data/sparql/conformance/oneOf/" includes="*.txt"/>
+      <fileset dir="./data/sparql/conformance/pchain/" includes="*.txt"/>
+      <fileset dir="./data/sparql/conformance/property-constraints/" includes="*.txt"/>
+      <fileset dir="./data/sparql/conformance/rng-dom/" includes="*.txt"/>
+      <fileset dir="./data/sparql/conformance/same-as/" includes="*.txt"/>
+      <fileset dir="./data/sparql/conformance/subsumption/" includes="*.txt"/>
+      <fileset dir="./data/sparql/conformance/uni-int/" includes="*.txt"/>
+		</delete>
+	</target>
+	
+	<target name="unzip-conformance-queries">
+    <unzip src="./data/sparql/conformance/cardinalities/${conformance_archive_name}.zip" dest="./data/sparql/conformance/cardinalities/"/>
+    <unzip src="./data/sparql/conformance/disjointness/${conformance_archive_name}.zip" dest="./data/sparql/conformance/disjointness/"/>
+    <unzip src="./data/sparql/conformance/inverseOf/${conformance_archive_name}.zip" dest="./data/sparql/conformance/inverseOf/"/>
+    <unzip src="./data/sparql/conformance/keys/${conformance_archive_name}.zip" dest="./data/sparql/conformance/keys/"/>
+    <unzip src="./data/sparql/conformance/oneOf/${conformance_archive_name}.zip" dest="./data/sparql/conformance/oneOf/"/>
+    <unzip src="./data/sparql/conformance/pchain/${conformance_archive_name}.zip" dest="./data/sparql/conformance/pchain/"/>
+    <unzip src="./data/sparql/conformance/property-constraints/${conformance_archive_name}.zip" dest="./data/sparql/conformance/property-constraints/"/>
+    <unzip src="./data/sparql/conformance/rng-dom/${conformance_archive_name}.zip" dest="./data/sparql/conformance/rng-dom/"/>
+    <unzip src="./data/sparql/conformance/same-as/${conformance_archive_name}.zip" dest="./data/sparql/conformance/same-as/"/>
+    <unzip src="./data/sparql/conformance/subsumption/${conformance_archive_name}.zip" dest="./data/sparql/conformance/subsumption/"/>
+    <unzip src="./data/sparql/conformance/uni-int/${conformance_archive_name}.zip" dest="./data/sparql/conformance/uni-int/"/>
+	</target>
+	
+  <target name="setup-query-mix">
+		<delete file="${dir.src}/eu/ldbc/semanticpublishing/agents/AggregationAgent.java"/>
+		<copy file="${dir.src}/eu/ldbc/semanticpublishing/agents/AggregationAgent.${query_mix}" tofile="${dir.src}/eu/ldbc/semanticpublishing/agents/AggregationAgent.java"/>
+		<delete dir="${dir.data}"/>
+		
+		<mkdir dir="./data-temp"/>
+		<copy todir="./data-temp">
+			<fileset dir="data-${query_mix}"/>
+		</copy>		
+		<delete dir="./data-temp/sparql/aggregation"/>
+		<mkdir dir="./data-temp/sparql/aggregation"/>
+		<copy todir="./data-temp/sparql/aggregation">
+			<fileset dir="./data-temp/sparql/aggregation_${customization}"/>
+		</copy>
+		<move file="./data-temp" toFile="./data"/>
+		<delete dir="./data-temp"/>
+		
+		<delete dir="./data/sparql/system"/>
+		<mkdir dir="./data/sparql/system"/>
+		<copy todir="./data/sparql/system">
+			<fileset dir="./data/sparql/system_${customization}"/>
+		</copy>		
+		
+		<delete>
+			<fileset dir="./src/eu/ldbc/semanticpublishing/templates/aggregation" includes="*.java"/>
+		</delete>
+		<unzip src="./src/eu/ldbc/semanticpublishing/templates/aggregation/${query_mix}.zip" dest="./src/eu/ldbc/semanticpublishing/templates/aggregation/" />
+
+    <antcall target="clear-conformance-queries"/>
+    <antcall target="unzip-conformance-queries">
+      <param name="conformance_archive_name" value="${customization}"/>
+    </antcall>
+	
+		<delete file="./definitions.properties"/>
+		<copy file="./definitions.properties-${query_mix}" tofile="./definitions.properties"/>
+	</target>
+	
+	<!--  Use this target to setup benchmark driver with standard SPARQL 1.1 query syntax and reduced query mix -->
+	<target name="setup-base-sparql-standard">
+    <antcall target="setup-query-mix">
+      <param name="query_mix" value="base"/>
+      <param name="customization" value="standard"/>
+    </antcall>
+	</target>
+
+	<!--  Use this target to setup benchmark driver with Virtuoso's custom SPARQL query syntax and reduced query mix -->
+	<target name="setup-base-virtuoso">
+    <antcall target="setup-query-mix">
+      <param name="query_mix" value="base"/>
+      <param name="customization" value="virtuoso"/>
+    </antcall>	
+	</target>
+
+	<!--  Use this target to setup benchmark driver with standard SPARQL 1.1 query syntax and full query mix -->
+	<target name="setup-full-sparql-standard">
+    <antcall target="setup-query-mix">
+      <param name="query_mix" value="full"/>
+      <param name="customization" value="standard"/>
+    </antcall>
+	</target>	
+	
+	<!--  Use this target to setup benchmark driver with Virtuoso's custom SPARQL 1.1 query syntax and full query mix -->
+	<target name="setup-full-virtuoso">
+    <antcall target="setup-query-mix">
+      <param name="query_mix" value="full"/>
+      <param name="customization" value="virtuoso"/>
+    </antcall>
+	</target>		
+	
+	<target name="build-base-querymix-standard" depends="build.release.version, setup-base-sparql-standard, rebuild">	
+		<jar destfile="${dir.dist}\${jar.file.name}-base.jar" basedir="${dir.bin}">
+			<manifest>
+				<attribute name="Main-Class" value="eu.ldbc.semanticpublishing.TestDriver"/>
+				<attribute name="Benchmark-Release-Version" value="${version.number.major}.${version.number.minor}.${svn.revision.number}"/>
+				<attribute name="Benchmark-Release-Type" value="base qierymix, standard SPARQL 1.1"/>
+			</manifest>
+			<zipgroupfileset dir="${dir.lib}" includes="*.jar"/>
+			<fileset dir="." includes="data/**" />
+			<fileset file="readme.txt" />
+			<fileset file="test.properties" />
+			<fileset file="definitions.properties" />
+		</jar>
+		<delete dir="./data"/>
+		<delete file="./definitions.properties" />
+	</target>
+	
+	<target name="build-base-querymix-virtuoso" depends="build.release.version, setup-base-virtuoso, rebuild">
+		<jar destfile="${dir.dist}\${jar.file.name}-base-virtuoso.jar" basedir="${dir.bin}">
+			<manifest>
+				<attribute name="Main-Class" value="eu.ldbc.semanticpublishing.TestDriver"/>
+				<attribute name="Benchmark-Release-Version" value="${version.number.major}.${version.number.minor}.${svn.revision.number}"/>
+				<attribute name="Benchmark-Release-Type" value="base qierymix, Virtuoso"/>
+			</manifest>
+			<zipgroupfileset dir="${dir.lib}" includes="*.jar"/>
+			<fileset dir="." includes="data/**" />
+			<fileset file="readme.txt" />
+			<fileset file="test.properties" />
+			<fileset file="definitions.properties" />
+		</jar>
+		<delete dir="./data"/>
+	</target>	
+	
+	<target name="build-full-querymix-standard" depends="build.release.version, setup-full-sparql-standard, rebuild">
+		<jar destfile="${dir.dist}\${jar.file.name}-full.jar" basedir="${dir.bin}">
+			<manifest>
+				<attribute name="Main-Class" value="eu.ldbc.semanticpublishing.TestDriver"/>
+				<attribute name="Benchmark-Release-Version" value="${version.number.major}.${version.number.minor}.${svn.revision.number}"/>
+				<attribute name="Benchmark-Release-Type" value="full qierymix, standard SPARQL 1.1"/>
+			</manifest>
+			<zipgroupfileset dir="${dir.lib}" includes="*.jar"/>
+			<fileset dir="." includes="data/**" />
+			<fileset file="readme.txt" />
+			<fileset file="test.properties" />
+			<fileset file="definitions.properties" />
+		</jar>
+		<delete dir="./data"/>
+	</target>
+	
+	<target name="build-full-querymix-virtuoso" depends="build.release.version, setup-full-virtuoso, rebuild">	
+		<jar destfile="${dir.dist}\${jar.file.name}-full-virtuoso.jar" basedir="${dir.bin}">
+			<manifest>
+				<attribute name="Main-Class" value="eu.ldbc.semanticpublishing.TestDriver"/>
+				<attribute name="Benchmark-Release-Version" value="${version.number.major}.${version.number.minor}.${svn.revision.number}"/>
+				<attribute name="Benchmark-Release-Type" value="full qierymix, Virtuoso"/>
+			</manifest>
+			<zipgroupfileset dir="${dir.lib}" includes="*.jar"/>
+			<fileset dir="." includes="data/**" />
+			<fileset file="readme.txt" />
+			<fileset file="test.properties" />
+			<fileset file="definitions.properties" />
+		</jar>
+		<delete dir="./data"/>
+	</target>	
+	
+	<!-- this target requires that an svn client is installed -->
+	<target name="build.release.version">
+		<exec executable="svn" outputproperty="svn.revision.number">
+			<arg line="info"/>
+		    <redirector>
+		        <outputfilterchain>
+		            <linecontainsregexp>
+		                <regexp pattern='^Revision' />
+		            </linecontainsregexp>
+		            <tokenfilter>
+		                <replaceregex pattern='[\D]+([\d]+)' replace="\1" />
+		            </tokenfilter>
+		        </outputfilterchain>
+		    </redirector>
+		</exec>
+		<echo>Benchmark Release Version : ${version.number.major}.${version.number.minor}.${svn.revision.number}</echo>
+	</target>
+	
+	<target name="show-usage">
+    <echo>
+---------------------------------------------------------------------------------------------------------------------------------------
+To BUILD the LDBC Semantic Publishing Benchmark, you should execute :
+      
+	Standard version :
+		ant build-base-querymix-standard (builds the benchmark driver with base query mix, standard SPARQL 1.1 compliance)
+		ant build-full-querymix-standard (builds the benchmark driver with full query mix, standard SPARQL 1.1 compliance)
+    	
+	Virtuoso customized : 
+		ant build-base-querymix-virtuoso (builds the benchmark driver with base query mix and customized query syntax for Virtuoso)
+		ant build-full-querymix-virtuoso (builds the benchmark driver with full query mix and customized query syntax for Virtuoso)
+---------------------------------------------------------------------------------------------------------------------------------------
+    </echo>
+	</target>
+</project>
