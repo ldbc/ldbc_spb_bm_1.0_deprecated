@@ -25,7 +25,7 @@ Project Structure :
 src\            			      (sources of the project)
 dist\           			      (the benchmark driver jar file)
 bin\            			      (binary files)    
-data\           			      (contains required ontologies and reference datasets used by the benchmark. Also will be packed with the distribution jar)
+data\           			      (contains required ontologies and reference datasets used by the data generator. Also will be packed with the distribution jar)
   ontologies\   			      (ontologies, core and domain, describing a publishing use-case)
     core\
     domain\
@@ -41,7 +41,7 @@ How to build the benchmark driver :
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
   Use the Ant with build.xml script. Default Ant task builds the jar and saves it to the 'dist' folder.
-  Currently two versions of the Benchmark exist : a base version - containing a reduced query-mix with 7 queries and advanced version with 26 queries,
+  Currently two versions of the Benchmark exist : a base version - containing a reduced query-mix with 9 queries and advanced version with 26 queries,
   use appropriate ant-tasks to build them, e.g.
   > ant build-base-querymix-standard //builds the standard benchmark driver compliant to SPARQL 1.1
   > ant build-base-querymix-virtuoso // builds a custom version of the driver customized for Virtuoso's small deviation in SPARQL queries
@@ -53,7 +53,7 @@ How to build the benchmark driver :
 How to install the benchmark driver :
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
-Save the disitribution jar file to a folder of choice, then extract from it following items :
+Save the distribution jar file to a folder of choice, then extract from it following items :
     - test.properties - contains configuration parameters for running the benchmark
     - definitions.properties
     - the folder data/ - contains required ontologies, reference data and query templates
@@ -70,12 +70,12 @@ Benchmark Phases :
     - loadDatasets          		: load the reference datasets (from the 'data/datasets' folder) into database
     - generateCreativeWorks 		: using uploaded data from previous two phases, generates Creative Works and saves them to files.
                                   Generated files need to be loaded into database manually (or automatically if file format is n-quads)
-                                  Note : in order to execute generateCreativeWorks phase, ontologies and reference data from previous two pahses must be present in database
+                                  Note : in order to execute generateCreativeWorks phase, ontologies and reference data from previous two phases must be present in database
     - loadCreativeWorks	  		  : load generated creative works into database (Tested for N-Quads)
     - warmUp                		: a series of Aggregation queries are executed for a fixed amount of time.
     - benchmark             		: all aggregation and editorial agents are started and kept running for a period of 'benchmarkRunPeriodSeconds'.
-    - checkConformance          : executes pre-defined queries (from folder 'data/sparql/conformance'. Checking for OWL2-RL : prp-irp, prp-asyp, prp-pdw, prp-adp, cax-dw, cax-adc, cls-maxc1, prp-key, prp-spo2, prp-inv1)  
-                                  Note : in order to execute generateCreativeWorks phase, ontologies from loadOntologies pahse must be present in database
+    - checkConformance          : executes predefined queries (from folder 'data/sparql/conformance'. Checking for OWL2-RL : prp-irp, prp-asyp, prp-pdw, prp-adp, cax-dw, cax-adc, cls-maxc1, prp-key, prp-spo2, prp-inv1)  
+                                  Note : in order to execute generateCreativeWorks phase, ontologies from loadOntologies phase must be present in database
     - cleanup               		: optional, the benchmark can be set to clear all data from database
                                   Note : all data will be erased from the repository
   
@@ -94,13 +94,13 @@ How to run the benchmark :
   
   * Configure the benchmark driver
   
-      Edit file : test.proerties, set values for :
+      Edit file : test.properties, set values for :
   
     - ontologiesPath                    (ontologies path, e.g. "./data/ontologies")
-    - referenceDatasetsPath             (referance dataset path, e.g. "./data/datasets")
+    - referenceDatasetsPath             (reference dataset path, e.g. "./data/datasets")
     - creativeWorksPath                 (generated creative works path, e.g. "./data/generated")
     - queriesPath                       (queries path, e.g. "./data/sparql")
-    - definitionsPath                   (definitions path, e.g. "./definitions.propertis")
+    - definitionsPath                   (definitions path, e.g. "./definitions.properties")
     - endpointURL                       (URL of endpoint, e.g. "http://localhost:8080/openrdf-sesame/repositories/ldbc1")
     - endpointUpdateURL                 (URL of endpoint for executing update queries, e.g. "http://localhost:8080/openrdf-sesame/repositories/ldbc1/statements")
     - datasetSize                       (target dataset size in triples, number of triples that will be generated by the data-generator)
@@ -111,8 +111,8 @@ How to run the benchmark :
     - generateCreativeWorksFormat       (available options: TriG, TriX, N-Triples, N-Quads, N3, RDF/XML, RDF/JSON, Turtle)
     - aggregationAgents                 (aggregation agents count which will execute mix of aggregation queries concurrently. Query mix can be configured by changing 
                                          parameter aggregationOperationsAllocation in definitions.properties file)
-    - editorialAgents                   (ditorial agents count which will execute a mix of editorial queries concurrently. Query mix can be configured by changing
-                                         parameter editorialOperationsAllocation in definitions.proeprties file)
+    - editorialAgents                   (editorial agents count which will execute a mix of editorial queries concurrently. Query mix can be configured by changing
+                                         parameter editorialOperationsAllocation in definitions.properties file)
                                          
                                          Note : For optimal results the sum of editorial and aggregation agents should be set to be equal to the number of CPU cores.
 	
@@ -136,7 +136,7 @@ How to run the benchmark :
     - aboutsAllocations                 (Defines allocation amount of About tags in Creative Works)
     - mentionsAllocations               (Defines allocation amount of Mention tags in Creative Works)
     - entityPopularity                  (Defines popularity of an entity in the reference datasets)
-    - usePopularEntities                (Defines allocation amount of popular entities to be used when tagging in Creative Works or in aggregation qierues. Used for generation of Creative Works biased towards popular entities)
+    - usePopularEntities                (Defines allocation amount of popular entities to be used when tagging in Creative Works or in aggregation queries. Used for generation of Creative Works biased towards popular entities)
     - creativeWorkTypesAllocation       (Defines allocation amount of Creative Work Types : BlogPost, NewsItem, Programme)
     - aboutAndMentionsAllocation        (Defines allocation amount of about or mentions used for the main aggregation query (/data/sparql/aggregation/query1.txt), which one will be used more frequently)
     - editorialOperationsAllocation     (Defines allocation amount of queries in the editorial query mix that each editorial agent will execute. Query mix order : insert.txt, update.txt and delete.txt)
