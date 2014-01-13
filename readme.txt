@@ -86,7 +86,7 @@ Benchmark Phases :
 How to run the benchmark : 
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
-  * Prepare and start a new SPARQL database. 
+  * Prepare and start a new RDF repository. 
   
     - Use rule-set : RDFS
     - Enable context indexing if available
