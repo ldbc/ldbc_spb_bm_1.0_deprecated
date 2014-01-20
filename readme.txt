@@ -113,6 +113,7 @@ How to run the benchmark :
                                          parameter aggregationOperationsAllocation in definitions.properties file)
     - editorialAgents                   (editorial agents count which will execute a mix of editorial queries concurrently. Query mix can be configured by changing
                                          parameter editorialOperationsAllocation in definitions.properties file)
+    - dataGeneratorWorkers              (number of simultaneously working data generator threads)
                                          
                                          Note : For optimal results the sum of editorial and aggregation agents should be set to be equal to the number of CPU cores.
 	

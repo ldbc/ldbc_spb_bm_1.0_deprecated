@@ -26,6 +26,7 @@ public class Configuration {
 	public static final String WARMUP_PERIOD_SECONDS = "warmupPeriodSeconds";
 	public static final String BENCHMARK_RUN_PERIOD_SECONDS = "benchmarkRunPeriodSeconds";
 	public static final String GENERATED_TRIPLES_PER_FILE = "generatedTriplesPerFile";
+	public static final String DATA_GENERATOR_WORKERS = "dataGeneratorWorkers";
 	public static final String VERBOSE = "verbose";
 	
 	public static final String LOAD_ONTOLOGIES = "loadOntologies";
@@ -56,6 +57,7 @@ public class Configuration {
 		properties.setProperty(WARMUP_PERIOD_SECONDS, "30" );
 		properties.setProperty(BENCHMARK_RUN_PERIOD_SECONDS, "60" );
 		properties.setProperty(GENERATED_TRIPLES_PER_FILE, "100000");
+		properties.setProperty(DATA_GENERATOR_WORKERS, "1");
 		properties.setProperty(VERBOSE, "false" );
 		
 		properties.setProperty(LOAD_ONTOLOGIES, "true");

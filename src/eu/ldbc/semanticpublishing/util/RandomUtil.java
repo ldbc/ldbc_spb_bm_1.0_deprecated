@@ -15,7 +15,8 @@ import java.util.UUID;
  * A utility class, for producing random values, strings, sentences, uris, etc. 
  */
 public class RandomUtil {
-	private static Random randomGenerator = new Random(0);
+	public static final long DEFAULT_SEED_VALUE = 0;
+	private static Random randomGenerator = new Random(DEFAULT_SEED_VALUE);
 	private static final String baseURI = "http://www.bbc.co.uk/";
 	private static final char[] symbols = new char[62];
 	private static final ArrayList<String> wordsList = new ArrayList<String>();
@@ -25,6 +26,11 @@ public class RandomUtil {
 		buildWordsArray(wordsFile);
 	}
 
+	public RandomUtil(String wordsFile, long seed) {
+		buildWordsArray(wordsFile);
+		randomGenerator.setSeed(seed);
+	}	
+	
 	static {
 		// numbers 0..9
 		for (int index = 0; index < 10; ++index) {
@@ -40,16 +46,28 @@ public class RandomUtil {
 		}
 	}
 
-	// non-deterministic
+	public void setRandomSeed(long seed) {
+		randomGenerator.setSeed(seed);
+	}
+	
 	public int nextInt(int min, int max) {
+		if (min >= max) {
+			System.out.println("Warning : RandomUtil : wrong parameter value of : min (" + min + ") >= value of max (" + max + ")! Inconsistent behaviour expected!");
+		}
 		return randomGenerator.nextInt(max - min) + min;
 	}
 
 	public int nextInt(int max) {
+		if (max <= 0) {
+			System.out.println("Warning : RandomUtil : wrong int parameter value (" + max + ")! Inconsistent behaviour expected!");			
+		}
 		return randomGenerator.nextInt(max);
 	}
 
 	public long nextLong(long max) {
+		if (max <= 0) {
+			System.out.println("Warning : RandomUtil : wrong long parameter value (" + max + ")! Inconsistent behaviour expected!");			
+		}
 		long value = randomGenerator.nextLong();
 		if( value < 0 ) {
 			value = -value;

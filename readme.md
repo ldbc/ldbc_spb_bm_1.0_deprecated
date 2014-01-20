@@ -60,6 +60,7 @@ All items should be saved in same location where the benchmark jar file is.
   * ***generateCreativeWorksFormat*** - serialization format for generated data. Available options : TriG, TriX, N-Triples, N-Quads, N3, RDF/XML, RDF/JSON, Turtle. Use exact names.
   * ***aggregationAgents*** - number of aggregation agents that will execute a mix of aggregation queries simultaneously
   * ***editorialAgents*** - number of editorial agents that will execute a mix of update operations simultaneously
+  * ***dataGeneratorWorkers*** - number of worker threads used by the data generator to produce data
   
 * Benchmark Phases (test.properties)
     One, some or all phases can be enabled and will run in a sequence below. Running first three phases is mandatory with optional forth (*loadCreativeWorks*)  in cases when generated data will not be loaded manually.

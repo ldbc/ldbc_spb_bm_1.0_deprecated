@@ -2,7 +2,6 @@ package eu.ldbc.semanticpublishing;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -13,18 +12,13 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.openrdf.model.Model;
-import org.openrdf.model.Statement;
-import org.openrdf.rio.RDFFormat;
-import org.openrdf.rio.RDFHandlerException;
-import org.openrdf.rio.RDFWriter;
-import org.openrdf.rio.Rio;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.ldbc.semanticpublishing.agents.AbstractAsynchronousAgent;
 import eu.ldbc.semanticpublishing.agents.AggregationAgent;
 import eu.ldbc.semanticpublishing.agents.EditorialAgent;
+import eu.ldbc.semanticpublishing.datagenerator.DataGenerator;
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection.QueryType;
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryExecuteManager;
 import eu.ldbc.semanticpublishing.properties.Configuration;
@@ -35,7 +29,6 @@ import eu.ldbc.semanticpublishing.resultanalyzers.CreativeWorksAnalyzer;
 import eu.ldbc.semanticpublishing.resultanalyzers.GeonamesAnalyzer;
 import eu.ldbc.semanticpublishing.resultanalyzers.ReferenceDataAnalyzer;
 import eu.ldbc.semanticpublishing.templates.MustacheTemplatesHolder;
-import eu.ldbc.semanticpublishing.templates.editorial.InsertTemplate;
 import eu.ldbc.semanticpublishing.util.FileUtils;
 import eu.ldbc.semanticpublishing.util.LoggingUtil;
 import eu.ldbc.semanticpublishing.util.RandomUtil;
@@ -223,17 +216,23 @@ public class TestDriver {
 				populateRefDataEntitiesLists();
 			}
 			
-			long triplesPerTransaction = configuration.getLong(Configuration.GENERATED_TRIPLES_PER_FILE);
-			long maxTriplesInDatabase = configuration.getLong(Configuration.DATASET_SIZE_TRIPLES);
-			String nquadFilesPath = configuration.getString(Configuration.CREATIVE_WORKS_PATH);
-			String generateCreativeWorksFormat = configuration.getString(Configuration.GENERATE_CREATIVE_WORKS_FORMAT);
+			long triplesPerFile = configuration.getLong(Configuration.GENERATED_TRIPLES_PER_FILE);
+			long totalTriples = configuration.getLong(Configuration.DATASET_SIZE_TRIPLES);
+			String destinationPath = configuration.getString(Configuration.CREATIVE_WORKS_PATH);
+			String serializationFormat = configuration.getString(Configuration.GENERATE_CREATIVE_WORKS_FORMAT);
 			
-			generateCreativeWorkSesame(generateCreativeWorksFormat, triplesPerTransaction, maxTriplesInDatabase, nquadFilesPath);
+			int generatorThreads = configuration.getInt(Configuration.DATA_GENERATOR_WORKERS);
 			
+			DataGenerator dataGenerator = new DataGenerator(randomGenerator, configuration, mustacheTemplatesHolder, generatorThreads, totalTriples, triplesPerFile, destinationPath, serializationFormat);
+			dataGenerator.produceData();
 		}
 	}
-	
-	private void generateCreativeWorkSesame(String serializationFormat, long maxTriplesInFile, long targetTriplesSize, String destinationPath) throws IOException {
+
+/*
+ * Method is commented out, using DataGenerator class instead
+*/
+/*	
+	private void generateCreativeWorksSesame(String serializationFormat, long maxTriplesInFile, long targetTriplesSize, String destinationPath) throws IOException {
 		
 		RDFFormat rdfFormat = RDFFormat.NQUADS;
 		
@@ -318,7 +317,7 @@ public class TestDriver {
 		}
 		System.out.println("\tcompleted! Total Creative Works saved : " + (DataManager.creativeWorksNexId.get() - creativeWorksInDatabase) + " in " + filesCount + " files.");
 	}
-	
+*/
 	private final AtomicBoolean runFlag = new AtomicBoolean(true);
 	
 	private void setupAsynchronousAgents() {
