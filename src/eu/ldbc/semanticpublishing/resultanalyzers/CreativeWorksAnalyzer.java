@@ -25,7 +25,7 @@ public class CreativeWorksAnalyzer {
 		query.append(queryTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.SYSTEM).get("analyzecreativeworks.txt"));
 		
 		SAXCreativeWorksCountTransformer saxCwCounter = new SAXCreativeWorksCountTransformer();
-		sparqlQeuryManager.executeQuery2(saxCwCounter, query.toString(), QueryType.SELECT);
+		sparqlQeuryManager.executeSystemQuery(saxCwCounter, query.toString(), QueryType.SELECT);
 		return saxCwCounter.getResult();
 	}
 }

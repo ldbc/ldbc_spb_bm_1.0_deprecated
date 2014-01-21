@@ -26,7 +26,7 @@ public class GeonamesAnalyzer {
 		query.append(queryTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.SYSTEM).get("analyzegeonamesdata.txt"));
 
 		SAXGeonamesTransformer geonamesTransformer = new SAXGeonamesTransformer();
-		sparqlQeuryManager.executeQuery2(geonamesTransformer, query.toString(), QueryType.SELECT);
+		sparqlQeuryManager.executeSystemQuery(geonamesTransformer, query.toString(), QueryType.SELECT);
 		return geonamesTransformer.getGeonamesIds();
 	}	
 }

@@ -28,7 +28,7 @@ public class ReferenceDataAnalyzer {
 		query.append(queryTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.SYSTEM).get("analyzereferencedata.txt"));
 
 		SAXReferenceDataEntityTransformer refDataBuilder = new SAXReferenceDataEntityTransformer();
-		sparqlQeuryManager.executeQuery2(refDataBuilder, query.toString(), QueryType.SELECT);
+		sparqlQeuryManager.executeSystemQuery(refDataBuilder, query.toString(), QueryType.SELECT);
 		return refDataBuilder.getEntitiesList();
 	}
 }

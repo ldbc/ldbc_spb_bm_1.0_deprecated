@@ -55,6 +55,7 @@ All items should be saved in same location where the benchmark jar file is.
   * ***datasetSize*** - size of generated data (triples). Data-generator uses this parameter
   * ***generatedTriplesPerFile*** - number of triples per generated file. Used to split the data generation into a number of files
   * ***queryTimeoutSeconds*** - query timeout in seconds
+  * ***systemQueryTimeoutSeconds*** -	system queries timeout, default value 1h
   * ***warmupPeriodSeconds*** - warmup period in seconds
   * ***benchmarkRunPeriodSeconds*** - benchmark period in seconds
   * ***generateCreativeWorksFormat*** - serialization format for generated data. Available options : TriG, TriX, N-Triples, N-Quads, N3, RDF/XML, RDF/JSON, Turtle. Use exact names.

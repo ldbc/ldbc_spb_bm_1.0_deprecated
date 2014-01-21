@@ -23,6 +23,7 @@ public class Configuration {
 	public static final String AGGREGATION_AGENTS_COUNT = "aggregationAgents";
 	public static final String EDITORIAL_AGENTS_COUNT = "editorialAgents";
 	public static final String QUERY_TIMEOUT_SECONDS = "queryTimeoutSeconds";
+	public static final String SYSTEM_QUERY_TIMEOUT_SECONDS = "systemQueryTimeoutSeconds";
 	public static final String WARMUP_PERIOD_SECONDS = "warmupPeriodSeconds";
 	public static final String BENCHMARK_RUN_PERIOD_SECONDS = "benchmarkRunPeriodSeconds";
 	public static final String GENERATED_TRIPLES_PER_FILE = "generatedTriplesPerFile";
@@ -54,6 +55,7 @@ public class Configuration {
 		properties.setProperty(AGGREGATION_AGENTS_COUNT, "16" );
 		properties.setProperty(EDITORIAL_AGENTS_COUNT, "2" );
 		properties.setProperty(QUERY_TIMEOUT_SECONDS, "90" );
+		properties.setProperty(SYSTEM_QUERY_TIMEOUT_SECONDS, "3600");
 		properties.setProperty(WARMUP_PERIOD_SECONDS, "30" );
 		properties.setProperty(BENCHMARK_RUN_PERIOD_SECONDS, "60" );
 		properties.setProperty(GENERATED_TRIPLES_PER_FILE, "100000");

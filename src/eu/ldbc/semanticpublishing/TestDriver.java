@@ -78,6 +78,7 @@ public class TestDriver {
 				configuration.getString(Configuration.ENDPOINT_URL),
 				configuration.getString(Configuration.ENDPOINT_UPDATE_URL),
 				configuration.getInt(Configuration.QUERY_TIMEOUT_SECONDS) * 1000,
+				configuration.getInt(Configuration.SYSTEM_QUERY_TIMEOUT_SECONDS) * 1000,
 				configuration.getBoolean(Configuration.VERBOSE));
 	}
 	

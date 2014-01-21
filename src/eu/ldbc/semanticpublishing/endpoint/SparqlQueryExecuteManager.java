@@ -13,13 +13,15 @@ import eu.ldbc.semanticpublishing.resultanalyzers.saxparsers.SAXResultTransforme
 public class SparqlQueryExecuteManager {
 	private String endpointUrl;
 	private String endpointUpdateUrl;
-	private int timeoutMilliseconds;
+	private int queryTimeoutMilliseconds;
+	private int systemQueryTimeoutMilliseconds;
 	private boolean verbose;
 	
-	public SparqlQueryExecuteManager(AtomicBoolean benchmarkState, String endpointUrl, String endpointUpdateUrl, int timeoutMilliseconds, boolean verbose) {
+	public SparqlQueryExecuteManager(AtomicBoolean benchmarkState, String endpointUrl, String endpointUpdateUrl, int queryTimeoutMilliseconds, int systemQueryTimeoutMilliseconds, boolean verbose) {
 		this.endpointUrl = endpointUrl;
 		this.endpointUpdateUrl = endpointUpdateUrl;
-		this.timeoutMilliseconds = timeoutMilliseconds;
+		this.queryTimeoutMilliseconds = queryTimeoutMilliseconds;
+		this.systemQueryTimeoutMilliseconds = systemQueryTimeoutMilliseconds;
 		this.verbose = verbose;
 	}
 	
@@ -31,7 +33,7 @@ public class SparqlQueryExecuteManager {
 	 * @throws IOException
 	 */
 	public String executeQuery(String queryName, String queryString, QueryType queryType) throws IOException {
-		return executeQuery(new SparqlQueryConnection(endpointUrl, endpointUpdateUrl, timeoutMilliseconds, verbose), queryName, queryString, queryType, false, true);
+		return executeQuery(new SparqlQueryConnection(endpointUrl, endpointUpdateUrl, queryTimeoutMilliseconds, verbose), queryName, queryString, queryType, false, true);
 	}
 	
 	/**
@@ -60,14 +62,15 @@ public class SparqlQueryExecuteManager {
 	/**
 	 * A service method for executing queries not related to the benchmark run.
 	 * Always executed in a new connection, used for execution of queries during ontologies and reference datasets loading only.
+	 * For system queries using systemQueryTimeoutMilliseconds instead of queryTimeoutMilliseconds
 	 * @param transformer
 	 * @param queryString
 	 * @param queryType
 	 * @throws IOException
 	 */
-	public void executeQuery2(SAXResultTransformer transformer, String queryString, QueryType queryType) throws IOException {
+	public void executeSystemQuery(SAXResultTransformer transformer, String queryString, QueryType queryType) throws IOException {
 		
-		SparqlQueryConnection sparqlQuery = new SparqlQueryConnection(endpointUrl, endpointUpdateUrl, queryString, queryType, timeoutMilliseconds, verbose);		
+		SparqlQueryConnection sparqlQuery = new SparqlQueryConnection(endpointUrl, endpointUpdateUrl, queryString, queryType, systemQueryTimeoutMilliseconds, verbose);		
 		InputStream is = sparqlQuery.execute();
 		if (is == null) {
 			System.out.println("Unable to execute query : \n" + queryString);
@@ -112,6 +115,6 @@ public class SparqlQueryExecuteManager {
 	}
 	
 	public int getTimeoutMilliseconds() {
-		return this.timeoutMilliseconds;
+		return this.queryTimeoutMilliseconds;
 	}
 }
