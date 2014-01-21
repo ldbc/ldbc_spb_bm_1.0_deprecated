@@ -81,6 +81,7 @@ All items should be saved in same location where the benchmark jar file is.
 ```sh
 java -jar semantic_publishing_benchmark-*.jar test.properties
 ```
+*Note: appropriate value for java maximum heap size may be required, e.g. -Xmx4096m*
 
 ###Results
 Results of the benchmark are saved to three types of log files :
