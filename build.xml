@@ -6,8 +6,10 @@
 	<property name="dir.bin" location="bin"/>
 	<property name="dir.dist" location="dist"/>
 	<property name="dir.data" location="data"/>
+	<property name="dir.datasets.and.queries" location="datasets_and_queries"/>
 	<property name="dir.lib" location="lib/"/>
 	<property name="jar.file.name" value="semantic_publishing_benchmark"/>
+	<property name="ref.knowledge.and.queries.archive.name" value="reference_knowledge_data"/>
 	
 	<path id="classpath-lib">
     <fileset dir="${dir.lib}">
@@ -71,35 +73,53 @@
 		<delete dir="${dir.data}"/>
 		
 		<mkdir dir="./data-temp"/>
-		<copy todir="./data-temp">
-			<fileset dir="data-${query_mix}"/>
+  		<mkdir dir="./data-temp/datasets"/>
+  		<copy todir="./data-temp/datasets">
+  			<fileset dir="datasets_and_queries/datasets"/>
+  		</copy>
+  		<mkdir dir="./data-temp/ontologies"/>
+		<copy todir="./data-temp/ontologies">
+      		<fileset dir="datasets_and_queries/ontologies"/>
 		</copy>		
-		<delete dir="./data-temp/sparql/aggregation"/>
+		<mkdir dir="./data-temp/sparql"/>
+		<copy todir="./data-temp/sparql">
+      		<fileset dir="datasets_and_queries/sparql/${query_mix}"/>
+		</copy>
+  	
+		<copy file="datasets_and_queries/WordsDictionary.txt" todir="./data-temp"/>
+
+  		<delete dir="./data-temp/sparql/aggregation"/>
 		<mkdir dir="./data-temp/sparql/aggregation"/>
 		<copy todir="./data-temp/sparql/aggregation">
 			<fileset dir="./data-temp/sparql/aggregation_${customization}"/>
 		</copy>
+  	
+		<delete dir="./data-temp/sparql/system"/>
+		<mkdir dir="./data-temp/sparql/system"/>
+		<copy todir="./data-temp/sparql/system">
+			<fileset dir="./data-temp/sparql/system_${customization}"/>
+		</copy>	  	
+  	
+ 		<delete dir="./data-temp/sparql/aggregation_standard"/>
+ 		<delete dir="./data-temp/sparql/aggregation_virtuoso"/>
+		<delete dir="./data-temp/sparql/system_standard"/>
+		<delete dir="./data-temp/sparql/system_virtuoso"/>
+  	
 		<move file="./data-temp" toFile="./data"/>
 		<delete dir="./data-temp"/>
-		
-		<delete dir="./data/sparql/system"/>
-		<mkdir dir="./data/sparql/system"/>
-		<copy todir="./data/sparql/system">
-			<fileset dir="./data/sparql/system_${customization}"/>
-		</copy>		
-		
+				
 		<delete>
 			<fileset dir="./src/eu/ldbc/semanticpublishing/templates/aggregation" includes="*.java"/>
 		</delete>
 		<unzip src="./src/eu/ldbc/semanticpublishing/templates/aggregation/${query_mix}.zip" dest="./src/eu/ldbc/semanticpublishing/templates/aggregation/" />
 
-    <antcall target="clear-conformance-queries"/>
-    <antcall target="unzip-conformance-queries">
-      <param name="conformance_archive_name" value="${customization}"/>
-    </antcall>
+    	<antcall target="clear-conformance-queries"/>
+    	<antcall target="unzip-conformance-queries">
+      		<param name="conformance_archive_name" value="${customization}"/>
+    	</antcall>
 	
 		<delete file="./definitions.properties"/>
-		<copy file="./definitions.properties-${query_mix}" tofile="./definitions.properties"/>
+		<copy file="datasets_and_queries/definitions.properties-${query_mix}" tofile="./definitions.properties"/>
 	</target>
 	
 	<!--  Use this target to setup benchmark driver with standard SPARQL 1.1 query syntax and reduced query mix -->
@@ -142,11 +162,12 @@
 				<attribute name="Benchmark-Release-Type" value="base qierymix, standard SPARQL 1.1"/>
 			</manifest>
 			<zipgroupfileset dir="${dir.lib}" includes="*.jar"/>
-			<fileset dir="." includes="data/**" />
 			<fileset file="readme.txt" />
 			<fileset file="test.properties" />
 			<fileset file="definitions.properties" />
 		</jar>
+		<antcall target="unzip-all-compressed-datasets"/>
+		<antcall target="zip-reference-knowledge-and-queries"/>
 		<delete dir="./data"/>
 		<delete file="./definitions.properties" />
 	</target>
@@ -159,12 +180,14 @@
 				<attribute name="Benchmark-Release-Type" value="base qierymix, Virtuoso"/>
 			</manifest>
 			<zipgroupfileset dir="${dir.lib}" includes="*.jar"/>
-			<fileset dir="." includes="data/**" />
 			<fileset file="readme.txt" />
 			<fileset file="test.properties" />
 			<fileset file="definitions.properties" />
 		</jar>
+		<antcall target="unzip-all-compressed-datasets"/>
+		<antcall target="zip-reference-knowledge-and-queries"/>	
 		<delete dir="./data"/>
+		<delete file="./definitions.properties" />
 	</target>	
 	
 	<target name="build-full-querymix-standard" depends="build.release.version, setup-full-sparql-standard, rebuild">
@@ -175,12 +198,14 @@
 				<attribute name="Benchmark-Release-Type" value="full qierymix, standard SPARQL 1.1"/>
 			</manifest>
 			<zipgroupfileset dir="${dir.lib}" includes="*.jar"/>
-			<fileset dir="." includes="data/**" />
 			<fileset file="readme.txt" />
 			<fileset file="test.properties" />
 			<fileset file="definitions.properties" />
 		</jar>
+		<antcall target="unzip-all-compressed-datasets"/>
+		<antcall target="zip-reference-knowledge-and-queries"/>		
 		<delete dir="./data"/>
+		<delete file="./definitions.properties" />
 	</target>
 	
 	<target name="build-full-querymix-virtuoso" depends="build.release.version, setup-full-virtuoso, rebuild">	
@@ -191,13 +216,31 @@
 				<attribute name="Benchmark-Release-Type" value="full qierymix, Virtuoso"/>
 			</manifest>
 			<zipgroupfileset dir="${dir.lib}" includes="*.jar"/>
-			<fileset dir="." includes="data/**" />
 			<fileset file="readme.txt" />
 			<fileset file="test.properties" />
 			<fileset file="definitions.properties" />
 		</jar>
+		<antcall target="unzip-all-compressed-datasets"/>
+		<antcall target="zip-reference-knowledge-and-queries"/>		
 		<delete dir="./data"/>
+		<delete file="./definitions.properties" />
 	</target>	
+
+	<!-- Zip reference knowledge (ontologies and reference datasets) -->
+	<target name="zip-reference-knowledge-and-queries">
+		<zip destfile="${dir.dist}/${ref.knowledge.and.queries.archive.name}.zip">
+			<zipfileset dir="." includes="data/**" excludes="data/datasets/*.zip"/>
+		</zip>
+	</target>
+	
+	<!-- UnZip all compressed datasets -->
+	<target name="unzip-all-compressed-datasets">
+		<unzip dest="${dir.data}/datasets">
+			<fileset dir="${dir.data}/datasets">
+				<include name="**/*.zip"/>
+			</fileset>			
+		</unzip>
+	</target>
 	
 	<!-- this target requires that an svn client is installed -->
 	<target name="build.release.version">
