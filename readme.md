@@ -70,6 +70,7 @@ All items should be saved in same location where the benchmark jar file is.
     One, some or all phases can be enabled and will run in a sequence below. Running first three phases is mandatory with optional forth (*loadCreativeWorks*)  in cases when generated data will not be loaded manually.
   
   * ***loadOntologies*** - populate the RDF database with required ontologies (from reference knowledge). It can be done manually by uploading all .ttl files located at : /data/ontologies
+  * ***adjustRefDatasetsSizes*** - optional phase, if reference dataset files exist with the extension '.adjustablettl', then for each a new .ttl file is created with adjusted size depending on the selected size of data to be generated (parameter 'datasetSize' in test.properties file).
   * ***loadReferenceDatasets*** - populate the RDF database with required reference data (from reference knowledge). It can be done manually by uploading all .ttl files located at : /data/datasets
   * ***generateCreativeWorks*** - generate the data used for benchmarking. Data is saved to files of defined size (*generatedTriplesPerFile*) and total number of triples (*datasetSize*)
   * ***loadCreativeWorks*** - load generated data from previous phase into RDF database. Optional phase, verified from N-Quads serialization format

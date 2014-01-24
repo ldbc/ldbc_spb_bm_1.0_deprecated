@@ -1,10 +1,19 @@
 package eu.ldbc.semanticpublishing.util;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import org.openrdf.rio.RDFFormat;
+import org.openrdf.rio.RDFHandlerException;
+import org.openrdf.rio.RDFParseException;
+import org.openrdf.rio.RDFParser;
+import org.openrdf.rio.Rio;
+
+import eu.ldbc.semanticpublishing.util.sesame.CroppingRDFHandler;
 
 /**
  * Utility class for configuring the POST http request with different serialization content types.
@@ -53,5 +62,31 @@ public class RdfUtils {
 		}
 		
 		httpUrlConnection.getInputStream().close();
+	}
+	
+	/**
+	 * The method can be used to "crop" entities for a dataset file, for example depending on the size of generated data
+	 * @param datasetFile - full path name
+	 * @param croppedDatasetFile - full path name
+	 * @param entitiesLimit - maximum number of entities to keep in cropped file
+	 * @throws RDFHandlerException 
+	 * @throws RDFParseException 
+	 */
+	public static void cropDatasetFile(String datasetFile, String croppedDatasetFile, long entitiesLimit, String entityTypeUri) throws IOException {
+		InputStream inputStream = new FileInputStream(datasetFile);
+		try {
+			RDFParser rdfParser = Rio.createParser(RDFFormat.TURTLE);
+			CroppingRDFHandler croppingRdfHandler = new CroppingRDFHandler(croppedDatasetFile, entitiesLimit, entityTypeUri);
+			rdfParser.setRDFHandler(croppingRdfHandler);			
+			rdfParser.parse(inputStream, datasetFile);
+		} catch (RDFParseException pe) {
+			System.out.println("RdfUtils : RDFParseException : " + pe.getMessage());
+			pe.printStackTrace();
+		} catch (RDFHandlerException he) {
+			System.out.println("RdfUtils : RDFHandlerException : " + he.getMessage());
+			he.printStackTrace();
+		} finally {		
+			inputStream.close();
+		}
 	}
 }

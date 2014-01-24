@@ -117,6 +117,26 @@ public class TestDriver {
 		}
 	}
 	
+	private void adjustRefDatasetsSizes() throws IOException {
+		System.out.println("Preparing datasets...");
+		int magnitude = 100000;
+		int avgTriplesPerCw = 19;
+		String dpbediaPrefix = "dbpedia";
+		String entityTypeUri = "http://xmlns.com/foaf/0.1/Person"; // foaf:Person
+		String datasetsPath = StringUtil.normalizePath(configuration.getString(Configuration.REFERENCE_DATASETS_PATH));
+		
+		List<File> collectedFiles = new ArrayList<File>();
+		FileUtils.collectFilesList2(datasetsPath, collectedFiles, "adjustablettl", true);
+		long entitiesLimit = (long) (Math.log10(configuration.getLong(Configuration.DATASET_SIZE_TRIPLES) / avgTriplesPerCw) * magnitude);
+		
+		for( File file : collectedFiles ) {
+			if (file.getPath().contains(dpbediaPrefix)) {
+				System.out.println("\tAdjusting entities size for file : " + file.getName() + ", entities limit : " + entitiesLimit);
+				RdfUtils.cropDatasetFile(file.getPath(), datasetsPath + File.separator + file.getName().substring(0, file.getName().lastIndexOf(".")) + ".adjusted.ttl", entitiesLimit, entityTypeUri);		
+			}
+		}			
+	}
+	
 	private void loadDatasets() throws IOException {
 		if( configuration.getBoolean(Configuration.LOAD_REFERENCE_DATASETS)) {
 			System.out.println("Loading reference datasets...");
@@ -520,6 +540,7 @@ public class TestDriver {
 
 	public void executePhases() throws IOException {
 		loadOntologies();
+		adjustRefDatasetsSizes();
 		loadDatasets();
 		generateCreativeWorks();
 		loadCreativeWorks();
