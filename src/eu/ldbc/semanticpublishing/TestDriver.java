@@ -118,25 +118,30 @@ public class TestDriver {
 	}
 	
 	private void adjustRefDatasetsSizes() throws IOException {
-		System.out.println("Preparing datasets...");
-		int magnitude = 100000;
-		int avgTriplesPerCw = 19;
-		String dpbediaPrefix = "dbpedia";
-		String entityTypeUri = "http://xmlns.com/foaf/0.1/Person"; // foaf:Person
-		String datasetsPath = StringUtil.normalizePath(configuration.getString(Configuration.REFERENCE_DATASETS_PATH));
-		
-		List<File> collectedFiles = new ArrayList<File>();
-		FileUtils.collectFilesList2(datasetsPath, collectedFiles, "adjustablettl", true);
-		long entitiesLimit = (long) (Math.log10(configuration.getLong(Configuration.DATASET_SIZE_TRIPLES) / avgTriplesPerCw) * magnitude);
-		
-		for( File file : collectedFiles ) {
-			if (file.getPath().contains(dpbediaPrefix)) {
-				System.out.println("\tAdjusting entities size for file : " + file.getName() + ", entities limit : " + entitiesLimit);
-				RdfUtils.cropDatasetFile(file.getPath(), datasetsPath + File.separator + file.getName().substring(0, file.getName().lastIndexOf(".")) + ".adjusted.ttl", entitiesLimit, entityTypeUri);		
+		if ( configuration.getBoolean(Configuration.ADJUST_REF_DATASETS_SIZES)) {
+			System.out.println("Adjusting reference datasets size...");
+			int magnitudeOfEntities = 100000;//magnitude in terms of entities used to get from reference dataset
+			int avgTriplesPerCw = 19;//average number of triples per Creative Work
+			String dpbediaPrefix = "dbpedia";
+			String personEntityTypeUri = "http://xmlns.com/foaf/0.1/Person"; // foaf:Person
+			String datasetsPath = StringUtil.normalizePath(configuration.getString(Configuration.REFERENCE_DATASETS_PATH));
+			
+			List<File> collectedFiles = new ArrayList<File>();
+			FileUtils.collectFilesList2(datasetsPath, collectedFiles, "adjustablettl", true);
+			
+			//calculate the amount of triples to be used for reference knowledge. Value is related to current size of the dataset to be generated.
+			//triplesLimit = Log10(CreativeWorksCount) * magnitudeTriples
+			long entitiesLimit = (long) (Math.log10(configuration.getLong(Configuration.DATASET_SIZE_TRIPLES) / avgTriplesPerCw) * magnitudeOfEntities);
+			
+			for( File file : collectedFiles ) {
+				if (file.getPath().contains(dpbediaPrefix)) {
+					System.out.println("\tAdjusting entities size for file : " + file.getName() + ", entities to be used : " + entitiesLimit);
+					RdfUtils.cropDatasetFile(file.getPath(), datasetsPath + File.separator + file.getName().substring(0, file.getName().lastIndexOf(".")) + ".adjusted.ttl", entitiesLimit, personEntityTypeUri);		
+				}
 			}
-		}			
+		}
 	}
-	
+	 
 	private void loadDatasets() throws IOException {
 		if( configuration.getBoolean(Configuration.LOAD_REFERENCE_DATASETS)) {
 			System.out.println("Loading reference datasets...");

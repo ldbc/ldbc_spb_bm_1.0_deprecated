@@ -65,7 +65,7 @@ Benchmark Phases :
   * The Semantic Publishing Benchmark can be configured to run through these phases ordered by the sequence they should be run : 
 
     - loadOntologies        		: load ontologies (from the 'data/ontologies' folder) into database
-    - adjustRefDatasetsSizes    	: optional phase, if reference dataset files exist with the extension '.adjustablettl', then for each a new .ttl file
+    - adjustRefDatasetsSizes    	: optional phase, if reference dataset files exist with the extension '.adjustablettl', then for each, a new .ttl file
                                  	  is created with adjusted size depending on the selected size of data to be generated (parameter 'datasetSize' in test.properties file).
     - loadDatasets          		: load the reference datasets (from the 'data/datasets' folder) into database
     - generateCreativeWorks 		: using uploaded data from previous two phases, generates Creative Works and saves them to files.

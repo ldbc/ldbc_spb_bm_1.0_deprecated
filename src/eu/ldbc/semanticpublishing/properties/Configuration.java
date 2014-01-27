@@ -32,6 +32,7 @@ public class Configuration {
 	
 	public static final String LOAD_ONTOLOGIES = "loadOntologies";
 	public static final String ONTOLOGIES_PATH = "ontologiesPath";
+	public static final String ADJUST_REF_DATASETS_SIZES = "adjustRefDatasetsSizes";
 	public static final String LOAD_REFERENCE_DATASETS = "loadReferenceDatasets";
 	public static final String REFERENCE_DATASETS_PATH = "referenceDatasetsPath";
 	public static final String GENERATE_CREATIVE_WORKS = "generateCreativeWorks";
@@ -64,6 +65,7 @@ public class Configuration {
 		
 		properties.setProperty(LOAD_ONTOLOGIES, "true");
 		properties.setProperty(ONTOLOGIES_PATH, "./data/ontologies");
+		properties.setProperty(ADJUST_REF_DATASETS_SIZES, "true");
 		properties.setProperty(LOAD_REFERENCE_DATASETS, "true");
 		properties.setProperty(REFERENCE_DATASETS_PATH, "./data/datasets");
 		properties.setProperty(GENERATE_CREATIVE_WORKS, "true");
