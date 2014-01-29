@@ -54,6 +54,7 @@ How to install the benchmark driver :
 
 Save the distribution jar and reference knowledge data files to a folder of choice, then extract from both following items :
     - folder data/ from reference knowledge data file - contains required ontologies, knowledge reference data and query templates
+    - additinal reference datasets (see project ldbc_semanticpub_bm_additional_datasets) - all files of type .ttl and save to data/datasets folder    
     - file test.properties - configuration parameters for running the benchmark, found in the benchmark jar file
     - file definitions.properties - configuration parameters on the benchmark generator, found in the benchmark jar file
 

@@ -33,9 +33,13 @@ Extract from benchmark's jar file following items :
 * ***test.properties*** - contains configuration parameters for configuring the benchmark driver
 * ***definitions.properties*** - contains values of pre-allocated parameters used by the benchmark. Not to be changed for a regular benchmark use
 
-Extract from reference knowledge data archive file following items : 
+Extract from reference knowledge data archive file (reference_knowledge_data.zip) following items : 
 
 * ***data/*** - folder containing required reference knowledge (ontologies and data) and query templates
+
+Extract from additinal reference datasets (see project ldbc_semanticpub_bm_additional_datasets) 
+
+* ***Files of type .ttl and save to data/datasets folder***
 
 All items should be saved in same location where the benchmark jar file is.
 
