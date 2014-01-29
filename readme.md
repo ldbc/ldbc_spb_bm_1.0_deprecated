@@ -39,7 +39,7 @@ Extract from reference knowledge data archive file (reference_knowledge_data.zip
 
 Extract from additinal reference datasets (see project ldbc_semanticpub_bm_additional_datasets) 
 
-* ***Files of type .ttl and save to data/datasets folder***
+* ***Files of type .ttl*** and save to data/datasets folder
 
 All items should be saved in same location where the benchmark jar file is.
 
