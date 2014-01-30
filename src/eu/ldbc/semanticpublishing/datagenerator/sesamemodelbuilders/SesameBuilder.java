@@ -1,4 +1,4 @@
-package eu.ldbc.semanticpublishing.templates;
+package eu.ldbc.semanticpublishing.datagenerator.sesamemodelbuilders;
 
 import org.openrdf.model.Model;
 import org.openrdf.model.ValueFactory;

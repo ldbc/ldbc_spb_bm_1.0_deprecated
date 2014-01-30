@@ -3,7 +3,6 @@ package eu.ldbc.semanticpublishing.datagenerator;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.openrdf.model.Model;
@@ -13,7 +12,7 @@ import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.RDFWriter;
 import org.openrdf.rio.Rio;
 
-import eu.ldbc.semanticpublishing.templates.editorial.InsertTemplate;
+import eu.ldbc.semanticpublishing.datagenerator.sesamemodelbuilders.CreativeWorkBuilder;
 import eu.ldbc.semanticpublishing.util.FileUtils;
 import eu.ldbc.semanticpublishing.util.RandomUtil;
 
@@ -21,7 +20,7 @@ import eu.ldbc.semanticpublishing.util.RandomUtil;
  * A class for generating Creative Works using components for serializing from the Sesame. 
  *
  */
-public class DataGeneratorWorker extends AbstractAsynchronousWorker {
+public class GeneralWorker extends AbstractAsynchronousWorker {
 
 	private static final String FILENAME_FORMAT = "%s%sgeneratedCreativeWorks-%04d.";
 	
@@ -33,10 +32,9 @@ public class DataGeneratorWorker extends AbstractAsynchronousWorker {
 	private AtomicLong filesCount;
 	private AtomicLong triplesGeneratedSoFar;
 	private RandomUtil ru;
-	private HashMap<String, String> editorialTemplates;
 	private Object lock;
 	
-	public DataGeneratorWorker(RandomUtil ru, Object lock, AtomicLong filesCount, long totalTriples, long totalTriplesPerThread, long triplesPerFile, AtomicLong triplesGeneratedSoFar, String destinationPath, String serializationFormat, HashMap<String, String> editorialTemplates) {
+	public GeneralWorker(RandomUtil ru, Object lock, AtomicLong filesCount, long totalTriples, long totalTriplesPerThread, long triplesPerFile, AtomicLong triplesGeneratedSoFar, String destinationPath, String serializationFormat) {
 		this.ru = ru;
 		this.lock = lock;
 		this.totalTriples = totalTriples;
@@ -46,7 +44,6 @@ public class DataGeneratorWorker extends AbstractAsynchronousWorker {
 		this.triplesGeneratedSoFar = triplesGeneratedSoFar;
 		this.destinationPath = destinationPath;
 		this.serializationFormat = serializationFormat;
-		this.editorialTemplates = editorialTemplates;
 	}
 	
 	@Override
@@ -106,8 +103,8 @@ public class DataGeneratorWorker extends AbstractAsynchronousWorker {
 					
 					//using a synchronized block, to guarantee the exactly equal generated data no matter the number of threads
 					synchronized(lock) {							
-						InsertTemplate insertQuery = new InsertTemplate("", ru, editorialTemplates); 
-						sesameModel = insertQuery.buildSesameModel();
+						CreativeWorkBuilder creativeWorkBuilder = new CreativeWorkBuilder("", ru);
+						sesameModel = creativeWorkBuilder.buildSesameModel();
 					}
 				
 					for (Statement statement : sesameModel) {

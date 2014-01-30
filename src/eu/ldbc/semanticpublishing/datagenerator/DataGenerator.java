@@ -6,7 +6,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import eu.ldbc.semanticpublishing.properties.Configuration;
 import eu.ldbc.semanticpublishing.refdataset.DataManager;
-import eu.ldbc.semanticpublishing.templates.MustacheTemplatesHolder;
 import eu.ldbc.semanticpublishing.util.RandomUtil;
 import eu.ldbc.semanticpublishing.util.ThreadUtil;
 
@@ -18,20 +17,18 @@ import eu.ldbc.semanticpublishing.util.ThreadUtil;
 public class DataGenerator {
 	private RandomUtil ru;
 	private int generatorThreads = 1;
-	private MustacheTemplatesHolder mustacheTemplatesHolder;
 	private long triplesPerFile;
 	private long totalTriples;
 	private AtomicLong filesCount = new AtomicLong(0);
 	private AtomicLong triplesGeneratedSoFar = new AtomicLong(0);
 	private String destinationPath;
 	private String serializationFormat;
-	private final List<DataGeneratorWorker> generatorThreadsList = new ArrayList<DataGeneratorWorker>();
+	private final List<GeneralWorker> generatorThreadsList = new ArrayList<GeneralWorker>();
 	
 	protected Object workersSyncLock;
 	
-	public DataGenerator(RandomUtil ru, Configuration configuration, MustacheTemplatesHolder mustacheTemplatesHolder, int generatorThreads, long totalTriples, long triplesPerFile, String destinationPath, String serializationFormat) {
+	public DataGenerator(RandomUtil ru, Configuration configuration, int generatorThreads, long totalTriples, long triplesPerFile, String destinationPath, String serializationFormat) {
 		this.ru = ru;
-		this.mustacheTemplatesHolder = mustacheTemplatesHolder;
 		this.generatorThreads = generatorThreads;
 		this.totalTriples = totalTriples;
 		this.triplesPerFile = triplesPerFile;
@@ -50,7 +47,7 @@ public class DataGenerator {
 		long triplesPerThread = totalTriples / generatorThreads;
 		
 		for (int i = 0; i < generatorThreads; i++) {
-			generatorThreadsList.add(new DataGeneratorWorker(ru, workersSyncLock, filesCount, totalTriples, triplesPerThread, triplesPerFile, triplesGeneratedSoFar, destinationPath, serializationFormat, mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.EDITORIAL)));
+			generatorThreadsList.add(new GeneralWorker(ru, workersSyncLock, filesCount, totalTriples, triplesPerThread, triplesPerFile, triplesGeneratedSoFar, destinationPath, serializationFormat));
 		}
 	}
 	
@@ -68,12 +65,12 @@ public class DataGenerator {
 		long currentTime = System.currentTimeMillis();
 		
 		//start the threads
-		for (DataGeneratorWorker worker : generatorThreadsList) {
+		for (GeneralWorker worker : generatorThreadsList) {
 			worker.start();
 		}
 		
 		//... and wait for all threads to complete
-		for (DataGeneratorWorker generatorThread : generatorThreadsList) {
+		for (GeneralWorker generatorThread : generatorThreadsList) {
 			ThreadUtil.join(generatorThread);
 
 		}

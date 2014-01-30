@@ -249,7 +249,7 @@ public class TestDriver {
 			
 			int generatorThreads = configuration.getInt(Configuration.DATA_GENERATOR_WORKERS);
 			
-			DataGenerator dataGenerator = new DataGenerator(randomGenerator, configuration, mustacheTemplatesHolder, generatorThreads, totalTriples, triplesPerFile, destinationPath, serializationFormat);
+			DataGenerator dataGenerator = new DataGenerator(randomGenerator, configuration, generatorThreads, totalTriples, triplesPerFile, destinationPath, serializationFormat);
 			dataGenerator.produceData();
 		}
 	}
