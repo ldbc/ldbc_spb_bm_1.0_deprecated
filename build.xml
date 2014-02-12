@@ -154,6 +154,14 @@
     </antcall>
 	</target>		
 	
+	<target name="copy-config-files-to-dist" >
+		<copy todir="${dir.dist}">
+			<fileset file="readme.txt" />
+			<fileset file="test.properties" />
+			<fileset file="definitions.properties" />
+		</copy>
+	</target>
+	
 	<target name="build-base-querymix-standard" depends="setup-base-sparql-standard, rebuild">	
 		<jar destfile="${dir.dist}\${jar.file.name}-base.jar" basedir="${dir.bin}">
 			<manifest>
@@ -166,6 +174,7 @@
 			<fileset file="test.properties" />
 			<fileset file="definitions.properties" />
 		</jar>
+		<antcall target="copy-config-files-to-dist"/>
 		<antcall target="unzip-all-compressed-datasets"/>
 		<antcall target="zip-reference-knowledge-and-queries"/>
 		<delete dir="./data"/>
@@ -184,6 +193,7 @@
 			<fileset file="test.properties" />
 			<fileset file="definitions.properties" />
 		</jar>
+		<antcall target="copy-config-files-to-dist"/>
 		<antcall target="unzip-all-compressed-datasets"/>
 		<antcall target="zip-reference-knowledge-and-queries"/>	
 		<delete dir="./data"/>
@@ -202,6 +212,7 @@
 			<fileset file="test.properties" />
 			<fileset file="definitions.properties" />
 		</jar>
+		<antcall target="copy-config-files-to-dist"/>
 		<antcall target="unzip-all-compressed-datasets"/>
 		<antcall target="zip-reference-knowledge-and-queries"/>		
 		<delete dir="./data"/>
@@ -220,6 +231,7 @@
 			<fileset file="test.properties" />
 			<fileset file="definitions.properties" />
 		</jar>
+		<antcall target="copy-config-files-to-dist"/>
 		<antcall target="unzip-all-compressed-datasets"/>
 		<antcall target="zip-reference-knowledge-and-queries"/>		
 		<delete dir="./data"/>

@@ -14,7 +14,7 @@ Distribution :
 ------------------------------------------------------------------------------
 
 The benchmark test driver is distributed as a jar file : semantic_publishing_benchmark-*.jar accompanied by a datasets archive file : reference_knowledge_data.zip
-The datasets file contains ontologies and reference datasets (required by the data-generator). Benchmark jar file contains configuration files : test.properties and definitions.properties. 
+The datasets file contains ontologies and reference datasets (required by the data-generator). Required set of configuration files : test.properties and definitions.properties (can also be found in the jar file) 
 
 
 
@@ -34,9 +34,9 @@ How to install the benchmark driver :
 
 Save the distribution jar and reference knowledge data files to a folder of choice, then extract from both following items :
     - folder data/ from reference knowledge data file - contains required ontologies, knowledge reference data and query templates
-    - additinal reference datasets (see project ldbc_semanticpub_bm_additional_datasets) - all files of type .ttl and save to data/datasets folder    
-    - file test.properties - configuration parameters for running the benchmark, found in the benchmark jar file
-    - file definitions.properties - configuration parameters on the benchmark generator, found in the benchmark jar file
+    - additional reference datasets (see project ldbc_semanticpub_bm_additional_datasets) - all files of type .ttl and save to data/datasets folder    
+    - file test.properties - configuration parameters for running the benchmark, found in distribution folder (also in the benchmark jar file)
+    - file definitions.properties - configuration parameters on the benchmark generator, found in distribution folder (also in the benchmark jar file)
 
 
 
@@ -115,7 +115,7 @@ How to run the benchmark :
 	 
       Sample of a test.properties file can be found in the distribution jar file.
 
-  * definitions.properties - currently pre-configured and no need to modify. Can be edited to tune various allocations configurations, used in -generateCreativeWorks and -runBenchmark phases.
+  * definitions.properties - currently pre-configured and no need to modify. Can be edited to tune various allocations, used in -generateCreativeWorks and -runBenchmark phases.
   
     - aboutsAllocations                 (Defines allocation amount of About tags in Creative Works)
     - mentionsAllocations               (Defines allocation amount of Mention tags in Creative Works)

@@ -28,7 +28,7 @@ ant build-base-querymix-virtuoso
 
 ###Install
 
-Extract from benchmark's jar file following items : 
+Required configuration files : 
 
 * ***test.properties*** - contains configuration parameters for configuring the benchmark driver
 * ***definitions.properties*** - contains values of pre-allocated parameters used by the benchmark. Not to be changed for a regular benchmark use
