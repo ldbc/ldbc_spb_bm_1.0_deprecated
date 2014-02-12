@@ -20,6 +20,11 @@ public class Definitions {
 	public static final String ABOUT_AND_MENTIONS_ALLOCATION = "aboutAndMentionsAllocation";
 	public static final String EDITORIAL_OPERATIONS_ALLOCATION = "editorialOperationsAllocation";
 	public static final String AGGREGATION_OPERATIONS_ALLOCATION = "aggregationOperationsAllocation";
+	public static final String EXPONENTIAL_DECAY_UPPER_LIMIT_OF_CWS = "exponentialDecayUpperLimitOfCWs";
+	public static final String EXPONENTIAL_DECAY_RATE = "exponentialDecayRate";
+	public static final String EXPONENTIAL_DECAY_THRESHOLD_PERCENT = "exponentialDecayThresholdPercent";
+	public static final String MAJOR_EVENTS_PER_YEAR = "majorEventsPerYear";
+	public static final String MINOR_EVENT_PER_YEAR = "minorEventsPerYear";
 	
 	//About tags in Creative Works
 	public static AllocationsUtil aboutsAllocations;
@@ -80,6 +85,54 @@ public class Definitions {
 		}
 		return value;
 	}
+	
+	/**
+	 * Read a configuration parameter's value as an int
+	 * @param key
+	 * @return
+	 */
+	public int getInt(String key) {
+		String value = getString(key);
+		
+		try {
+			return Integer.parseInt(value);
+		}
+		catch( NumberFormatException e ) {
+			throw new IllegalStateException( "Illegal value for integer configuration parameter: " + key);
+		}
+	}
+
+	/**
+	 * Read a configuration parameter's value as a long
+	 * @param key
+	 * @return
+	 */
+	public long getLong(String key) {
+		String value = getString(key);
+		
+		try {
+			return Long.parseLong(value);
+		}
+		catch( NumberFormatException e ) {
+			throw new IllegalStateException( "Illegal value for long integer configuration parameter: " + key);
+		}
+	}
+	
+	/**
+	 * Read a configuration parameter's value as a Double
+	 * @param key
+	 * @return
+	 */
+	public double getDouble(String key) {
+		String value = getString(key);
+		
+		try {
+			return Double.parseDouble(value);
+		}
+		catch( NumberFormatException e ) {
+			throw new IllegalStateException( "Illegal value for long integer configuration parameter: " + key);
+		}
+	}	
 	
 	private void initialize() {
 		if (verbose) {

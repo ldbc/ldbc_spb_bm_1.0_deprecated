@@ -12,7 +12,7 @@ import eu.ldbc.semanticpublishing.refdataset.model.Entity;
  */
 public class DataManager {
 		
-	//a list for popular entities - 
+	//a list for popular entities 
 	public static final ArrayList<Entity> popularEntitiesList = new ArrayList<Entity>();
 	
 	//a list for regular entities

@@ -41,6 +41,7 @@ SELECT ?type ((COUNT(*)) as ?count)
 WHERE {
   ?creativeWork a ?type  .
   ?creativeWork a cwork:CreativeWork .
+  ?creativeWork cwork:dateModified ?dateModified.
   FILTER( ?type != cwork:CreativeWork ) .
   FILTER( ?dateModified > {{{cwStartDateTime}}} && ?dateModified < {{{cwEndDateTime}}} ) .
 } 

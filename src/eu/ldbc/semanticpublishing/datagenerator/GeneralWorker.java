@@ -15,31 +15,29 @@ import org.openrdf.rio.Rio;
 import eu.ldbc.semanticpublishing.datagenerator.sesamemodelbuilders.CreativeWorkBuilder;
 import eu.ldbc.semanticpublishing.util.FileUtils;
 import eu.ldbc.semanticpublishing.util.RandomUtil;
+import eu.ldbc.semanticpublishing.util.SesameUtils;
 
 /**
  * A class for generating Creative Works using components for serializing from the Sesame. 
  *
  */
 public class GeneralWorker extends AbstractAsynchronousWorker {
-
-	private static final String FILENAME_FORMAT = "%s%sgeneratedCreativeWorks-%04d.";
 	
-	private long totalTriples;
-	private long triplesPerFile;
-	private long totalTriplesForWorker;
-	private String destinationPath;
-	private String serializationFormat;
-	private AtomicLong filesCount;
-	private AtomicLong triplesGeneratedSoFar;
-	private RandomUtil ru;
-	private Object lock;
+	protected long targetTriples;
+	protected long triplesPerFile;
+	protected long totalTriplesForWorker;
+	protected String destinationPath;
+	protected String serializationFormat;
+	protected AtomicLong filesCount;
+	protected AtomicLong triplesGeneratedSoFar;
+	protected RandomUtil ru;
+	protected Object lock;
 	
-	public GeneralWorker(RandomUtil ru, Object lock, AtomicLong filesCount, long totalTriples, long totalTriplesPerThread, long triplesPerFile, AtomicLong triplesGeneratedSoFar, String destinationPath, String serializationFormat) {
+	public GeneralWorker(RandomUtil ru, Object lock, AtomicLong filesCount, long totalTriples, long triplesPerFile, AtomicLong triplesGeneratedSoFar, String destinationPath, String serializationFormat) {
 		this.ru = ru;
 		this.lock = lock;
-		this.totalTriples = totalTriples;
+		this.targetTriples = totalTriples;
 		this.filesCount = filesCount;
-		this.totalTriplesForWorker = totalTriplesPerThread;
 		this.triplesPerFile = triplesPerFile;
 		this.triplesGeneratedSoFar = triplesGeneratedSoFar;
 		this.destinationPath = destinationPath;
@@ -47,58 +45,29 @@ public class GeneralWorker extends AbstractAsynchronousWorker {
 	}
 	
 	@Override
-	public void execute() throws IOException {
-		RDFFormat rdfFormat = RDFFormat.NQUADS;
+	public void execute() throws Exception {
 		
-		if (serializationFormat.equalsIgnoreCase("BinaryRDF")) {
-			rdfFormat = RDFFormat.BINARY;
-		} else if (serializationFormat.equalsIgnoreCase("TriG")) {
-			rdfFormat = RDFFormat.TRIG;
-		} else if (serializationFormat.equalsIgnoreCase("TriX")) {
-			rdfFormat = RDFFormat.TRIX;
-		} else if (serializationFormat.equalsIgnoreCase("N-Triples")) {
-			rdfFormat = RDFFormat.NTRIPLES;
-		} else if (serializationFormat.equalsIgnoreCase("N-Quads")) {	
-			rdfFormat = RDFFormat.NQUADS;
-		} else if (serializationFormat.equalsIgnoreCase("N3")) {
-			rdfFormat = RDFFormat.N3;
-		} else if (serializationFormat.equalsIgnoreCase("RDF/XML")) {
-			rdfFormat = RDFFormat.RDFXML;
-		} else if (serializationFormat.equalsIgnoreCase("RDF/JSON")) {
-			rdfFormat = RDFFormat.RDFJSON;
-		} else if (serializationFormat.equalsIgnoreCase("Turtle")) {
-			rdfFormat = RDFFormat.TURTLE;
-		} else {
-			throw new IllegalArgumentException("Warning : unknown serialization format : " + serializationFormat + ", defaulting to N-Quads");
-		}
+		RDFFormat rdfFormat = SesameUtils.parseRdfFormat(serializationFormat);
 		
 		FileUtils.makeDirectories(destinationPath);
 
-		//loop until the maximum number of triples to store in the database is reached
-		for (long triplesCount = 0; triplesCount < totalTriplesForWorker; ) {
-
-			//Adjust the number of triples in last batch
-			long triplesLeftInFile = triplesPerFile;
-			if ((totalTriplesForWorker - triplesCount) >= triplesPerFile) {
-				triplesLeftInFile = triplesPerFile;
-			} else {
-				triplesLeftInFile = totalTriplesForWorker - triplesCount;
-			}
-			
-			long currentFilesCount = filesCount.incrementAndGet();
-			String fileName = String.format(FILENAME_FORMAT + rdfFormat.getDefaultFileExtension(), destinationPath, File.separator, currentFilesCount);
-			
-			FileOutputStream fos = null;			
-
+		long currentFilesCount = filesCount.incrementAndGet();
+		String fileName = String.format(FILENAME_FORMAT + rdfFormat.getDefaultFileExtension(), destinationPath, File.separator, currentFilesCount);
+		
+		FileOutputStream fos = null;
+		RDFWriter rdfWriter = null;
+		
+		int cwsInFileCount = 0;
+		int currentTriplesCount = 0;
+		
+		//loop until the triples generated so far have reached the targeted totalTriples size
+		while (triplesGeneratedSoFar.get() < targetTriples) {
 			try {
 				fos = new FileOutputStream(fileName);
-				RDFWriter rdfWriter = Rio.createWriter(rdfFormat, fos);
-				
+				rdfWriter = Rio.createWriter(rdfFormat, fos);
 				rdfWriter.startRDF();
-	
-				int cwsInFileCount = 0;
-				int currentTriplesCount = 0;
-				while ( currentTriplesCount < triplesLeftInFile ) {
+
+				while ( currentTriplesCount < triplesPerFile ) {
 					Model sesameModel;
 					
 					//using a synchronized block, to guarantee the exactly equal generated data no matter the number of threads
@@ -113,20 +82,35 @@ public class GeneralWorker extends AbstractAsynchronousWorker {
 						
 					cwsInFileCount++;
 					currentTriplesCount += sesameModel.size();
+					triplesGeneratedSoFar.addAndGet(sesameModel.size());
+					
+					if (triplesGeneratedSoFar.get() > targetTriples) {					
+						rdfWriter.endRDF();
+						flushClose(fos); 
+						System.out.println(Thread.currentThread().getName() + " :: Saving file #" + currentFilesCount + " with " + cwsInFileCount + " Creative Works. Generated triples so far : " + triplesGeneratedSoFar.get() + ". Target: " + targetTriples + " triples");
+						return;
+					}
 				}
-				triplesCount += currentTriplesCount;
-				triplesGeneratedSoFar.addAndGet(currentTriplesCount);
+				
+				System.out.println(Thread.currentThread().getName() + " :: Saving file #" + currentFilesCount + " with " + cwsInFileCount + " Creative Works. Generated triples so far : " + triplesGeneratedSoFar.get() + ". Target: " + targetTriples + " triples");
 				
 				rdfWriter.endRDF();
+				flushClose(fos);
 
-				System.out.println(Thread.currentThread().getName() + " :: Saving file #" + currentFilesCount + " with " + cwsInFileCount + " Creative Works. Generated triples so far : " + triplesGeneratedSoFar.get() + ". Target: " + totalTriples + " triples");
+				cwsInFileCount = 0;
+				currentTriplesCount = 0;
+								
+				currentFilesCount = filesCount.getAndIncrement();
+				fileName = String.format(FILENAME_FORMAT + rdfFormat.getDefaultFileExtension(), destinationPath, File.separator, currentFilesCount);
+
+				fos = new FileOutputStream(fileName);
+				rdfWriter = Rio.createWriter(rdfFormat, fos);			
+				rdfWriter.startRDF();
 			} catch (RDFHandlerException e) {
-				throw new IOException("A problem occurred generating RDF data: " + e.getMessage());
+				throw new IOException("A problem occurred while generating RDF data: " + e.getMessage());
 			} finally {
-				if(fos != null) {
-					fos.close();
-				}
-			}							
+				flushClose(fos);
+			}
 		}
 	}
 }

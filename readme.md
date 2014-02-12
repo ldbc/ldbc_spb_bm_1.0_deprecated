@@ -69,6 +69,7 @@ All items should be saved in same location where the benchmark jar file is.
   * ***aggregationAgents*** - number of aggregation agents that will execute a mix of aggregation queries simultaneously
   * ***editorialAgents*** - number of editorial agents that will execute a mix of update operations simultaneously
   * ***dataGeneratorWorkers*** - number of worker threads used by the data generator to produce data
+  * ***generatorRandomSeed*** - use it to set a random set for the data generator (default value is 0). e.g. in cases when several benchmark drivers are started in separate processes to generate data
   
 * Benchmark Phases (test.properties)
     One, some or all phases can be enabled and will run in a sequence below. Running first three phases is mandatory with optional forth (*loadCreativeWorks*)  in cases when generated data will not be loaded manually.

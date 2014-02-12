@@ -45,6 +45,7 @@ public class Configuration {
 	public static final String CHECK_CONFORMANCE = "checkConformance";
 	public static final String QUERIES_PATH = "queriesPath";
 	public static final String DEFINITIONS_PATH = "definitionsPath";
+	public static final String GENERATOR_RANDOM_SEED = "generatorRandomSeed";
 	
 	/**
 	 * Initialise and set default values for parameters that make sense.
@@ -76,6 +77,7 @@ public class Configuration {
 		properties.setProperty(CHECK_CONFORMANCE, "false");
 		properties.setProperty(QUERIES_PATH, "./data/sparql");
 		properties.setProperty(DEFINITIONS_PATH, "./definitions.properties");
+		properties.setProperty(GENERATOR_RANDOM_SEED, "0");
 	}
 	
 	/**

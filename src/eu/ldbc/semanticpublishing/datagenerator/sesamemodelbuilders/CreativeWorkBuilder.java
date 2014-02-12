@@ -15,12 +15,16 @@ import eu.ldbc.semanticpublishing.util.RandomUtil;
 
 public class CreativeWorkBuilder implements SesameBuilder {
 
+	private Date presetDate;
 	private CWType cwType = CWType.BLOG_POST;
 	private String cwTypeString = "cwork:BlogPost";
 	private String contextURI;
+	private String presetAboutTagUri;
 	private int aboutsCount = 0;
 	private int mentionsCount = 0;	
 	private Entity cwEntity;
+	private boolean usePresetDate = false;
+	private boolean usePresetAboutTagUri = false;
 	
 	private final RandomUtil ru;
 	
@@ -35,6 +39,8 @@ public class CreativeWorkBuilder implements SesameBuilder {
 	public CreativeWorkBuilder(String contextURI, RandomUtil ru) {
 		this.contextURI = contextURI;
 		this.ru = ru;
+		this.aboutsCount = Definitions.aboutsAllocations.getAllocation();
+		this.mentionsCount = Definitions.mentionsAllocations.getAllocation();
 		initializeCreativeWorkEntity(contextURI);
 	}
 	
@@ -88,6 +94,22 @@ public class CreativeWorkBuilder implements SesameBuilder {
 		}
 	}
 	
+	public void setPresetDate(Date date) {
+		this.presetDate = date;
+	}
+	
+	public void setUsePresetDate(boolean usePresetDate) {
+		this.usePresetDate = true;
+	}
+	
+	public void setPresetAboutTag(String aboutTagUri) {
+		this.presetAboutTagUri = aboutTagUri;
+	}
+	
+	public void setUsePresetAboutTag(boolean usePresetAboutTagUri) {
+		this.usePresetAboutTagUri = usePresetAboutTagUri;
+	}
+	
 	/**
 	 * Builds a Sesame Model of the Insert query template using values from templateParameterValues array.
 	 * Which gets initialized with values during construction of the object.
@@ -135,6 +157,10 @@ public class CreativeWorkBuilder implements SesameBuilder {
 		
 		boolean initialAboutUriUsed = false;
 		String initialUri = this.cwEntity.getObjectFromTriple(Entity.ENTITY_ABOUT);
+		
+		if (usePresetAboutTagUri) {
+			initialUri = presetAboutTagUri;
+		}
 		
 		//Set About(s)
 		//using aboutsCount + 1, because Definitions.aboutsAllocations.getAllocation() returning 0 is still a valid allocation
@@ -255,23 +281,40 @@ public class CreativeWorkBuilder implements SesameBuilder {
 			break;
 		}
 		
-		//Modification date
-		Date randomDateTime = ru.randomDateTime();
-		
-		//Set Creation Date
+		//Creation and Modification date
 		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(randomDateTime);
-		calendar.add(Calendar.MONTH, -1 * ru.nextInt(12));
-		calendar.add(Calendar.DATE, -1 * ru.nextInt(31));
-		calendar.add(Calendar.HOUR, -1 * ru.nextInt(24));
-		predicate = sesameValueFactory.createURI(cworkNamespace + "dateCreated");
-		object = sesameValueFactory.createLiteral(calendar.getTime());
 		
-		model.add(subject, predicate, object, context);
-		
-		//Set Modification Date
-		predicate = sesameValueFactory.createURI(cworkNamespace + "dateModified");
-		object = sesameValueFactory.createLiteral(randomDateTime);
+		if (usePresetDate) {
+			predicate = sesameValueFactory.createURI(cworkNamespace + "dateCreated");
+			object = sesameValueFactory.createLiteral(presetDate);
+			model.add(subject, predicate, object, context);
+			
+			//Set Modification Date
+			calendar.setTime(presetDate);
+			calendar.add(Calendar.MONTH, ru.nextInt(12));
+			calendar.add(Calendar.DATE, ru.nextInt(31));
+			calendar.add(Calendar.HOUR, ru.nextInt(24));			
+			
+			predicate = sesameValueFactory.createURI(cworkNamespace + "dateModified");
+			object = sesameValueFactory.createLiteral(calendar.getTime());
+		} else	{
+			Date randomDateTime = ru.randomDateTime();
+			
+			//Set Creation Date
+			calendar.setTime(randomDateTime);
+			calendar.add(Calendar.MONTH, -1 * ru.nextInt(12));
+			calendar.add(Calendar.DATE, -1 * ru.nextInt(31));
+			calendar.add(Calendar.HOUR, -1 * ru.nextInt(24));
+			
+			predicate = sesameValueFactory.createURI(cworkNamespace + "dateCreated");
+			object = sesameValueFactory.createLiteral(calendar.getTime());
+			
+			model.add(subject, predicate, object, context);
+			
+			//Set Modification Date
+			predicate = sesameValueFactory.createURI(cworkNamespace + "dateModified");
+			object = sesameValueFactory.createLiteral(randomDateTime);
+		}
 		
 		model.add(subject, predicate, object, context);
 		

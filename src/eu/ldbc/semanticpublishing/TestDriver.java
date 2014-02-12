@@ -38,7 +38,6 @@ import eu.ldbc.semanticpublishing.util.ThreadUtil;
 
 /**
  * The start point of the semantic publishing test driver. Initializes and runs all parts of the benchmark.
- *
  */
 public class TestDriver {
 	private int aggregationAgentsCount;
@@ -64,7 +63,7 @@ public class TestDriver {
 		configuration.loadFromFile(args[0]);
 		definitions.loadFromFile(configuration.getString(Configuration.DEFINITIONS_PATH), configuration.getBoolean(Configuration.VERBOSE));
 		mustacheTemplatesHolder.loadFrom(configuration.getString(Configuration.QUERIES_PATH));
-		
+
 		//will read the dictionary file from jar file as a resource
 		randomGenerator = initializeRandomUtil();
 		
@@ -92,7 +91,7 @@ public class TestDriver {
 		String oneLevelUp = ontologiesPath.substring(0, ontologiesPath.lastIndexOf(File.separator) + 1);
 		String filePath = oneLevelUp + "WordsDictionary.txt";
 		
-		return new RandomUtil(filePath);
+		return new RandomUtil(filePath, configuration.getLong(Configuration.GENERATOR_RANDOM_SEED));
 	}
 	
 	private void loadOntologies() throws IOException {
@@ -233,7 +232,7 @@ public class TestDriver {
 		}
 	}
 	
-	private void generateCreativeWorks() throws IOException {
+	private void generateCreativeWorks() throws IOException, InterruptedException {
 		if( configuration.getBoolean(Configuration.GENERATE_CREATIVE_WORKS)) {
 			System.out.println("Generating Creative Works data files...");
 			
@@ -249,7 +248,7 @@ public class TestDriver {
 			
 			int generatorThreads = configuration.getInt(Configuration.DATA_GENERATOR_WORKERS);
 			
-			DataGenerator dataGenerator = new DataGenerator(randomGenerator, configuration, generatorThreads, totalTriples, triplesPerFile, destinationPath, serializationFormat);
+			DataGenerator dataGenerator = new DataGenerator(randomGenerator, configuration, definitions, generatorThreads, totalTriples, triplesPerFile, destinationPath, serializationFormat);
 			dataGenerator.produceData();
 		}
 	}
@@ -260,29 +259,7 @@ public class TestDriver {
 /*	
 	private void generateCreativeWorksSesame(String serializationFormat, long maxTriplesInFile, long targetTriplesSize, String destinationPath) throws IOException {
 		
-		RDFFormat rdfFormat = RDFFormat.NQUADS;
-		
-		if (serializationFormat.equalsIgnoreCase("BinaryRDF")) {
-			rdfFormat = RDFFormat.BINARY;
-		} else if (serializationFormat.equalsIgnoreCase("TriG")) {
-			rdfFormat = RDFFormat.TRIG;
-		} else if (serializationFormat.equalsIgnoreCase("TriX")) {
-			rdfFormat = RDFFormat.TRIX;
-		} else if (serializationFormat.equalsIgnoreCase("N-Triples")) {
-			rdfFormat = RDFFormat.NTRIPLES;
-		} else if (serializationFormat.equalsIgnoreCase("N-Quads")) {	
-			rdfFormat = RDFFormat.NQUADS;
-		} else if (serializationFormat.equalsIgnoreCase("N3")) {
-			rdfFormat = RDFFormat.N3;
-		} else if (serializationFormat.equalsIgnoreCase("RDF/XML")) {
-			rdfFormat = RDFFormat.RDFXML;
-		} else if (serializationFormat.equalsIgnoreCase("RDF/JSON")) {
-			rdfFormat = RDFFormat.RDFJSON;
-		} else if (serializationFormat.equalsIgnoreCase("Turtle")) {
-			rdfFormat = RDFFormat.TURTLE;
-		} else {
-			throw new IllegalArgumentException("Warning : unknown serialization format : " + serializationFormat + ", defaulting to N-Quads");
-		}
+		RDFFormat rdfFormat = SesameUtils.parseRdfFormat(serializationFormat);
 		
 		FileUtils.makeDirectories(destinationPath);
 
@@ -543,7 +520,7 @@ public class TestDriver {
 		}
 	}
 
-	public void executePhases() throws IOException {
+	public void executePhases() throws IOException, InterruptedException {
 		loadOntologies();
 		adjustRefDatasetsSizes();
 		loadDatasets();
@@ -560,7 +537,7 @@ public class TestDriver {
 		System.exit(0);
 	}
 	
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, InterruptedException {
 		LoggingUtil.Configure();
 		TestDriver testDriver = new TestDriver(args);
 		testDriver.executePhases();

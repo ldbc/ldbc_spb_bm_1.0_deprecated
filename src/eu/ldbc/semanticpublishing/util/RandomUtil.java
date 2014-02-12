@@ -22,10 +22,6 @@ public class RandomUtil {
 	private static final ArrayList<String> wordsList = new ArrayList<String>();
 	private static final int YEARS_OFFSET = 1;
 
-	public RandomUtil(String wordsFile) {
-		buildWordsArray(wordsFile);
-	}
-
 	public RandomUtil(String wordsFile, long seed) {
 		buildWordsArray(wordsFile);
 		randomGenerator.setSeed(seed);

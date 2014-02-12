@@ -18,24 +18,6 @@ The datasets file contains ontologies and reference datasets (required by the da
 
 
 
-Project Structure : 
-------------------------------------------------------------------------------
-
-src\            			      (sources of the project)
-dist\           			      (the benchmark driver jar file)
-bin\            			      (binary files)    
-data\           			      (contains required ontologies and reference datasets used by the data generator. Also will be packed with the distribution jar)
-  ontologies\   			      (ontologies, core and domain, describing a publishing use-case)
-    core\
-    domain\
-  datasets\     			      (reference datasets, used by the data-generator for generating synthetic data for benchmarking)
-  sparql\       			      (query templates and constraint validation queries)
-  	aggregation\			      (aggregation query templates)
-  	conformance\ 				  (queries for testing OWL2-RL conformance capabilities of the database engine)
-  	editorial\				      (editorial query templates)
-
-
-
 How to build the benchmark driver :
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -44,8 +26,6 @@ How to build the benchmark driver :
   use appropriate ant-tasks to build them, e.g.
   > ant build-base-querymix-standard //builds the standard benchmark driver compliant to SPARQL 1.1
   > ant build-base-querymix-virtuoso // builds a custom version of the driver customized for Virtuoso's small deviation in SPARQL queries
-  > ant build-full-querymix-standard
-  > ant build-full-querymix-virtuoso
 
 
 
@@ -116,6 +96,7 @@ How to run the benchmark :
     - editorialAgents                   (editorial agents count which will execute a mix of editorial queries concurrently. Query mix can be configured by changing
                                          parameter editorialOperationsAllocation in definitions.properties file)
     - dataGeneratorWorkers              (number of simultaneously working data generator threads)
+    - generatorRandomSeed				(use it to set a random set for the data generator (default value is 0). e.g. in cases when several benchmark drivers are started in separate processes to generate data)
                                          
                                          Note : For optimal results the sum of editorial and aggregation agents should be set to be equal to the number of CPU cores.
 	
@@ -144,6 +125,11 @@ How to run the benchmark :
     - aboutAndMentionsAllocation        (Defines allocation amount of about or mentions used for the main aggregation query (/data/sparql/aggregation/query1.txt), which one will be used more frequently)
     - editorialOperationsAllocation     (Defines allocation amount of queries in the editorial query mix that each editorial agent will execute. Query mix order : insert.txt, update.txt and delete.txt)
     - aggregationOperationsAllocation   (Defines allocation amount of queries in the aggregation query mix that each aggregation agent will execute. Query mix order : query1.txt, query2.txt... etc)
+    - exponentialDecayUpperLimitOfCWs   (Defines the maximum number of creative works that an entity can be tagged about. Exponential decay function will start from the value defined)
+    - exponentialDecayRate              (Defines the exponential decay rate. Used values to be in range 0.01 (for gentle slope) to 1 (for steep slope))
+    - exponentialDecayThresholdPercent  (Defines the threshold in percents of exponential decay, below that threshold values will be ignored. Threshold is defined as the ratio of : currentExponentialDecayValue / exponentialDecayUpperLimitOfCWs. e.g. 5% threshold will be the value of 0.05)
+    - majorEventsPerYear                (Defines the maximum number of 'major' events that could happen in one year. Each major event will be tagged by a number of Creative Works which will decay exponentially in time.)
+    - minorEventsPerYear                (Defines the maximum number of 'minor' events that could happen in one year. Each minor event will be tagged by a number of Creative Works which will decay exponentially in time. Value of exponentialDecayUpperLimitOfCWs for minor events will be ten times smaller for them.)
     
       Sample definitions.properties file can be found in the distribution jar file.
 
