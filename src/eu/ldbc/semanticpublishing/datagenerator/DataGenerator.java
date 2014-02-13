@@ -98,6 +98,6 @@ public class DataGenerator {
 		executorService.shutdown();
 		executorService.awaitTermination(AWAIT_PERIOD_HOURS, TimeUnit.HOURS);
 		
-		System.out.println("\tcompleted! Total Creative Works created : " + (DataManager.creativeWorksNexId.get() - creativeWorksInDatabase) + " in " + filesCount.get() + " files. Time : " + (System.currentTimeMillis() - currentTime) + " ms");
+		System.out.println("\tcompleted! Total Creative Works created : " + String.format("%,d", (DataManager.creativeWorksNexId.get() - creativeWorksInDatabase)) + " in " + filesCount.get() + " files. Time : " + (System.currentTimeMillis() - currentTime) + " ms");
 	}
 }

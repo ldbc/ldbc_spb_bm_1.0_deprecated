@@ -60,7 +60,13 @@ public class GeneralWorker extends AbstractAsynchronousWorker {
 		int cwsInFileCount = 0;
 		int currentTriplesCount = 0;
 		
-		//loop until the triples generated so far have reached the targeted totalTriples size
+		//skip data generation if targetTriples size has already been reached 
+		if (triplesGeneratedSoFar.get() > targetTriples) {
+//			System.out.println(Thread.currentThread().getName() + " :: generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + " have reached the targeted triples size: " + String.format("%,d", targetTriples) + ". Generating is cancelled");
+			return;
+		}
+		
+		//loop until the generated triples have reached the targeted totalTriples size
 		while (triplesGeneratedSoFar.get() < targetTriples) {
 			try {
 				fos = new FileOutputStream(fileName);
@@ -87,12 +93,12 @@ public class GeneralWorker extends AbstractAsynchronousWorker {
 					if (triplesGeneratedSoFar.get() > targetTriples) {					
 						rdfWriter.endRDF();
 						flushClose(fos); 
-						System.out.println(Thread.currentThread().getName() + " :: Saving file #" + currentFilesCount + " with " + cwsInFileCount + " Creative Works. Generated triples so far : " + triplesGeneratedSoFar.get() + ". Target: " + targetTriples + " triples");
+						System.out.println(Thread.currentThread().getName() + " :: Saving file #" + currentFilesCount + " with " + cwsInFileCount + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
 						return;
 					}
 				}
 				
-				System.out.println(Thread.currentThread().getName() + " :: Saving file #" + currentFilesCount + " with " + cwsInFileCount + " Creative Works. Generated triples so far : " + triplesGeneratedSoFar.get() + ". Target: " + targetTriples + " triples");
+				System.out.println(Thread.currentThread().getName() + " :: Saving file #" + currentFilesCount + " with " + cwsInFileCount + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
 				
 				rdfWriter.endRDF();
 				flushClose(fos);

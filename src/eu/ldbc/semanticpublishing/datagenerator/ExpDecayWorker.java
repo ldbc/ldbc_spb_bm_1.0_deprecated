@@ -59,6 +59,12 @@ public class ExpDecayWorker extends GeneralWorker {
 
 		RDFWriter rdfWriter = null;
 		
+		//skip data generation if targetTriples size has already been reached 
+		if (triplesGeneratedSoFar.get() > targetTriples) {
+//			System.out.println(Thread.currentThread().getName() + " :: generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + " have reached the targeted triples size: " + String.format("%,d", targetTriples) + ". Generating is cancelled");
+			return;
+		}
+		
 		long creativeWorksForCurrentIteration = expGenerator.generateNext();		
 		
 		try {
@@ -74,7 +80,7 @@ public class ExpDecayWorker extends GeneralWorker {
 					if (currentTriplesCount >= triplesPerFile) {						
 						rdfWriter.endRDF();
 						flushClose(fos);
-						System.out.println(Thread.currentThread().getName() + " :: Saving file #" + currentFilesCount + " with " + cwsInFileCount + " Creative Works. Generated triples so far : " + triplesGeneratedSoFar.get() + ". Target: " + targetTriples + " triples");
+						System.out.println(Thread.currentThread().getName() + " :: Saving file #" + currentFilesCount + " with " + cwsInFileCount + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
 	
 						cwsInFileCount = 0;
 						currentTriplesCount = 0;
