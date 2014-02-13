@@ -31,17 +31,17 @@ ant build-base-querymix-virtuoso
 Required configuration files : 
 
 * ***test.properties*** - contains configuration parameters for configuring the benchmark driver
-* ***definitions.properties*** - contains values of pre-allocated parameters used by the benchmark. Not to be changed for a regular benchmark use
+* ***definitions.properties*** - contains values of pre-allocated parameters used by the benchmark. Not to be modified by the regular benchmark user
 
 Extract from reference knowledge data archive file (reference_knowledge_data.zip) following items : 
 
 * ***data/*** - folder containing required reference knowledge (ontologies and data) and query templates
 
-Extract from additinal reference datasets (see project ldbc_semanticpub_bm_additional_datasets) 
+Extract from additinal reference datasets (see project ldbc_semanticpub_bm_additional_datasets). This is an optional step.
 
 * ***Files of type .ttl*** and save to data/datasets folder
 
-All items should be saved in same location where the benchmark jar file is.
+All items should be saved in same location with the benchmark jar file.
 
 ###Configure
 
@@ -69,10 +69,10 @@ All items should be saved in same location where the benchmark jar file is.
   * ***aggregationAgents*** - number of aggregation agents that will execute a mix of aggregation queries simultaneously
   * ***editorialAgents*** - number of editorial agents that will execute a mix of update operations simultaneously
   * ***dataGeneratorWorkers*** - number of worker threads used by the data generator to produce data
-  * ***generatorRandomSeed*** - use it to set a random set for the data generator (default value is 0). e.g. in cases when several benchmark drivers are started in separate processes to generate data
+  * ***generatorRandomSeed*** - use it to set a value for the random seed used by the data generator (default value is 0). e.g. in cases when several benchmark drivers are started in separate processes to generate data
   
 * Benchmark Phases (test.properties)
-    One, some or all phases can be enabled and will run in a sequence below. Running first three phases is mandatory with optional forth (*loadCreativeWorks*)  in cases when generated data will not be loaded manually.
+    One, some or all phases can be enabled and will run in the sequence listed below. Running first three phases is mandatory with optionally enabling fourth one (*loadCreativeWorks*) - for the case when generated data will not be loaded manually into the database.
   
   * ***loadOntologies*** - populate the RDF database with required ontologies (from reference knowledge). It can be done manually by uploading all .ttl files located at : /data/ontologies
   * ***adjustRefDatasetsSizes*** - optional phase, if reference dataset files exist with the extension '.adjustablettl', then for each, a new .ttl file is created with adjusted size depending on the selected size of data to be generated (parameter 'datasetSize' in test.properties file).
