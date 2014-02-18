@@ -30,17 +30,19 @@ public class EditorialAgent extends AbstractAsynchronousAgent {
 	private final AtomicBoolean benchmarkingState;
 	protected final HashMap<String, String> queryTemplates;
 	private SparqlQueryConnection connection;
+	private int seedYear;
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(EditorialAgent.class.getName());
 	private final static Logger BRIEF_LOGGER = LoggerFactory.getLogger(TestDriver.class.getName());
 	
-	public EditorialAgent(AtomicBoolean benchmarkingState, SparqlQueryExecuteManager queryExecuteManager, RandomUtil ru, AtomicBoolean runFlag, HashMap<String, String> queryTemplates) {
+	public EditorialAgent(AtomicBoolean benchmarkingState, SparqlQueryExecuteManager queryExecuteManager, RandomUtil ru, AtomicBoolean runFlag, HashMap<String, String> queryTemplates, int seedYear) {
 		super(runFlag);
 		this.queryExecuteManager = queryExecuteManager;
 		this.ru = ru;
 		this.benchmarkingState = benchmarkingState;
 		this.queryTemplates = queryTemplates;
 		this.connection = new SparqlQueryConnection(queryExecuteManager.getEndpointUrl(), queryExecuteManager.getEndpointUpdateUrl(), queryExecuteManager.getTimeoutMilliseconds(), true);
+		this.seedYear = seedYear;
 	}
 	
 	@Override
@@ -57,7 +59,7 @@ public class EditorialAgent extends AbstractAsynchronousAgent {
 			
 			switch (queryDistribution) {
 				case 0 :
-					MustacheTemplate insertQuery = new InsertTemplate("", ru, queryTemplates);
+					MustacheTemplate insertQuery = new InsertTemplate("", ru, queryTemplates, seedYear);
 					
 					queryType = insertQuery.getTemplateQueryType();
 					queryName = insertQuery.getTemplateFileName();
@@ -70,7 +72,7 @@ public class EditorialAgent extends AbstractAsynchronousAgent {
 					long cwNextId = ru.nextInt((int)DataManager.creativeWorksNexId.get());
 					String uri = ru.numberURI("context", cwNextId, true, true);
 								
-					MustacheTemplate updateQuery = new UpdateTemplate(uri, ru, queryTemplates);
+					MustacheTemplate updateQuery = new UpdateTemplate(uri, ru, queryTemplates, seedYear);
 					
 					queryType = updateQuery.getTemplateQueryType();
 					queryName = updateQuery.getTemplateFileName();

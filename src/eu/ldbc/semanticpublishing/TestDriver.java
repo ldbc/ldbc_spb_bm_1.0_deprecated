@@ -91,7 +91,7 @@ public class TestDriver {
 		String oneLevelUp = ontologiesPath.substring(0, ontologiesPath.lastIndexOf(File.separator) + 1);
 		String filePath = oneLevelUp + "WordsDictionary.txt";
 		
-		return new RandomUtil(filePath, configuration.getLong(Configuration.GENERATOR_RANDOM_SEED));
+		return new RandomUtil(filePath, configuration.getLong(Configuration.GENERATOR_RANDOM_SEED), definitions.getInt(Definitions.YEAR_SEED));
 	}
 	
 	private void loadOntologies() throws IOException {
@@ -329,7 +329,7 @@ public class TestDriver {
 		}
 
 		for(int i = 0; i < editorialAgentsCount; ++i ) {
-			editorialAgents.add(new EditorialAgent(inBenchmarkState, queryExecuteManager, randomGenerator, runFlag, mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.EDITORIAL)));
+			editorialAgents.add(new EditorialAgent(inBenchmarkState, queryExecuteManager, randomGenerator, runFlag, mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.EDITORIAL), definitions.getInt(Definitions.YEAR_SEED)));
 		}
 	}
 	

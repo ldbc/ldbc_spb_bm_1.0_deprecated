@@ -20,11 +20,12 @@ public class RandomUtil {
 	private static final String baseURI = "http://www.bbc.co.uk/";
 	private static final char[] symbols = new char[62];
 	private static final ArrayList<String> wordsList = new ArrayList<String>();
-	private static final int YEARS_OFFSET = 1;
+	private int seedYear = 2000;
 
-	public RandomUtil(String wordsFile, long seed) {
+	public RandomUtil(String wordsFile, long seed, int seedYear) {
 		buildWordsArray(wordsFile);
 		randomGenerator.setSeed(seed);
+		this.seedYear = seedYear;
 	}	
 	
 	static {
@@ -44,6 +45,10 @@ public class RandomUtil {
 
 	public void setRandomSeed(long seed) {
 		randomGenerator.setSeed(seed);
+	}
+	
+	public void setSeedYear(int seedYear) {
+		this.seedYear = seedYear;
 	}
 	
 	public int nextInt(int min, int max) {
@@ -96,13 +101,11 @@ public class RandomUtil {
 	}
 
 	/**
-	 * Produces a random xsd:dateTime literal with a fixed offset of YEARS_OFFSET years from now
+	 * Produces a random xsd:dateTime literal with a fixed year set in seedYear
 	 *   e.g. "2011-10-21T20:55:58.379+03:00"^^xsd:dateTime
 	 */
 	public String randomDateTimeString() {	
-		Calendar calendar = Calendar.getInstance();
-		
-		int year = nextInt(calendar.get(Calendar.YEAR) - YEARS_OFFSET, calendar.get(Calendar.YEAR));
+		int year = seedYear;
 		int month = nextInt(0, 11);
 
 		int day;
@@ -146,7 +149,7 @@ public class RandomUtil {
 	public Date randomDateTime() {
 		Calendar calendar = Calendar.getInstance();
 		
-		int year = nextInt(calendar.get(Calendar.YEAR) - YEARS_OFFSET, calendar.get(Calendar.YEAR));
+		int year = seedYear;
 		int month = nextInt(0, 11);
 
 		int day;
@@ -176,10 +179,10 @@ public class RandomUtil {
 		Calendar calendar = Calendar.getInstance();
 		
 		if (maxYear < 0) {
-			maxYear = calendar.get(Calendar.YEAR) - YEARS_OFFSET;
+			maxYear = seedYear;
 		}
 		
-		int year = nextInt(calendar.get(Calendar.YEAR) - YEARS_OFFSET, calendar.get(Calendar.YEAR));
+		int year = seedYear;
 		
 		int month = 0;
 		

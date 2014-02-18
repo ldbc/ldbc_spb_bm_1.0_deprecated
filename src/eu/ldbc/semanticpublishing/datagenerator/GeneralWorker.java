@@ -93,12 +93,12 @@ public class GeneralWorker extends AbstractAsynchronousWorker {
 					if (triplesGeneratedSoFar.get() > targetTriples) {					
 						rdfWriter.endRDF();
 						flushClose(fos); 
-						System.out.println(Thread.currentThread().getName() + " :: Saving file #" + currentFilesCount + " with " + cwsInFileCount + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
+						System.out.println(Thread.currentThread().getName() + " GWorker :: Saving file #" + currentFilesCount + " with " + cwsInFileCount + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
 						return;
 					}
 				}
 				
-				System.out.println(Thread.currentThread().getName() + " :: Saving file #" + currentFilesCount + " with " + cwsInFileCount + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
+				System.out.println(Thread.currentThread().getName() + " GWorker :: Saving file #" + currentFilesCount + " with " + cwsInFileCount + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
 				
 				rdfWriter.endRDF();
 				flushClose(fos);

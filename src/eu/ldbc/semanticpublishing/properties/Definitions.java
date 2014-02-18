@@ -25,6 +25,7 @@ public class Definitions {
 	public static final String EXPONENTIAL_DECAY_THRESHOLD_PERCENT = "exponentialDecayThresholdPercent";
 	public static final String MAJOR_EVENTS_PER_YEAR = "majorEventsPerYear";
 	public static final String MINOR_EVENT_PER_YEAR = "minorEventsPerYear";
+	public static final String YEAR_SEED = "seedYear";
 	
 	//About tags in Creative Works
 	public static AllocationsUtil aboutsAllocations;

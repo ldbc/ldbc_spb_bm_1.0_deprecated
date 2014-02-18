@@ -291,29 +291,29 @@ public class CreativeWorkBuilder implements SesameBuilder {
 			
 			//Set Modification Date
 			calendar.setTime(presetDate);
-			calendar.add(Calendar.MONTH, ru.nextInt(12));
-			calendar.add(Calendar.DATE, ru.nextInt(31));
-			calendar.add(Calendar.HOUR, ru.nextInt(24));			
+			calendar.add(Calendar.MONTH, 1 * ru.nextInt(12));
+			calendar.add(Calendar.DATE, 1 * ru.nextInt(31));
+			calendar.add(Calendar.HOUR, 1 * ru.nextInt(24));			
 			
 			predicate = sesameValueFactory.createURI(cworkNamespace + "dateModified");
 			object = sesameValueFactory.createLiteral(calendar.getTime());
-		} else	{
-			Date randomDateTime = ru.randomDateTime();
+		} else {
+			Date creationDate = ru.randomDateTime();
 			
 			//Set Creation Date
-			calendar.setTime(randomDateTime);
-			calendar.add(Calendar.MONTH, -1 * ru.nextInt(12));
-			calendar.add(Calendar.DATE, -1 * ru.nextInt(31));
-			calendar.add(Calendar.HOUR, -1 * ru.nextInt(24));
-			
 			predicate = sesameValueFactory.createURI(cworkNamespace + "dateCreated");
-			object = sesameValueFactory.createLiteral(calendar.getTime());
+			object = sesameValueFactory.createLiteral(creationDate);
 			
 			model.add(subject, predicate, object, context);
 			
 			//Set Modification Date
+			calendar.setTime(creationDate);
+			calendar.add(Calendar.MONTH, 1 * ru.nextInt(12));
+			calendar.add(Calendar.DATE, 1 * ru.nextInt(31));
+			calendar.add(Calendar.HOUR, 1 * ru.nextInt(24));
+			
 			predicate = sesameValueFactory.createURI(cworkNamespace + "dateModified");
-			object = sesameValueFactory.createLiteral(randomDateTime);
+			object = sesameValueFactory.createLiteral(calendar.getTime());
 		}
 		
 		model.add(subject, predicate, object, context);

@@ -13,8 +13,8 @@ public class UpdateTemplate extends InsertTemplate {
 	//must match with corresponding file name of the mustache template file
 	private static final String templateFileName = "update.txt";
 	
-	public UpdateTemplate(String contextURI, RandomUtil ru, HashMap<String, String> queryTemplates) {
-		super(contextURI, ru, queryTemplates);
+	public UpdateTemplate(String contextURI, RandomUtil ru, HashMap<String, String> queryTemplates, int seedYear) {
+		super(contextURI, ru, queryTemplates, seedYear);
 	}
 	
 	@Override

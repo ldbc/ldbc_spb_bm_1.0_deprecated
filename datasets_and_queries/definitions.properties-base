@@ -46,3 +46,7 @@ majorEventsPerYear=5
 #Defines the maximum number of 'minor' events that could happen in one year. Each minor event will be tagged by a number of Creative Works which will decay exponentially in time.
 #Value of exponentialDecayUpperLimitOfCWs for minor events will be ten times smaller for them.
 minorEventsPerYear=100
+
+#Defines a seed year that will be used for generating the Creative Works.
+# e.g. seedYear=2014 will have all creative works have dateCreated randomly picked in 2014, and dateModified in future interval
+seedYear=2011

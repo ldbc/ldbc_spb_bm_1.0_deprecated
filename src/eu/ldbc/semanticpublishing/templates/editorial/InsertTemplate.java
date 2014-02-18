@@ -25,6 +25,7 @@ public class InsertTemplate extends MustacheTemplate {
 	private String contextURI;
 	private int aboutsCount = 0;
 	private int mentionsCount = 0;	
+	private int seedYear = 2000;
 	private Entity cwEntity;
 	private boolean initialAboutUriUsed = false;
 	private boolean geonamesLocationUsed = false;
@@ -35,12 +36,13 @@ public class InsertTemplate extends MustacheTemplate {
 		BLOG_POST, NEWS_ITEM, PROGRAMME
 	}	
 	
-	public InsertTemplate(String contextURI, RandomUtil ru, HashMap<String, String> queryTemplates) {
+	public InsertTemplate(String contextURI, RandomUtil ru, HashMap<String, String> queryTemplates, int seedYear) {
 		super(queryTemplates);
 		this.contextURI = contextURI;
 		this.ru = ru;
 		this.aboutsCount = Definitions.aboutsAllocations.getAllocation();
 		this.mentionsCount = Definitions.mentionsAllocations.getAllocation();
+		this.seedYear = seedYear;
 		initializeCreativeWorkEntity(contextURI);
 	}
 	
@@ -278,9 +280,7 @@ public class InsertTemplate extends MustacheTemplate {
 	 */	
 	public String cwDateCreated() {
 		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.MONTH, -1 * ru.nextInt(12));
-		calendar.add(Calendar.DATE, -1 * ru.nextInt(31));
-		calendar.add(Calendar.HOUR, -1 * ru.nextInt(24));
+		calendar.set(Calendar.YEAR, seedYear);
 		return ru.dateTimeString(calendar.getTime());
 	}
 	
@@ -288,7 +288,12 @@ public class InsertTemplate extends MustacheTemplate {
 	 * A method for replacing mustache template : {{{cwDateModified}}}
 	 */		
 	public String cwDateModified() {
-		return ru.currentDateTimeString();
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, seedYear);
+		calendar.add(Calendar.MONTH, 1 * ru.nextInt(12));
+		calendar.add(Calendar.DATE, 1 * ru.nextInt(31));
+		calendar.add(Calendar.HOUR, 1 * ru.nextInt(24));
+		return ru.dateTimeString(calendar.getTime());
 	}
 	
 	/**

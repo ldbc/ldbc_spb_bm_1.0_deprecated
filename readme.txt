@@ -130,6 +130,7 @@ How to run the benchmark :
     - exponentialDecayThresholdPercent  (Defines the threshold in percents of exponential decay, below that threshold values will be ignored. Threshold is defined as the ratio of : currentExponentialDecayValue / exponentialDecayUpperLimitOfCWs. e.g. 5% threshold will be the value of 0.05)
     - majorEventsPerYear                (Defines the maximum number of 'major' events that could happen in one year. Each major event will be tagged by a number of Creative Works which will decay exponentially in time.)
     - minorEventsPerYear                (Defines the maximum number of 'minor' events that could happen in one year. Each minor event will be tagged by a number of Creative Works which will decay exponentially in time. Value of exponentialDecayUpperLimitOfCWs for minor events will be ten times smaller for them.)
+    - seedYear                          (Defines a seed year that will be used for generating the Creative Works. Each Creative Work will have its creation date during that year. All date-range queries will use that value also.)
     
       Sample definitions.properties file can be found in the distribution jar file.
 
