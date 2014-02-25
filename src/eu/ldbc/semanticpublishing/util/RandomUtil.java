@@ -9,7 +9,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Random;
-import java.util.UUID;
 
 /**
  * A utility class, for producing random values, strings, sentences, uris, etc. 
@@ -338,12 +337,8 @@ public class RandomUtil {
 		return sb.toString();
 	}
 
-	public String randomUUID() {
-		return UUID.randomUUID().toString();
-	}
-
 	/**
-	 * Generates a random URI, using the UUID.randomUUID() method.
+	 * Generates a random URI, using nextInt() method.
 	 * 
 	 * @param domain
 	 *            - adds the domain name to the URI, e.g. domain=sports, then
@@ -353,7 +348,7 @@ public class RandomUtil {
 	 * @return the generated URI
 	 */
 	public String randomURI(String domain, boolean appendBrackets, boolean appendSuffixId) {
-		String uuid = randomUUID();
+		String nextIntStr = Integer.toString(Math.abs(randomGenerator.nextInt()));
 		StringBuilder sb = new StringBuilder();
 
 		if (appendBrackets) {
@@ -363,7 +358,7 @@ public class RandomUtil {
 		sb.append(RandomUtil.baseURI);
 		sb.append(domain);
 		sb.append("/");
-		sb.append(uuid);
+		sb.append(nextIntStr);
 
 		if (appendSuffixId) {
 			sb.append("#id");

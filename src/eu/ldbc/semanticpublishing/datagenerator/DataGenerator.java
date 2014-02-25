@@ -64,8 +64,9 @@ public class DataGenerator {
 						  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_RATE), 
 						  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_THRESHOLD_PERCENT));
 			Entity e = DataManager.popularEntitiesList.get(ru.nextInt(DataManager.popularEntitiesList.size()));
-			executorService.execute(new ExpDecayWorker(edgu, ru.randomDateTime(), e.getURI(), ru, workersSyncLock, filesCount, 
-													   triplesPerFile, totalTriples, triplesGeneratedSoFar, destinationPath, serializationFormat));
+			ExpDecayWorker edw = new ExpDecayWorker(edgu, ru.randomDateTime(), e, ru, workersSyncLock, filesCount, 
+					   								triplesPerFile, totalTriples, triplesGeneratedSoFar, destinationPath, serializationFormat);
+			executorService.execute(edw);
 		}
 		executorService.shutdown();
 		executorService.awaitTermination(AWAIT_PERIOD_HOURS, TimeUnit.HOURS);
@@ -78,8 +79,9 @@ public class DataGenerator {
 						  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_RATE), 
 						  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_THRESHOLD_PERCENT));
 			Entity e = DataManager.regularEntitiesList.get(ru.nextInt(DataManager.regularEntitiesList.size()));
-			executorService.execute(new ExpDecayWorker(edgu, ru.randomDateTime(), e.getURI(), ru, workersSyncLock, filesCount, 
-														triplesPerFile, totalTriples, triplesGeneratedSoFar, destinationPath, serializationFormat));
+			ExpDecayWorker edw = new ExpDecayWorker(edgu, ru.randomDateTime(), e, ru, workersSyncLock, filesCount, 
+													triplesPerFile, totalTriples, triplesGeneratedSoFar, destinationPath, serializationFormat);
+			executorService.execute(edw);
 		}
 		
 		executorService.shutdown();

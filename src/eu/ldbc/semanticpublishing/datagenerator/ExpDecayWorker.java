@@ -16,6 +16,7 @@ import org.openrdf.rio.RDFWriter;
 import org.openrdf.rio.Rio;
 
 import eu.ldbc.semanticpublishing.datagenerator.sesamemodelbuilders.CreativeWorkBuilder;
+import eu.ldbc.semanticpublishing.refdataset.model.Entity;
 import eu.ldbc.semanticpublishing.util.ExponentialDecayNumberGeneratorUtil;
 import eu.ldbc.semanticpublishing.util.FileUtils;
 import eu.ldbc.semanticpublishing.util.RandomUtil;
@@ -30,16 +31,16 @@ import eu.ldbc.semanticpublishing.util.SesameUtils;
 public class ExpDecayWorker extends GeneralWorker {
 	private ExponentialDecayNumberGeneratorUtil expGenerator;
 	private Date startDate;
-	private String entityUriToTag;
+	private Entity entity;
 	private int daySteps;
 	
-	public ExpDecayWorker(ExponentialDecayNumberGeneratorUtil expGenerator, Date startDate, String entityUriToUseForTagging, 
+	public ExpDecayWorker(ExponentialDecayNumberGeneratorUtil expGenerator, Date startDate, Entity entity, 
 						  RandomUtil ru, Object lock, AtomicLong globalFilesCount, long triplesPerFile, long totalTriples, 
 						  AtomicLong triplesGeneratedSoFar, String destinationPath, String serializationFormat) {
 		super(ru, lock, globalFilesCount, totalTriples, triplesPerFile, triplesGeneratedSoFar, destinationPath, serializationFormat);
 		this.expGenerator = expGenerator;
 		this.startDate = startDate;
-		this.entityUriToTag = entityUriToUseForTagging;
+		this.entity = entity;
 		this.daySteps = 0;		
 	}
 	
@@ -110,11 +111,11 @@ public class ExpDecayWorker extends GeneralWorker {
 						calendar.add(Calendar.HOUR, ru.nextInt(24));
 						calendar.add(Calendar.MINUTE, ru.nextInt(60));
 						calendar.add(Calendar.SECOND, ru.nextInt(60));
-						calendar.add(Calendar.MILLISECOND, ru.nextInt(1000));
-						CreativeWorkBuilder creativeWorkBuilder = new CreativeWorkBuilder("", ru);
-						creativeWorkBuilder.setPresetDate(calendar.getTime());
+						calendar.set(Calendar.MILLISECOND, ru.nextInt(1000));
+						CreativeWorkBuilder creativeWorkBuilder = new CreativeWorkBuilder("", ru);						
+						creativeWorkBuilder.setPresetDate(calendar.getTime());				
 						creativeWorkBuilder.setUsePresetDate(true);
-						creativeWorkBuilder.setPresetAboutTag(entityUriToTag);
+						creativeWorkBuilder.setPresetAboutTag(entity.getURI());
 						creativeWorkBuilder.setUsePresetAboutTag(true);
 						sesameModel = creativeWorkBuilder.buildSesameModel();
 					}
