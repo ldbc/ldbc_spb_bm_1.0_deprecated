@@ -1,5 +1,6 @@
 package eu.ldbc.semanticpublishing.datagenerator;
 
+import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -23,7 +24,7 @@ public class DataGenerator {
 	private Definitions definitions;
 	private int generatorThreads = 1;
 	private long triplesPerFile;
-	private long totalTriples;
+	private long targetedTriplesSize;
 	private AtomicLong filesCount = new AtomicLong(0);
 	private AtomicLong triplesGeneratedSoFar = new AtomicLong(0);
 	private String destinationPath;
@@ -37,7 +38,7 @@ public class DataGenerator {
 		this.configuration = configuration;
 		this.definitions = definitions;
 		this.generatorThreads = generatorThreads;
-		this.totalTriples = totalTriples;
+		this.targetedTriplesSize = totalTriples;
 		this.triplesPerFile = triplesPerFile;
 		this.destinationPath = destinationPath;
 		this.serializationFormat = serializationFormat;
@@ -62,14 +63,22 @@ public class DataGenerator {
 		for (int i = 0; i < definitions.getInt(Definitions.MAJOR_EVENTS_PER_YEAR); i++) {
 			edgu =  new ExponentialDecayNumberGeneratorUtil(/*ru.nextInt(1000, */exponentialDecayUpperLimitOfCws, 
 						  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_RATE), 
-						  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_THRESHOLD_PERCENT));
+						  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_THRESHOLD_PERCENT));			
+			Date startDate = ru.randomDateTime();
 			Entity e = DataManager.popularEntitiesList.get(ru.nextInt(DataManager.popularEntitiesList.size()));
-			ExpDecayWorker edw = new ExpDecayWorker(edgu, ru.randomDateTime(), e, ru, workersSyncLock, filesCount, 
-					   								triplesPerFile, totalTriples, triplesGeneratedSoFar, destinationPath, serializationFormat);
-			executorService.execute(edw);
+			for (int j = 0; j < generatorThreads; j++) {
+				ExpDecayWorker edw = new ExpDecayWorker(edgu, startDate, e, ru, workersSyncLock, filesCount, 
+														triplesPerFile, targetedTriplesSize, triplesGeneratedSoFar, destinationPath, serializationFormat);			
+				executorService.execute(edw);				
+			}
 		}
 		executorService.shutdown();
 		executorService.awaitTermination(AWAIT_PERIOD_HOURS, TimeUnit.HOURS);
+		
+		if (triplesGeneratedSoFar.get() >= targetedTriplesSize) {
+			System.out.println("Generated triples abount (" + triplesGeneratedSoFar.get() + ") has reached targeted triples size (" + targetedTriplesSize + "), stopping generation...");
+			return;
+		}
 		
 		//Generate MINOR EVENTS with exponential decay
 		executorService = Executors.newFixedThreadPool(generatorThreads);		
@@ -78,10 +87,13 @@ public class DataGenerator {
 			edgu =  new ExponentialDecayNumberGeneratorUtil(/*ru.nextInt(1000,*/ exponentialDecayUpperLimitOfCws / 10, 
 						  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_RATE), 
 						  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_THRESHOLD_PERCENT));
+			Date startDate = ru.randomDateTime();
 			Entity e = DataManager.regularEntitiesList.get(ru.nextInt(DataManager.regularEntitiesList.size()));
-			ExpDecayWorker edw = new ExpDecayWorker(edgu, ru.randomDateTime(), e, ru, workersSyncLock, filesCount, 
-													triplesPerFile, totalTriples, triplesGeneratedSoFar, destinationPath, serializationFormat);
-			executorService.execute(edw);
+			for (int j = 0; j < generatorThreads; j++) {			
+				ExpDecayWorker edw = new ExpDecayWorker(edgu, startDate, e, ru, workersSyncLock, filesCount, 
+														triplesPerFile, targetedTriplesSize, triplesGeneratedSoFar, destinationPath, serializationFormat);
+				executorService.execute(edw);
+			}
 		}
 		
 		executorService.shutdown();
@@ -90,9 +102,9 @@ public class DataGenerator {
 		//Generate noise to fill-in with generated data with randomly distributed tags of creative works, i.e. model "noise"
 		executorService = Executors.newFixedThreadPool(generatorThreads);
 		
-		if (triplesGeneratedSoFar.get() < totalTriples) {
+		if (triplesGeneratedSoFar.get() < targetedTriplesSize) {
 			for (int i = 0; i < configuration.getInt(Configuration.DATA_GENERATOR_WORKERS); i++) {
-				executorService.execute(new GeneralWorker(ru, workersSyncLock, filesCount, totalTriples, 
+				executorService.execute(new GeneralWorker(ru, workersSyncLock, filesCount, targetedTriplesSize, 
 														  triplesPerFile, triplesGeneratedSoFar, destinationPath, serializationFormat));			
 			}
 		}

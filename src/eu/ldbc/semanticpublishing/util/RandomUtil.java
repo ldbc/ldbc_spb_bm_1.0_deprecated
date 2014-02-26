@@ -19,10 +19,12 @@ public class RandomUtil {
 	private static final String baseURI = "http://www.bbc.co.uk/";
 	private static final char[] symbols = new char[62];
 	private static final ArrayList<String> wordsList = new ArrayList<String>();
+	private String wordsFilePath;
 	private int seedYear = 2000;
 
 	public RandomUtil(String wordsFile, long seed, int seedYear) {
 		buildWordsArray(wordsFile);
+		this.wordsFilePath = wordsFile;
 		randomGenerator.setSeed(seed);
 		this.seedYear = seedYear;
 	}	
@@ -42,8 +44,16 @@ public class RandomUtil {
 		}
 	}
 
+	public String getWordsFilePath() {
+		return this.wordsFilePath;
+	}
+	
 	public void setRandomSeed(long seed) {
 		randomGenerator.setSeed(seed);
+	}
+	
+	public int getSeedYear() {
+		return this.seedYear;
 	}
 	
 	public void setSeedYear(int seedYear) {

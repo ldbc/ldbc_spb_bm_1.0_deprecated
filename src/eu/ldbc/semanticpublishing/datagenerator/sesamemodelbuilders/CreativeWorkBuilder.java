@@ -23,8 +23,7 @@ public class CreativeWorkBuilder implements SesameBuilder {
 	private int aboutsCount = 0;
 	private int mentionsCount = 0;	
 	private Entity cwEntity;
-	private boolean usePresetDate = false;
-	private boolean usePresetAboutTagUri = false;
+	private boolean usePresetData = false;
 	
 	private final RandomUtil ru;
 	
@@ -94,22 +93,26 @@ public class CreativeWorkBuilder implements SesameBuilder {
 		}
 	}
 	
-	public void setPresetDate(Date date) {
-		this.presetDate = date;
+	public void setRandomDate(Date startDate, int daySteps) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(startDate);
+		calendar.add(Calendar.DATE, daySteps);
+		calendar.add(Calendar.HOUR, ru.nextInt(24));
+		calendar.add(Calendar.MINUTE, ru.nextInt(60));
+		calendar.add(Calendar.SECOND, ru.nextInt(60));
+		calendar.add(Calendar.MILLISECOND, ru.nextInt(1000));
+		
+		this.presetDate = calendar.getTime();
 	}
 	
-	public void setUsePresetDate(boolean usePresetDate) {
-		this.usePresetDate = true;
+	public void setUsePresetData(boolean usePresetData) {
+		this.usePresetData = true;
 	}
 	
-	public void setPresetAboutTag(String aboutTagUri) {
+	public void setAboutTag(String aboutTagUri) {
 		this.presetAboutTagUri = aboutTagUri;
 	}
-	
-	public void setUsePresetAboutTag(boolean usePresetAboutTagUri) {
-		this.usePresetAboutTagUri = usePresetAboutTagUri;
-	}
-	
+		
 	/**
 	 * Builds a Sesame Model of the Insert query template using values from templateParameterValues array.
 	 * Which gets initialized with values during construction of the object.
@@ -158,7 +161,7 @@ public class CreativeWorkBuilder implements SesameBuilder {
 		boolean initialAboutUriUsed = false;
 		String initialUri = this.cwEntity.getObjectFromTriple(Entity.ENTITY_ABOUT);
 		
-		if (usePresetAboutTagUri) {
+		if (usePresetData) {
 			initialUri = presetAboutTagUri;
 		}
 		
@@ -284,7 +287,8 @@ public class CreativeWorkBuilder implements SesameBuilder {
 		//Creation and Modification date
 		Calendar calendar = Calendar.getInstance();
 		
-		if (usePresetDate) {
+		if (usePresetData) {
+			//Set Creation Date
 			predicate = sesameValueFactory.createURI(cworkNamespace + "dateCreated");
 			object = sesameValueFactory.createLiteral(presetDate);
 			model.add(subject, predicate, object, context);

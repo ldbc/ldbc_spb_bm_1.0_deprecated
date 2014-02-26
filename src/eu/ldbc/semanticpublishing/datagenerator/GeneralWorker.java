@@ -92,7 +92,7 @@ public class GeneralWorker extends AbstractAsynchronousWorker {
 					
 					if (triplesGeneratedSoFar.get() > targetTriples) {					
 						rdfWriter.endRDF();
-						flushClose(fos); 
+						closeStream(fos); 
 						System.out.println(Thread.currentThread().getName() + " GWorker :: Saving file #" + currentFilesCount + " with " + cwsInFileCount + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
 						return;
 					}
@@ -101,7 +101,7 @@ public class GeneralWorker extends AbstractAsynchronousWorker {
 				System.out.println(Thread.currentThread().getName() + " GWorker :: Saving file #" + currentFilesCount + " with " + cwsInFileCount + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
 				
 				rdfWriter.endRDF();
-				flushClose(fos);
+				closeStream(fos);
 
 				cwsInFileCount = 0;
 				currentTriplesCount = 0;
@@ -114,8 +114,6 @@ public class GeneralWorker extends AbstractAsynchronousWorker {
 				rdfWriter.startRDF();
 			} catch (RDFHandlerException e) {
 				throw new IOException("A problem occurred while generating RDF data: " + e.getMessage());
-			} finally {
-				flushClose(fos);
 			}
 		}
 	}

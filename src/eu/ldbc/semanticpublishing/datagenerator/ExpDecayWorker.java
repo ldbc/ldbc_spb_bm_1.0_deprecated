@@ -3,7 +3,6 @@ package eu.ldbc.semanticpublishing.datagenerator;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicLong;
@@ -32,7 +31,6 @@ public class ExpDecayWorker extends GeneralWorker {
 	private ExponentialDecayNumberGeneratorUtil expGenerator;
 	private Date startDate;
 	private Entity entity;
-	private int daySteps;
 	
 	public ExpDecayWorker(ExponentialDecayNumberGeneratorUtil expGenerator, Date startDate, Entity entity, 
 						  RandomUtil ru, Object lock, AtomicLong globalFilesCount, long triplesPerFile, long totalTriples, 
@@ -41,7 +39,6 @@ public class ExpDecayWorker extends GeneralWorker {
 		this.expGenerator = expGenerator;
 		this.startDate = startDate;
 		this.entity = entity;
-		this.daySteps = 0;		
 	}
 	
 	@Override
@@ -66,8 +63,14 @@ public class ExpDecayWorker extends GeneralWorker {
 			return;
 		}
 		
-		long creativeWorksForCurrentIteration = expGenerator.generateNext();		
+		long creativeWorksForCurrentIteration = 0;
+		long iterationStep = 0;
 		
+		synchronized(lock) {
+			creativeWorksForCurrentIteration = expGenerator.generateNext();
+			iterationStep = expGenerator.getIterationStep();
+		}
+			
 		try {
 			while (expGenerator.hasNext()) {				
 				for (int i = 0; i < creativeWorksForCurrentIteration; i++) {
@@ -80,7 +83,7 @@ public class ExpDecayWorker extends GeneralWorker {
 					
 					if (currentTriplesCount >= triplesPerFile) {						
 						rdfWriter.endRDF();
-						flushClose(fos);
+						closeStream(fos);
 						System.out.println(Thread.currentThread().getName() + " EWorker :: Saving file #" + currentFilesCount + " with " + cwsInFileCount + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
 	
 						cwsInFileCount = 0;
@@ -96,7 +99,7 @@ public class ExpDecayWorker extends GeneralWorker {
 					
 					if (triplesGeneratedSoFar.get() > targetTriples) {						
 						rdfWriter.endRDF();
-						flushClose(fos);
+						closeStream(fos);
 						System.out.println(Thread.currentThread().getName() + " EWorker :: Saving file #" + currentFilesCount + " with " + cwsInFileCount + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
 						return;
 					}
@@ -105,21 +108,13 @@ public class ExpDecayWorker extends GeneralWorker {
 					
 					//using a synchronized block, to guarantee the exactly equal generated data no matter the number of threads
 					synchronized(lock) {					
-						Calendar calendar = Calendar.getInstance();
-						calendar.setTime(startDate);
-						calendar.add(Calendar.DATE, daySteps);
-						calendar.add(Calendar.HOUR, ru.nextInt(24));
-						calendar.add(Calendar.MINUTE, ru.nextInt(60));
-						calendar.add(Calendar.SECOND, ru.nextInt(60));
-						calendar.set(Calendar.MILLISECOND, ru.nextInt(1000));
 						CreativeWorkBuilder creativeWorkBuilder = new CreativeWorkBuilder("", ru);						
-						creativeWorkBuilder.setPresetDate(calendar.getTime());				
-						creativeWorkBuilder.setUsePresetDate(true);
-						creativeWorkBuilder.setPresetAboutTag(entity.getURI());
-						creativeWorkBuilder.setUsePresetAboutTag(true);
+						creativeWorkBuilder.setRandomDate(startDate, (int)iterationStep);				
+						creativeWorkBuilder.setAboutTag(entity.getURI());
+						creativeWorkBuilder.setUsePresetData(true);
 						sesameModel = creativeWorkBuilder.buildSesameModel();
 					}
-				
+
 					for (Statement statement : sesameModel) {
 						rdfWriter.handleStatement(statement);
 					}
@@ -128,8 +123,11 @@ public class ExpDecayWorker extends GeneralWorker {
 					currentTriplesCount += sesameModel.size();
 					triplesGeneratedSoFar.addAndGet(sesameModel.size());	
 				}
-				daySteps++;
-				creativeWorksForCurrentIteration = expGenerator.generateNext();
+
+				synchronized(lock) {
+					creativeWorksForCurrentIteration = expGenerator.generateNext();
+					iterationStep = expGenerator.getIterationStep();
+				}
 			}
 		} catch (RDFHandlerException e) {
 			throw new IOException("A problem occurred while generating RDF data: " + e.getMessage());
@@ -138,8 +136,8 @@ public class ExpDecayWorker extends GeneralWorker {
 			if (rdfWriter != null) {
 				rdfWriter.endRDF();
 			}
-		} finally {
-			flushClose(fos);
+			closeStream(fos);
+			System.out.println(Thread.currentThread().getName() + " EWorker :: Saving file #" + currentFilesCount + " with " + cwsInFileCount + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
 		}
 	}
 }

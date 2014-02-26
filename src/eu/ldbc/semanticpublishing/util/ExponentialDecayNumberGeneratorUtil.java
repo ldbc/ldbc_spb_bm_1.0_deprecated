@@ -39,6 +39,10 @@ public class ExponentialDecayNumberGeneratorUtil {
 		return result;		
 	}
 
+	public long getIterationStep() {
+		return step;
+	}
+	
 	public boolean hasNext() {
 		return next != null;
 	}
