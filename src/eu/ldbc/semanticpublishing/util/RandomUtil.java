@@ -179,6 +179,21 @@ public class RandomUtil {
 		
 		return calendar.getTime();
 	}
+	
+	/**
+	 * Produces a random Date object starting with 1.1.seedYear and a random offset of maxDaysAfterSeedYear
+	 */
+	public Date randomDateTime(int maxDaysAfterSeedYear) {
+		Calendar calendar = Calendar.getInstance();
+		
+		calendar.set(seedYear, 0, 1, nextInt(23), nextInt(59), nextInt(59));
+		
+		int offset = nextInt(maxDaysAfterSeedYear);
+		
+		calendar.add(Calendar.DAY_OF_YEAR, offset);
+		
+		return calendar.getTime();
+	}
 
 	/**
 	 * Produces a random Date object with max limit on the year on month random selection. If input values are less
@@ -202,7 +217,7 @@ public class RandomUtil {
 		}
 
 		int day;
-		if (month == 2) {
+		if (month == 1) {
 			day = nextInt(1, 28);
 		} else if (month == 4 || month == 6 || month == 9 || month == 11) {
 			day = nextInt(1, 30);

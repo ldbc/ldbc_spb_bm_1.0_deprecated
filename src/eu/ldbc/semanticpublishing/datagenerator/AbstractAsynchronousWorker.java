@@ -19,8 +19,9 @@ public abstract class AbstractAsynchronousWorker extends Thread {
 		}
 	}
 	
-	protected void closeStream(FileOutputStream fos) throws IOException {
+	protected synchronized void flushClose(FileOutputStream fos) throws IOException {
 		if (fos != null) {
+			fos.flush();
 			fos.close();
 		}
 	}	

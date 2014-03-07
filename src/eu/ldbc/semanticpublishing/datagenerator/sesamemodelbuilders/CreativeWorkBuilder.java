@@ -18,8 +18,11 @@ public class CreativeWorkBuilder implements SesameBuilder {
 	private Date presetDate;
 	private CWType cwType = CWType.BLOG_POST;
 	private String cwTypeString = "cwork:BlogPost";
-	private String contextURI;
-	private String presetAboutTagUri;
+	private String contextURI = "";
+	private String aboutPresetUri = "";
+	private String optionalAboutPresetUri = "";
+	private String mentionsPresetUri = "";
+	private String optionalMentionsPresetUri = "";
 	private int aboutsCount = 0;
 	private int mentionsCount = 0;	
 	private Entity cwEntity;
@@ -93,7 +96,7 @@ public class CreativeWorkBuilder implements SesameBuilder {
 		}
 	}
 	
-	public void setRandomDate(Date startDate, int daySteps) {
+	public void setDateIncrement(Date startDate, int daySteps) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(startDate);
 		calendar.add(Calendar.DATE, daySteps);
@@ -109,8 +112,20 @@ public class CreativeWorkBuilder implements SesameBuilder {
 		this.usePresetData = true;
 	}
 	
-	public void setAboutTag(String aboutTagUri) {
-		this.presetAboutTagUri = aboutTagUri;
+	public void setAboutPresetUri(String aboutUri) {
+		this.aboutPresetUri = aboutUri;
+	}
+	
+	public void setOptionalAboutPresetUri(String optionalAboutUri) {
+		this.optionalAboutPresetUri = optionalAboutUri;
+	}
+	
+	public void setMentionsPresetUri(String mentionsUri) {
+		this.mentionsPresetUri = mentionsUri;
+	}
+	
+	public void setOptionalMentionsPresetUri(String optionalMentionsUri) {
+		this.optionalMentionsPresetUri = optionalMentionsUri;
 	}
 		
 	/**
@@ -118,16 +133,14 @@ public class CreativeWorkBuilder implements SesameBuilder {
 	 * Which gets initialized with values during construction of the object.
 	 */
 	@Override
-	public Model buildSesameModel() {
+	public synchronized Model buildSesameModel() {
 		Model model = new LinkedHashModel();
-		
 		String adaptedContextUri = contextURI.replace("<", "").replace(">", "");
 		URI context = sesameValueFactory.createURI(adaptedContextUri);
 		
 		//Set Creative Work Type
 		URI subject = sesameValueFactory.createURI(adaptedContextUri.replace("/context/", "/things/"));
 		URI predicate = sesameValueFactory.createURI(rdfTypeNamespace);
-		
 		String s = cwTypeString;
 		s = s.replace("cwork:", cworkNamespace);
 		Value object = sesameValueFactory.createURI(s);
@@ -162,7 +175,7 @@ public class CreativeWorkBuilder implements SesameBuilder {
 		String initialUri = this.cwEntity.getObjectFromTriple(Entity.ENTITY_ABOUT);
 		
 		if (usePresetData) {
-			initialUri = presetAboutTagUri;
+			initialUri = aboutPresetUri;
 		}
 		
 		//Set About(s)
@@ -179,6 +192,13 @@ public class CreativeWorkBuilder implements SesameBuilder {
 			object = sesameValueFactory.createURI(initialUri.replace("<", "").replace(">", ""));
 			
 			model.add(subject, predicate, object, context);
+		}
+		
+		//Add optional About URI - in case of modeling correlations - disregard the about distributions
+		if (usePresetData && !optionalAboutPresetUri.isEmpty()) {
+			predicate = sesameValueFactory.createURI(cworkNamespace + "about");
+			object = sesameValueFactory.createURI(optionalAboutPresetUri.replace("<", "").replace(">", ""));
+			model.add(subject, predicate, object, context);			
 		}
 		
 		//Set Mention(s)
@@ -202,7 +222,21 @@ public class CreativeWorkBuilder implements SesameBuilder {
 			
 			model.add(subject, predicate, object, context);
 		}
-		
+
+		//Add Mentions URI - in case of modeling correlations - disregard the mentions distributions
+		if (usePresetData && !mentionsPresetUri.isEmpty()) {
+			predicate = sesameValueFactory.createURI(cworkNamespace + "mentions");
+			object = sesameValueFactory.createURI(mentionsPresetUri.replace("<", "").replace(">", ""));
+			model.add(subject, predicate, object, context);			
+		}		
+
+		//Add optional Mentions URI - in case of modeling correlations - disregard the mentions distributions
+		if (usePresetData && !optionalMentionsPresetUri.isEmpty()) {
+			predicate = sesameValueFactory.createURI(cworkNamespace + "mentions");
+			object = sesameValueFactory.createURI(optionalMentionsPresetUri.replace("<", "").replace(">", ""));
+			model.add(subject, predicate, object, context);			
+		}		
+
 		switch (cwType) {
 		case BLOG_POST :
 			//Set Audience

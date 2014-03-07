@@ -46,7 +46,6 @@ public class DataGenerator {
 	}
 	
 	public void produceData() throws InterruptedException {
-		ExecutorService executorService = Executors.newFixedThreadPool(generatorThreads);
 		long creativeWorksInDatabase = DataManager.creativeWorksNexId.get();
 		
 		if (creativeWorksInDatabase > 0) {
@@ -59,21 +58,23 @@ public class DataGenerator {
 		ExponentialDecayNumberGeneratorUtil edgu;
 
 		int exponentialDecayUpperLimitOfCws = definitions.getInt(Definitions.EXPONENTIAL_DECAY_UPPER_LIMIT_OF_CWS);
-		
-		for (int i = 0; i < definitions.getInt(Definitions.MAJOR_EVENTS_PER_YEAR); i++) {
-			edgu =  new ExponentialDecayNumberGeneratorUtil(/*ru.nextInt(1000, */exponentialDecayUpperLimitOfCws, 
-						  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_RATE), 
-						  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_THRESHOLD_PERCENT));			
-			Date startDate = ru.randomDateTime();
-			Entity e = DataManager.popularEntitiesList.get(ru.nextInt(DataManager.popularEntitiesList.size()));
-			for (int j = 0; j < generatorThreads; j++) {
-				ExpDecayWorker edw = new ExpDecayWorker(edgu, startDate, e, ru, workersSyncLock, filesCount, 
-														triplesPerFile, targetedTriplesSize, triplesGeneratedSoFar, destinationPath, serializationFormat);			
-				executorService.execute(edw);				
+
+		ExecutorService executorService = null;
+		executorService = Executors.newFixedThreadPool(generatorThreads);
+		if (definitions.getInt(Definitions.MAJOR_EVENTS_PER_YEAR) > 0) {
+
+			for (int i = 0; i < definitions.getInt(Definitions.MAJOR_EVENTS_PER_YEAR); i++) {
+				edgu =  new ExponentialDecayNumberGeneratorUtil(/*ru.nextInt(1000, */exponentialDecayUpperLimitOfCws, 
+							  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_RATE), 
+							  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_THRESHOLD_PERCENT));
+				Date startDate = ru.randomDateTime();
+				Entity e = DataManager.popularEntitiesList.get(ru.nextInt(DataManager.popularEntitiesList.size()));
+				for (int j = 0; j < generatorThreads; j++) {
+					ExpDecayWorker edw = new ExpDecayWorker(edgu, startDate, e, ru, workersSyncLock, filesCount, triplesPerFile, targetedTriplesSize, triplesGeneratedSoFar, destinationPath, serializationFormat);
+					executorService.execute(edw);				
+				}
 			}
 		}
-		executorService.shutdown();
-		executorService.awaitTermination(AWAIT_PERIOD_HOURS, TimeUnit.HOURS);
 		
 		if (triplesGeneratedSoFar.get() >= targetedTriplesSize) {
 			System.out.println("Generated triples abount (" + triplesGeneratedSoFar.get() + ") has reached targeted triples size (" + targetedTriplesSize + "), stopping generation...");
@@ -81,36 +82,29 @@ public class DataGenerator {
 		}
 		
 		//Generate MINOR EVENTS with exponential decay
-		executorService = Executors.newFixedThreadPool(generatorThreads);		
-		
-		for (int i = 0; i < definitions.getInt(Definitions.MINOR_EVENT_PER_YEAR); i++) {
-			edgu =  new ExponentialDecayNumberGeneratorUtil(/*ru.nextInt(1000,*/ exponentialDecayUpperLimitOfCws / 10, 
-						  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_RATE), 
-						  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_THRESHOLD_PERCENT));
-			Date startDate = ru.randomDateTime();
-			Entity e = DataManager.regularEntitiesList.get(ru.nextInt(DataManager.regularEntitiesList.size()));
-			for (int j = 0; j < generatorThreads; j++) {			
-				ExpDecayWorker edw = new ExpDecayWorker(edgu, startDate, e, ru, workersSyncLock, filesCount, 
-														triplesPerFile, targetedTriplesSize, triplesGeneratedSoFar, destinationPath, serializationFormat);
-				executorService.execute(edw);
+		if (definitions.getInt(Definitions.MINOR_EVENT_PER_YEAR) > 0) {			
+			for (int i = 0; i < definitions.getInt(Definitions.MINOR_EVENT_PER_YEAR); i++) {
+				edgu =  new ExponentialDecayNumberGeneratorUtil(/*ru.nextInt(1000,*/ exponentialDecayUpperLimitOfCws / 10, 
+							  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_RATE), 
+							  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_THRESHOLD_PERCENT));
+				Date startDate = ru.randomDateTime();
+				Entity e = DataManager.regularEntitiesList.get(ru.nextInt(DataManager.regularEntitiesList.size()));
+				for (int j = 0; j < generatorThreads; j++) {			
+					ExpDecayWorker edw = new ExpDecayWorker(edgu, startDate, e, ru, workersSyncLock, filesCount, triplesPerFile, targetedTriplesSize, triplesGeneratedSoFar, destinationPath, serializationFormat);
+					executorService.execute(edw);
+				}
 			}
 		}
 		
-		executorService.shutdown();
-		executorService.awaitTermination(AWAIT_PERIOD_HOURS, TimeUnit.HOURS);
-		
-		//Generate noise to fill-in with generated data with randomly distributed tags of creative works, i.e. model "noise"
-		executorService = Executors.newFixedThreadPool(generatorThreads);
-		
-		if (triplesGeneratedSoFar.get() < targetedTriplesSize) {
-			for (int i = 0; i < configuration.getInt(Configuration.DATA_GENERATOR_WORKERS); i++) {
-				executorService.execute(new GeneralWorker(ru, workersSyncLock, filesCount, targetedTriplesSize, 
-														  triplesPerFile, triplesGeneratedSoFar, destinationPath, serializationFormat));			
+		//Generate noise to fill-in with generated data with randomly distributed tags of creative works, i.e. model "noise"		
+		if ((triplesGeneratedSoFar.get() < targetedTriplesSize) && configuration.getBoolean(Configuration.USE_GENERAL_DATA_GENERATORS)) {
+			for (int i = 0; i < configuration.getInt(Configuration.DATA_GENERATOR_WORKERS); i++) {				
+				GeneralWorker gw = new GeneralWorker(ru, workersSyncLock, filesCount, targetedTriplesSize, triplesPerFile, triplesGeneratedSoFar, destinationPath, serializationFormat);
+				executorService.execute(gw);
 			}
-		}
-		
+		}		
 		executorService.shutdown();
-		executorService.awaitTermination(AWAIT_PERIOD_HOURS, TimeUnit.HOURS);
+		executorService.awaitTermination(AWAIT_PERIOD_HOURS, TimeUnit.HOURS);		
 		
 		System.out.println("\tcompleted! Total Creative Works created : " + String.format("%,d", (DataManager.creativeWorksNexId.get() - creativeWorksInDatabase)) + " in " + filesCount.get() + " files. Time : " + (System.currentTimeMillis() - currentTime) + " ms");
 	}

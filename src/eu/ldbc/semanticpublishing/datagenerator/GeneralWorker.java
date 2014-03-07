@@ -6,10 +6,8 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.openrdf.model.Model;
-import org.openrdf.model.Statement;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFHandlerException;
-import org.openrdf.rio.RDFWriter;
 import org.openrdf.rio.Rio;
 
 import eu.ldbc.semanticpublishing.datagenerator.sesamemodelbuilders.CreativeWorkBuilder;
@@ -46,16 +44,13 @@ public class GeneralWorker extends AbstractAsynchronousWorker {
 	
 	@Override
 	public void execute() throws Exception {
-		
+		FileOutputStream fos = null;
 		RDFFormat rdfFormat = SesameUtils.parseRdfFormat(serializationFormat);
 		
 		FileUtils.makeDirectories(destinationPath);
 
 		long currentFilesCount = filesCount.incrementAndGet();
 		String fileName = String.format(FILENAME_FORMAT + rdfFormat.getDefaultFileExtension(), destinationPath, File.separator, currentFilesCount);
-		
-		FileOutputStream fos = null;
-		RDFWriter rdfWriter = null;
 		
 		int cwsInFileCount = 0;
 		int currentTriplesCount = 0;
@@ -67,52 +62,48 @@ public class GeneralWorker extends AbstractAsynchronousWorker {
 		}
 		
 		//loop until the generated triples have reached the targeted totalTriples size
-		while (triplesGeneratedSoFar.get() < targetTriples) {
+		while (true) {
+			if (triplesGeneratedSoFar.get() > targetTriples) {					
+				break;
+			}
+			
 			try {
 				fos = new FileOutputStream(fileName);
-				rdfWriter = Rio.createWriter(rdfFormat, fos);
-				rdfWriter.startRDF();
+				
+				Model sesameModel;
 
-				while ( currentTriplesCount < triplesPerFile ) {
-					Model sesameModel;
+				while (true) {
+					if (currentTriplesCount > triplesPerFile) {
+						break;
+					}					
+
+					if (triplesGeneratedSoFar.get() > targetTriples) {					
+						break;
+					}
 					
 					//using a synchronized block, to guarantee the exactly equal generated data no matter the number of threads
 					synchronized(lock) {							
 						CreativeWorkBuilder creativeWorkBuilder = new CreativeWorkBuilder("", ru);
 						sesameModel = creativeWorkBuilder.buildSesameModel();
 					}
-				
-					for (Statement statement : sesameModel) {
-						rdfWriter.handleStatement(statement);
-					}
-						
-					cwsInFileCount++;
-					currentTriplesCount += sesameModel.size();
-					triplesGeneratedSoFar.addAndGet(sesameModel.size());
 					
-					if (triplesGeneratedSoFar.get() > targetTriples) {					
-						rdfWriter.endRDF();
-						closeStream(fos); 
-						System.out.println(Thread.currentThread().getName() + " GWorker :: Saving file #" + currentFilesCount + " with " + cwsInFileCount + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
-						return;
-					}
+					Rio.write(sesameModel, fos, rdfFormat);
+					
+					cwsInFileCount++;
+					currentTriplesCount += sesameModel.size();											
+					triplesGeneratedSoFar.addAndGet(sesameModel.size());					
 				}
 				
+				flushClose(fos);
 				System.out.println(Thread.currentThread().getName() + " GWorker :: Saving file #" + currentFilesCount + " with " + cwsInFileCount + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
-				
-				rdfWriter.endRDF();
-				closeStream(fos);
 
 				cwsInFileCount = 0;
 				currentTriplesCount = 0;
-								
-				currentFilesCount = filesCount.getAndIncrement();
-				fileName = String.format(FILENAME_FORMAT + rdfFormat.getDefaultFileExtension(), destinationPath, File.separator, currentFilesCount);
 
-				fos = new FileOutputStream(fileName);
-				rdfWriter = Rio.createWriter(rdfFormat, fos);			
-				rdfWriter.startRDF();
+				currentFilesCount = filesCount.incrementAndGet();
+				fileName = String.format(FILENAME_FORMAT + rdfFormat.getDefaultFileExtension(), destinationPath, File.separator, currentFilesCount);
 			} catch (RDFHandlerException e) {
+				flushClose(fos);
 				throw new IOException("A problem occurred while generating RDF data: " + e.getMessage());
 			}
 		}

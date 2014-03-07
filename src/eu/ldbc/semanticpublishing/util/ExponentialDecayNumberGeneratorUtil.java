@@ -26,7 +26,7 @@ public class ExponentialDecayNumberGeneratorUtil {
 		this.decayThresholdPercent = decayThresholdPercent;
 	}
 	
-	public synchronized Long generateNext() throws NoSuchElementException {
+	public long generateNext() throws NoSuchElementException {
 		long result = (long) (decayLimit * Math.exp(-decayRate*step));
 		next = result;
 		step++;
