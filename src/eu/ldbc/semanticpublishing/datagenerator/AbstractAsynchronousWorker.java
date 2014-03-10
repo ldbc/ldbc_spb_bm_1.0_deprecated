@@ -1,8 +1,5 @@
 package eu.ldbc.semanticpublishing.datagenerator;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 /**
  * Abstract class for extending Workers for the DataGenerator.
  */
@@ -16,13 +13,6 @@ public abstract class AbstractAsynchronousWorker extends Thread {
 			execute();
 		} catch (Exception e) {
 			System.out.println("Exception caught by : " + Thread.currentThread().getName() + " : " + e.getMessage());
-		}
-	}
-	
-	protected synchronized void flushClose(FileOutputStream fos) throws IOException {
-		if (fos != null) {
-			fos.flush();
-			fos.close();
 		}
 	}	
 	

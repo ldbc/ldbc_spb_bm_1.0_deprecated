@@ -51,3 +51,21 @@ minorEventsPerYear=100
 #Defines a seed year that will be used for generating the Creative Works.
 # e.g. seedYear=2014 will have all creative works have dateCreated randomly picked in 2014, and dateModified in future interval
 seedYear=2010
+
+#Defines the period (in years) of the gnerated data, starting from 'seedYear'
+dataGenerationPeriodYears=1
+
+#Defines the number of correlations between entities that will be generated in the dataset
+# e.g. correlationsAmount=200 will produce 200 correlations between popular entities 
+correlationsAmount=50
+
+#Defines maximum amount of Creative Works that will be generated for a particular correlation in a single day
+correlationsMagnitude=100
+
+#Defines the duration of correlation between two entities
+# e.g. correlationDuration=0.2 defines that 20% of total generation period will have Creative Works that are about or mentioning the two entities
+correlationDuration=0.2
+
+#Defines the lifespan of each entity that participates in a correlation
+# e.g. correlationEntityLifespan=0.5 defines that 50% of total generation period will be the lifespan of an entity that participates in a correlation, i.e. tagged in Creative Works
+correlationEntityLifespan=0.5

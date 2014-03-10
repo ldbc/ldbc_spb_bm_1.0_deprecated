@@ -108,4 +108,11 @@ public class GeneralWorker extends AbstractAsynchronousWorker {
 			}
 		}
 	}
+	
+	protected synchronized void flushClose(FileOutputStream fos) throws IOException {
+		if (fos != null) {
+			fos.flush();
+			fos.close();
+		}
+	}	
 }

@@ -26,6 +26,11 @@ public class Definitions {
 	public static final String MAJOR_EVENTS_PER_YEAR = "majorEventsPerYear";
 	public static final String MINOR_EVENT_PER_YEAR = "minorEventsPerYear";
 	public static final String YEAR_SEED = "seedYear";
+	public static final String DATA_GENERATOR_PERIOD_YEARS = "dataGenerationPeriodYears";
+	public static final String CORRELATIONS_AMOUNT = "correlationsAmount";
+	public static final String CORRELATIONS_MAGNITUDE = "correlationsMagnitude";
+	public static final String CORRELATIONS_DURATION = "correlationDuration";
+	public static final String CORRELATION_ENTITY_LIFESPAN = "correlationEntityLifespan";
 	
 	//About tags in Creative Works
 	public static AllocationsUtil aboutsAllocations;

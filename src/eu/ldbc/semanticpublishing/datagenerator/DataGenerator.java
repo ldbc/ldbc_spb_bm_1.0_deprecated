@@ -1,6 +1,7 @@
 package eu.ldbc.semanticpublishing.datagenerator;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -95,8 +96,22 @@ public class DataGenerator {
 				}
 			}
 		}
+				
+		//Generate Correlations between entities
+		int correlationsAmount = definitions.getInt(Definitions.CORRELATIONS_AMOUNT);
+		if (correlationsAmount > 0) {
+			LinkedList<Entity> entitiesList = buildCorrelationsList(correlationsAmount);		
+				
+			while (!entitiesList.isEmpty()) {				
+				CorrelationsWorker cw = new CorrelationsWorker(ru, entitiesList.remove(), entitiesList.remove(), entitiesList.remove(), definitions.getInt(Definitions.DATA_GENERATOR_PERIOD_YEARS), 
+															   definitions.getInt(Definitions.CORRELATIONS_MAGNITUDE), definitions.getDouble(Definitions.CORRELATION_ENTITY_LIFESPAN), 
+															   definitions.getDouble(Definitions.CORRELATIONS_DURATION), workersSyncLock, filesCount, targetedTriplesSize, triplesPerFile, 
+															   triplesGeneratedSoFar, destinationPath, serializationFormat);
+				executorService.execute(cw);
+			}
+		}
 		
-		//Generate noise to fill-in with generated data with randomly distributed tags of creative works, i.e. model "noise"		
+		//Generate random Creative Works to fill-in with rest of the generated data with randomly distributed tags of creative works, i.e. generate "noise"
 		if ((triplesGeneratedSoFar.get() < targetedTriplesSize) && configuration.getBoolean(Configuration.USE_GENERAL_DATA_GENERATORS)) {
 			for (int i = 0; i < configuration.getInt(Configuration.DATA_GENERATOR_WORKERS); i++) {				
 				GeneralWorker gw = new GeneralWorker(ru, workersSyncLock, filesCount, targetedTriplesSize, triplesPerFile, triplesGeneratedSoFar, destinationPath, serializationFormat);
@@ -107,5 +122,20 @@ public class DataGenerator {
 		executorService.awaitTermination(AWAIT_PERIOD_HOURS, TimeUnit.HOURS);		
 		
 		System.out.println("\tcompleted! Total Creative Works created : " + String.format("%,d", (DataManager.creativeWorksNexId.get() - creativeWorksInDatabase)) + " in " + filesCount.get() + " files. Time : " + (System.currentTimeMillis() - currentTime) + " ms");
+	}
+	
+	private LinkedList<Entity> buildCorrelationsList(int correlationsAmount) {
+		LinkedList<Entity> linkedList = new LinkedList<Entity>();
+		
+		for (int i = 0; i < correlationsAmount; i++) {
+			Entity e = DataManager.regularEntitiesList.get(ru.nextInt(DataManager.popularEntitiesList.size()));
+			linkedList.add(e);
+			e = DataManager.regularEntitiesList.get(ru.nextInt(DataManager.popularEntitiesList.size()));
+			linkedList.add(e);
+			e = DataManager.regularEntitiesList.get(ru.nextInt(DataManager.regularEntitiesList.size()));
+			linkedList.add(e);			
+		}
+		
+		return linkedList;
 	}
 }
