@@ -57,7 +57,7 @@ dataGenerationPeriodYears=1
 
 #Defines the number of correlations between entities that will be generated in the dataset
 # e.g. correlationsAmount=200 will produce 200 correlations between popular entities 
-correlationsAmount=50
+correlationsAmount=30
 
 #Defines maximum amount of Creative Works that will be generated for a particular correlation in a single day
 correlationsMagnitude=100
