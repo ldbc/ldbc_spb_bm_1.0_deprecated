@@ -55,7 +55,7 @@ public class CorrelationsWorker extends GeneralWorker {
 	@Override
 	public void execute() throws Exception {
 
-//System.out.println(Thread.currentThread().getName() + " : A : " + entityA.getURI() + " : B : " + entityB.getURI() + " : C : " + entityC.getURI());		
+//System.out.println(Thread.currentThread().getName() + " : entity A : " + entityA.getURI() + " : entity B : " + entityB.getURI() + " : entity C : " + entityC.getURI());		
 		
 		//skip data generation if targetTriples size has already been reached 
 		if (triplesGeneratedSoFar.get() > targetTriples) {
