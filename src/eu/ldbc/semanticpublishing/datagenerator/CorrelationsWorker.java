@@ -70,6 +70,7 @@ public class CorrelationsWorker extends GeneralWorker {
 		int cwsInFileCount = 0;
 		int currentTriplesCount = 0;
 		int thirdEntityCountdown = 0;
+		int correlationsMagnitudeForIteration = this.correlationsMagnitude;
 		long currentFilesCount = filesCount.incrementAndGet();		
 		String fileName = String.format(FILENAME_FORMAT + rdfFormat.getDefaultFileExtension(), destinationPath, File.separator, currentFilesCount);
 				
@@ -79,43 +80,44 @@ public class CorrelationsWorker extends GeneralWorker {
 		
 		fos = new FileOutputStream(fileName);
 		
+		//not too much space to run in parallel, but guarantees consistency in generated data after each run
 		synchronized(lock) {
 			//pick a random date starting from 1.Jan to the value of totalCorrelationPeriodDays
 			startDate = ru.randomDateTime(365 * dataGenerationPeriodYears - totalCorrelationPeriodDays);
 			thirdEntityCountdown = ru.nextInt((int)(THRID_ENTITY_CORRELATION_DISTANCE * 0.6), THRID_ENTITY_CORRELATION_DISTANCE);
-		}
-
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(startDate);
-		try {
-			for (int dayIncrement = 0; dayIncrement < totalCorrelationPeriodDays; dayIncrement++) {
-				int correlationsMagnitude = ru.nextInt((int)(this.correlationsMagnitude * 0.75), this.correlationsMagnitude);				
-				boolean thirdEntitySet = false;				
-				
-				//generate Creative Works with correlations for that day
-				for (int i = 0; i < correlationsMagnitude; i++) {
-					if (currentTriplesCount >= triplesPerFile) {						
-						fos.close();
-						System.out.println(Thread.currentThread().getName() + " CWorker :: Saving file #" + currentFilesCount + " with " + cwsInFileCount + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
-	
-						cwsInFileCount = 0;
-						currentTriplesCount = 0;
+		
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(startDate);
+			
+			try {
+				for (int dayIncrement = 0; dayIncrement < totalCorrelationPeriodDays; dayIncrement++) {
+					correlationsMagnitudeForIteration = ru.nextInt((int)(this.correlationsMagnitude * 0.75), this.correlationsMagnitude);
+					
+					boolean thirdEntitySet = false;				
+					
+					//generate Creative Works with correlations for that day
+					for (int i = 0; i < correlationsMagnitudeForIteration; i++) {
+						if (currentTriplesCount >= triplesPerFile) {						
+							fos.close();
+							System.out.println(Thread.currentThread().getName() + " CWorker :: Saving file #" + currentFilesCount + " with " + cwsInFileCount + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
+		
+							cwsInFileCount = 0;
+							currentTriplesCount = 0;
+							
+							currentFilesCount = filesCount.incrementAndGet();
+							fileName = String.format(FILENAME_FORMAT + rdfFormat.getDefaultFileExtension(), destinationPath, File.separator, currentFilesCount);
+		
+							fos = new FileOutputStream(fileName);										
+						}
 						
-						currentFilesCount = filesCount.incrementAndGet();
-						fileName = String.format(FILENAME_FORMAT + rdfFormat.getDefaultFileExtension(), destinationPath, File.separator, currentFilesCount);
-	
-						fos = new FileOutputStream(fileName);										
-					}
-					
-					if (triplesGeneratedSoFar.get() > targetTriples) {
-						fos.close();
-						System.out.println(Thread.currentThread().getName() + " CWorker :: Saving file #" + currentFilesCount + " with " + cwsInFileCount + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
-						return;
-					}
-					
-					Model sesameModel = null;
-					
-					synchronized(lock) {
+						if (triplesGeneratedSoFar.get() > targetTriples) {
+							fos.close();
+							System.out.println(Thread.currentThread().getName() + " CWorker :: Saving file #" + currentFilesCount + " with " + cwsInFileCount + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
+							return;
+						}
+						
+						Model sesameModel = null;
+						
 						if (dayIncrement < 365 * dataGenerationPeriodYears * (correlationEntityLifespanPercent - correlationDurationPercent)) {
 							sesameModel = buildCreativeWork(entityA, entityC, null, true, calendar.getTime(), 0);
 						} else if ((dayIncrement >= 365 * dataGenerationPeriodYears * (correlationEntityLifespanPercent - correlationDurationPercent)) && dayIncrement < (365 * dataGenerationPeriodYears * (correlationEntityLifespanPercent))) {
@@ -135,24 +137,24 @@ public class CorrelationsWorker extends GeneralWorker {
 							sesameModel = buildCreativeWork(entityA, entityC, null, true, calendar.getTime(), 0);
 							System.out.println(Thread.currentThread().getName() + " :: Warning : Unexpected stage in data generation reached, defaulting");						
 						}
+						
+						Rio.write(sesameModel, fos, rdfFormat);
+						
+						cwsInFileCount++;
+						currentTriplesCount += sesameModel.size();
+						
+						triplesGeneratedSoFar.addAndGet(sesameModel.size());				
 					}
-					
-					Rio.write(sesameModel, fos, rdfFormat);
-					
-					cwsInFileCount++;
-					currentTriplesCount += sesameModel.size();
-					
-					triplesGeneratedSoFar.addAndGet(sesameModel.size());				
-				}
-				thirdEntityCountdown--;
-				calendar.add(Calendar.DAY_OF_YEAR, 1);
-			}		
-		} catch(RDFHandlerException e) {
-			throw new IOException("A problem occurred while generating RDF data: " + e.getMessage());
-		}		
+					thirdEntityCountdown--;
+					calendar.add(Calendar.DAY_OF_YEAR, 1);
+				}		
+			} catch(RDFHandlerException e) {
+				throw new IOException("A problem occurred while generating RDF data: " + e.getMessage());
+			}
+		} //synchronized
 	}
 	
-	private synchronized Model buildCreativeWork(Entity a, Entity b, Entity c, boolean aboutOrMentionsB, Date startDate, int dayIncrement) {
+	private Model buildCreativeWork(Entity a, Entity b, Entity c, boolean aboutOrMentionsB, Date startDate, int dayIncrement) {
 		CreativeWorkBuilder creativeWorkBuilder = new CreativeWorkBuilder("", ru);
 		creativeWorkBuilder.setDateIncrement(startDate, dayIncrement);
 		creativeWorkBuilder.setAboutPresetUri(a.getURI());
@@ -165,7 +167,6 @@ public class CorrelationsWorker extends GeneralWorker {
 			creativeWorkBuilder.setOptionalMentionsPresetUri(c.getURI());
 		}
 		creativeWorkBuilder.setUsePresetData(true);
-		Model sesameModel = creativeWorkBuilder.buildSesameModel();
-		return sesameModel;
+		return creativeWorkBuilder.buildSesameModel();
 	}
 }

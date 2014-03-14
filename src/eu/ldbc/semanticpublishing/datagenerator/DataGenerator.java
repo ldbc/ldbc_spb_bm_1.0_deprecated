@@ -1,7 +1,7 @@
 package eu.ldbc.semanticpublishing.datagenerator;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -32,7 +32,7 @@ public class DataGenerator {
 	private String serializationFormat;
 	private static final long AWAIT_PERIOD_HOURS = 6; 
 	
-	protected Object workersSyncLock;
+	protected Object syncLock;
 	
 	public DataGenerator(RandomUtil ru, Configuration configuration, Definitions definitions, int generatorThreads, long totalTriples, long triplesPerFile, String destinationPath, String serializationFormat) {
 		this.ru = ru;
@@ -43,7 +43,7 @@ public class DataGenerator {
 		this.triplesPerFile = triplesPerFile;
 		this.destinationPath = destinationPath;
 		this.serializationFormat = serializationFormat;
-		this.workersSyncLock = new Object();
+		this.syncLock = new Object();
 	}
 	
 	public void produceData() throws InterruptedException {
@@ -71,7 +71,7 @@ public class DataGenerator {
 				Date startDate = ru.randomDateTime();
 				Entity e = DataManager.popularEntitiesList.get(ru.nextInt(DataManager.popularEntitiesList.size()));
 				for (int j = 0; j < generatorThreads; j++) {
-					ExpDecayWorker edw = new ExpDecayWorker(edgu, startDate, e, ru, workersSyncLock, filesCount, triplesPerFile, targetedTriplesSize, triplesGeneratedSoFar, destinationPath, serializationFormat);
+					ExpDecayWorker edw = new ExpDecayWorker(edgu, startDate, e, ru, syncLock, filesCount, triplesPerFile, targetedTriplesSize, triplesGeneratedSoFar, destinationPath, serializationFormat);
 					executorService.execute(edw);				
 				}
 			}
@@ -91,23 +91,29 @@ public class DataGenerator {
 				Date startDate = ru.randomDateTime();
 				Entity e = DataManager.regularEntitiesList.get(ru.nextInt(DataManager.regularEntitiesList.size()));
 				for (int j = 0; j < generatorThreads; j++) {			
-					ExpDecayWorker edw = new ExpDecayWorker(edgu, startDate, e, ru, workersSyncLock, filesCount, triplesPerFile, targetedTriplesSize, triplesGeneratedSoFar, destinationPath, serializationFormat);
+					ExpDecayWorker edw = new ExpDecayWorker(edgu, startDate, e, ru, syncLock, filesCount, triplesPerFile, targetedTriplesSize, triplesGeneratedSoFar, destinationPath, serializationFormat);
 					executorService.execute(edw);
 				}
 			}
 		}
-				
+
 		//Generate Correlations between entities
 		int correlationsAmount = definitions.getInt(Definitions.CORRELATIONS_AMOUNT);
 		if (correlationsAmount > 0) {
-			LinkedList<Entity> entitiesList = buildCorrelationsList(correlationsAmount);		
-				
-			while (!entitiesList.isEmpty()) {				
-				CorrelationsWorker cw = new CorrelationsWorker(ru, entitiesList.remove(), entitiesList.remove(), entitiesList.remove(), definitions.getInt(Definitions.DATA_GENERATOR_PERIOD_YEARS), 
+			ArrayList<Entity> entitiesList = buildCorrelationsList(correlationsAmount);
+			
+			for (int i = 0; i < (entitiesList.size() / 3);i++) {
+				Entity entityA = entitiesList.get(i * 3);
+				Entity entityB = entitiesList.get(i * 3 + 1);
+				Entity entityC = entitiesList.get(i * 3 + 2);				
+
+				CorrelationsWorker cw = new CorrelationsWorker(ru, entityA, entityB, entityC, definitions.getInt(Definitions.DATA_GENERATOR_PERIOD_YEARS), 
 															   definitions.getInt(Definitions.CORRELATIONS_MAGNITUDE), definitions.getDouble(Definitions.CORRELATION_ENTITY_LIFESPAN), 
-															   definitions.getDouble(Definitions.CORRELATIONS_DURATION), workersSyncLock, filesCount, targetedTriplesSize, triplesPerFile, 
+															   definitions.getDouble(Definitions.CORRELATIONS_DURATION), syncLock, filesCount, targetedTriplesSize, triplesPerFile, 
 															   triplesGeneratedSoFar, destinationPath, serializationFormat);
-				executorService.execute(cw);
+				//running it single threaded to guarantee integrity of generated data in sequential runs. TODO : make it run in parallel 
+				cw.start();
+				cw.join();
 			}
 		}
 		
@@ -117,7 +123,7 @@ public class DataGenerator {
 		}
 		if ((triplesGeneratedSoFar.get() < targetedTriplesSize) && configuration.getBoolean(Configuration.USE_GENERAL_DATA_GENERATORS)) {
 			for (int i = 0; i < configuration.getInt(Configuration.DATA_GENERATOR_WORKERS); i++) {				
-				GeneralWorker gw = new GeneralWorker(ru, workersSyncLock, filesCount, targetedTriplesSize, triplesPerFile, triplesGeneratedSoFar, destinationPath, serializationFormat);
+				GeneralWorker gw = new GeneralWorker(ru, syncLock, filesCount, targetedTriplesSize, triplesPerFile, triplesGeneratedSoFar, destinationPath, serializationFormat);
 				executorService.execute(gw);
 			}
 		}		
@@ -127,18 +133,21 @@ public class DataGenerator {
 		System.out.println("\tcompleted! Total Creative Works created : " + String.format("%,d", (DataManager.creativeWorksNexId.get() - creativeWorksInDatabase)) + " in " + filesCount.get() + " files. Time : " + (System.currentTimeMillis() - currentTime) + " ms");
 	}
 	
-	private LinkedList<Entity> buildCorrelationsList(int correlationsAmount) {
-		LinkedList<Entity> linkedList = new LinkedList<Entity>();
+	private synchronized ArrayList<Entity> buildCorrelationsList(int correlationsAmount) {
+		ArrayList<Entity> arrayList = new ArrayList<Entity>();
 		
-		for (int i = 0; i < correlationsAmount; i++) {
-			Entity e = DataManager.regularEntitiesList.get(ru.nextInt(DataManager.popularEntitiesList.size()));
-			linkedList.add(e);
-			e = DataManager.regularEntitiesList.get(ru.nextInt(DataManager.popularEntitiesList.size()));
-			linkedList.add(e);
+		for (int i = 0; i < correlationsAmount; i++) {			
+			//First main entity in correlation
+			Entity e = DataManager.popularEntitiesList.get(ru.nextInt(DataManager.popularEntitiesList.size()));
+			arrayList.add(e);
+			//Second main entity in correlation
+			e = DataManager.popularEntitiesList.get(ru.nextInt(DataManager.popularEntitiesList.size()));
+			arrayList.add(e);
+			//Third entity which participates sparsely in the correlation period
 			e = DataManager.regularEntitiesList.get(ru.nextInt(DataManager.regularEntitiesList.size()));
-			linkedList.add(e);			
+			arrayList.add(e);
 		}
 		
-		return linkedList;
+		return arrayList;
 	}
 }
