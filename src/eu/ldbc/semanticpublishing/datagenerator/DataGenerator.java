@@ -55,6 +55,26 @@ public class DataGenerator {
 		
 		long currentTime = System.currentTimeMillis();
 
+		//Generate Correlations between entities
+		int correlationsAmount = definitions.getInt(Definitions.CORRELATIONS_AMOUNT);
+		if (correlationsAmount > 0) {
+			ArrayList<Entity> entitiesList = buildCorrelationsList(correlationsAmount);
+			
+			for (int i = 0; i < (entitiesList.size() / 3);i++) {
+				Entity entityA = entitiesList.get(i * 3);
+				Entity entityB = entitiesList.get(i * 3 + 1);
+				Entity entityC = entitiesList.get(i * 3 + 2);				
+
+				CorrelationsWorker cw = new CorrelationsWorker(ru, entityA, entityB, entityC, definitions.getInt(Definitions.DATA_GENERATOR_PERIOD_YEARS), 
+															   definitions.getInt(Definitions.CORRELATIONS_MAGNITUDE), definitions.getDouble(Definitions.CORRELATION_ENTITY_LIFESPAN), 
+															   definitions.getDouble(Definitions.CORRELATIONS_DURATION), syncLock, filesCount, targetedTriplesSize, triplesPerFile, 
+															   triplesGeneratedSoFar, destinationPath, serializationFormat);
+				//running it single threaded to guarantee integrity of generated data in sequential runs. TODO : make it run in parallel 
+				cw.start();
+				cw.join();
+			}
+		}
+		
 		//Generate MAJOR EVENTS with exponential decay
 		ExponentialDecayNumberGeneratorUtil edgu;
 
@@ -94,26 +114,6 @@ public class DataGenerator {
 					ExpDecayWorker edw = new ExpDecayWorker(edgu, startDate, e, ru, syncLock, filesCount, triplesPerFile, targetedTriplesSize, triplesGeneratedSoFar, destinationPath, serializationFormat);
 					executorService.execute(edw);
 				}
-			}
-		}
-
-		//Generate Correlations between entities
-		int correlationsAmount = definitions.getInt(Definitions.CORRELATIONS_AMOUNT);
-		if (correlationsAmount > 0) {
-			ArrayList<Entity> entitiesList = buildCorrelationsList(correlationsAmount);
-			
-			for (int i = 0; i < (entitiesList.size() / 3);i++) {
-				Entity entityA = entitiesList.get(i * 3);
-				Entity entityB = entitiesList.get(i * 3 + 1);
-				Entity entityC = entitiesList.get(i * 3 + 2);				
-
-				CorrelationsWorker cw = new CorrelationsWorker(ru, entityA, entityB, entityC, definitions.getInt(Definitions.DATA_GENERATOR_PERIOD_YEARS), 
-															   definitions.getInt(Definitions.CORRELATIONS_MAGNITUDE), definitions.getDouble(Definitions.CORRELATION_ENTITY_LIFESPAN), 
-															   definitions.getDouble(Definitions.CORRELATIONS_DURATION), syncLock, filesCount, targetedTriplesSize, triplesPerFile, 
-															   triplesGeneratedSoFar, destinationPath, serializationFormat);
-				//running it single threaded to guarantee integrity of generated data in sequential runs. TODO : make it run in parallel 
-				cw.start();
-				cw.join();
 			}
 		}
 		
