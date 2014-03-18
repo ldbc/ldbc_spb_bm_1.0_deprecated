@@ -26,6 +26,13 @@ ant build-base-querymix-standard
 ant build-base-querymix-virtuoso
 ```
 
+Result of the build process is saved to the distribution folder (dist/) : 
+* semantic_publishing_benchmark-*.jar
+* semantic_publishing_benchmark_reference_knowledge_data.zip
+* definitions.properties
+* test.properties
+* readme.txt
+
 ###Install
 
 Required configuration files : 
@@ -33,7 +40,7 @@ Required configuration files :
 * ***test.properties*** - contains configuration parameters for configuring the benchmark driver
 * ***definitions.properties*** - contains values of pre-allocated parameters used by the benchmark. Not to be modified by the regular benchmark user
 
-Extract from reference knowledge data archive file (reference_knowledge_data.zip) following items : 
+Extract from file **semantic_publishing_benchmark_reference_knowledge_data.zip** following : 
 
 * ***data/*** - folder containing required reference knowledge (ontologies and data) and query templates
 
