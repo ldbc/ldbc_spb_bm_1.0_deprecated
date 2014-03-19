@@ -82,11 +82,11 @@ public class ExpDecayWorker extends GeneralWorker {
 						
 						fos = new FileOutputStream(fileName);
 					}
+					
 					if (triplesGeneratedSoFar.get() > targetTriples) {
-						flushClose(fos);
-						System.out.println(Thread.currentThread().getName() + " EWorker :: Saving file #" + currentFilesCount + " with " + cwsInFileCount + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
 						return;
 					}
+					
 					Model sesameModel;
 					
 					//using a synchronized block, to guarantee the exactly equal generated data no matter the number of threads
@@ -114,9 +114,10 @@ public class ExpDecayWorker extends GeneralWorker {
 		} catch (RDFHandlerException e) {
 			throw new IOException("A problem occurred while generating RDF data: " + e.getMessage());
 		} catch (NoSuchElementException nse) {
-			//reached the end of iteration, close file stream
+			//reached the end of iteration, close file stream in finally section
+		} finally {
 			flushClose(fos);
-			System.out.println(Thread.currentThread().getName() + " EWorker :: Saving file #" + currentFilesCount + " with " + cwsInFileCount + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
+			System.out.println(Thread.currentThread().getName() + " EWorker :: Saving file #" + currentFilesCount + " with " + cwsInFileCount + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");			
 		}
 	}
 }

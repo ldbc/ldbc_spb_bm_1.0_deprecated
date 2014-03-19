@@ -98,7 +98,7 @@ public class CorrelationsWorker extends GeneralWorker {
 					//generate Creative Works with correlations for that day
 					for (int i = 0; i < correlationsMagnitudeForIteration; i++) {
 						if (currentTriplesCount >= triplesPerFile) {						
-							fos.close();
+							flushClose(fos);
 							System.out.println(Thread.currentThread().getName() + " CWorker :: Saving file #" + currentFilesCount + " with " + cwsInFileCount + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
 		
 							cwsInFileCount = 0;
@@ -111,8 +111,6 @@ public class CorrelationsWorker extends GeneralWorker {
 						}
 						
 						if (triplesGeneratedSoFar.get() > targetTriples) {
-							fos.close();
-							System.out.println(Thread.currentThread().getName() + " CWorker :: Saving file #" + currentFilesCount + " with " + cwsInFileCount + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
 							return;
 						}
 						
@@ -150,6 +148,9 @@ public class CorrelationsWorker extends GeneralWorker {
 				}		
 			} catch(RDFHandlerException e) {
 				throw new IOException("A problem occurred while generating RDF data: " + e.getMessage());
+			} finally {
+				flushClose(fos);
+				System.out.println(Thread.currentThread().getName() + " CWorker :: Saving file #" + currentFilesCount + " with " + cwsInFileCount + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
 			}
 		} //synchronized
 	}
