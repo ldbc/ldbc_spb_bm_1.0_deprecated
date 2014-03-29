@@ -34,7 +34,8 @@ PREFIX fb:<http://rdf.freebase.com/ns/>
 #  Query Description : 
 #  Retrieve a list of N creative works that are about and mention 'things' of same entity type, additional properties like title, category.
 #  Additional constraint is added by a filter that selects creative works containing a word which is not so commonly used e.g. "policy" in their titlle.
-# (star query)
+#  Possible point for optimisation, optimizer to eliminate the optional
+#  (star query)
 
 SELECT DISTINCT ?thing ?about ?mentions ?entityType ?category ?title
 WHERE 
@@ -49,10 +50,9 @@ WHERE
   ?thing cwork:category ?category . 
   ?thing cwork:title ?title . 
   FILTER (CONTAINS (?title, "policy") ) . 
-  #possible point for optimisation, optimizer to eliminate the optional
   OPTIONAL {
     ?thing cwork:audience {{{cwAudienceType}}} . 
   }
 }
-ORDER BY ?tag
-LIMIT 500
+ORDER BY ?about
+LIMIT 100

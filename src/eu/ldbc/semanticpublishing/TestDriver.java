@@ -79,6 +79,9 @@ public class TestDriver {
 				configuration.getInt(Configuration.QUERY_TIMEOUT_SECONDS) * 1000,
 				configuration.getInt(Configuration.SYSTEM_QUERY_TIMEOUT_SECONDS) * 1000,
 				configuration.getBoolean(Configuration.VERBOSE));
+		
+		//set the nextId for Creative Works, default 0
+		DataManager.creativeWorksNexId.set(configuration.getLong(Configuration.CREATIVE_WORK_NEXT_ID));
 	}
 	
 	public SparqlQueryExecuteManager getQueryExecuteManager() { 
@@ -91,7 +94,7 @@ public class TestDriver {
 		String oneLevelUp = ontologiesPath.substring(0, ontologiesPath.lastIndexOf(File.separator) + 1);
 		String filePath = oneLevelUp + "WordsDictionary.txt";
 		
-		return new RandomUtil(filePath, configuration.getLong(Configuration.GENERATOR_RANDOM_SEED), definitions.getInt(Definitions.YEAR_SEED));
+		return new RandomUtil(filePath, configuration.getLong(Configuration.GENERATOR_RANDOM_SEED), definitions.getInt(Definitions.YEAR_SEED), definitions.getInt(Definitions.DATA_GENERATOR_PERIOD_YEARS));
 	}
 	
 	private void loadOntologies() throws IOException {
@@ -166,7 +169,7 @@ public class TestDriver {
 	private void populateRefDataEntitiesLists() throws IOException {
 		
 		if (configuration.getBoolean(Configuration.VERBOSE)) {
-			System.out.println("Retrieving stats from reference knowledge...");
+			System.out.println("Analyzing reference knowledge in data...");
 		}
 		
 		//retrieve entity uris frsom database
@@ -325,7 +328,7 @@ public class TestDriver {
 	
 	private void setupAsynchronousAgents() {
 		for(int i = 0; i < aggregationAgentsCount; ++i ) {
-			aggregationAgents.add(new AggregationAgent(inBenchmarkState, queryExecuteManager, randomGenerator, runFlag, mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.AGGREGATION)));
+			aggregationAgents.add(new AggregationAgent(inBenchmarkState, queryExecuteManager, randomGenerator, runFlag, mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.AGGREGATION), definitions.getInt(Definitions.YEAR_SEED)));
 		}
 
 		for(int i = 0; i < editorialAgentsCount; ++i ) {
@@ -347,7 +350,14 @@ public class TestDriver {
 					System.err.println("Warmup : Warning : no Creative Works were found stored in the database, initialise it with ontologies and reference datasets first! Exiting.");
 					System.exit(-1);
 				}
-			}			
+			}
+			//initialize dataset info, required for query parameters
+			if ((DataManager.correlatedEntitiesList.size() + DataManager.exponentialDecayEntitiesMinorList.size() + DataManager.exponentialDecayEntitiesMajorList.size()) == 0) {
+				String datasetInfoFile = DataManager.buildPersistDataInfoPath(configuration);
+				if (!datasetInfoFile.isEmpty()) {			
+					DataManager.initDatasetInfo(datasetInfoFile);
+				}
+			}
 			
 			System.out.println("Warming up...");
 			LOGGER.info("Warming up...");
@@ -370,6 +380,13 @@ public class TestDriver {
 				if (DataManager.creativeWorksNexId.get() == 0) {
 					System.err.println("Warmup : Warning : no Creative Works were found stored in the database, initialise it with ontologies and reference datasets first! Exiting.");
 					System.exit(-1);
+				}
+			}
+			//initialize dataset info, required for query parameters
+			if ((DataManager.correlatedEntitiesList.size() + DataManager.exponentialDecayEntitiesMinorList.size() + DataManager.exponentialDecayEntitiesMajorList.size()) == 0) {
+				String datasetInfoFile = DataManager.buildPersistDataInfoPath(configuration);
+				if (!datasetInfoFile.isEmpty()) {			
+					DataManager.initDatasetInfo(datasetInfoFile);
 				}
 			}
 			
@@ -543,3 +560,4 @@ public class TestDriver {
 		testDriver.executePhases();
 	}
 }
+//1. Search for file : configuration.getString("creativeWorksPath") + File.separator + configuration.getString("creativeWorksDetails")

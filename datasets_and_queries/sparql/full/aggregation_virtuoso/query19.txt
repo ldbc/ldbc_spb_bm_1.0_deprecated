@@ -1,6 +1,4 @@
-
 define input:inference "ldbc"
-define input:same-as 'yes'
 
 PREFIX bbcevent:<http://www.bbc.co.uk/ontologies/event/> 
 PREFIX geo-pos:<http://www.w3.org/2003/01/geo/wgs84_pos#> 
@@ -33,22 +31,20 @@ PREFIX curric:<http://www.bbc.co.uk/ontologies/curriculum/>
 PREFIX skos:<http://www.w3.org/2004/02/skos/core#> 
 PREFIX cwork:<http://www.bbc.co.uk/ontologies/creativework/> 
 PREFIX fb:<http://rdf.freebase.com/ns/>
+PREFIX geo:<http://www.w3.org/2003/01/geo/wgs84_pos#>
 PREFIX ldbc:<http://www.ldbc.eu/ontologies/sempub#>
 
 #  Query name : query19
 #  Query Description : 
-#  Retrieve a list of N creative works, their thumbnail and the thumbnail’s alternative text.
-#  reasoning : rdfs:subClassOf, owl:propertyChainAxiom, owl:DataProperty 
+#  Retrieve the top most topics that creative works are about in a fixed date-time range, ordered by modification date.
+#  Additional constraint is the type of creative tagging those topics and its audience.
 
-SELECT DISTINCT ?thing ?thumbnail ?altText 
-WHERE 
-{ 
-  ?thing rdf:type cwork:CreativeWork . 
-  ?thing cwork:thumbnail ?thumbnail . 
-  OPTIONAL {
-  	?thumbnail cwork:altText ?altText . 
-	  ?thing ldbc:cworkThumbnailAltText ?altText2 . 
-	  FILTER (?altText = ?altText2)  . 
-  }
+SELECT ?topic ((COUNT(*)) as ?topicsCount) {   
+  ?cwork a {{{cwType}}}  . 
+  ?cwork cwork:audience {{{cwAudience}}} .
+  ?cwork cwork:about ?topic .
+  ?cwork cwork:dateModified ?dateModif .
+  {{{cwFilterDateModifiedCondition}}}
 }
-LIMIT 100
+GROUP BY ?topic
+ORDER BY DESC(?dateModif)

@@ -46,7 +46,9 @@ public class Configuration {
 	public static final String QUERIES_PATH = "queriesPath";
 	public static final String DEFINITIONS_PATH = "definitionsPath";
 	public static final String GENERATOR_RANDOM_SEED = "generatorRandomSeed";
+	public static final String CREATIVE_WORK_NEXT_ID = "creativeWorkNextId";
 	public static final String USE_GENERAL_DATA_GENERATORS = "useGeneralDataGenerators";
+	public static final String CREATIVE_WORKS_INFO = "creativeWorksInfo";
 	
 	/**
 	 * Initialise and set default values for parameters that make sense.
@@ -79,8 +81,9 @@ public class Configuration {
 		properties.setProperty(QUERIES_PATH, "./data/sparql");
 		properties.setProperty(DEFINITIONS_PATH, "./definitions.properties");
 		properties.setProperty(GENERATOR_RANDOM_SEED, "0");
-		
+		properties.setProperty(CREATIVE_WORK_NEXT_ID, "0");
 		properties.setProperty(USE_GENERAL_DATA_GENERATORS, "true");
+		properties.setProperty(CREATIVE_WORKS_INFO, "");
 	}
 	
 	/**

@@ -10,7 +10,7 @@ import eu.ldbc.semanticpublishing.templates.MustacheTemplate;
  * A class extending the MustacheTemplate, used to generate a query string
  * corresponding to file Configuration.QUERIES_PATH/aggregation/query16.txt
  */
-public class Query16Template  extends MustacheTemplate {
+public class Query16Template extends MustacheTemplate {
 	//must match with corresponding file name of the mustache template file
 	private static final String templateFileName = "query16.txt";
 	
@@ -39,7 +39,6 @@ public class Query16Template  extends MustacheTemplate {
 		return "cwork:InternationalAudience";		
 	}
 
-	
 	@Override
 	public String getTemplateFileName() {
 		return templateFileName;

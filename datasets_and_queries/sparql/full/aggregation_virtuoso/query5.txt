@@ -34,7 +34,7 @@ PREFIX fb:<http://rdf.freebase.com/ns/>
 
 #  Query name : query5
 #  Query Description : 
-#  Retrieve the N most popular topics that creative works are about
+#  Retrieve the 1000 most popular topics from two categories creative works are about
 #  reasoning : owl:ObjectProperty
 
 SELECT ?about ((COUNT(*)) AS ?count) 

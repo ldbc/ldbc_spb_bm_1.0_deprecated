@@ -59,4 +59,4 @@ WHERE
   }
 }
 ORDER BY ?tag
-LIMIT 500
+LIMIT 100

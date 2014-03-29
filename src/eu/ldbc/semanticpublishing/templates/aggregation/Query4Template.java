@@ -17,7 +17,7 @@ public class Query4Template extends MustacheTemplate {
 	private static final String templateFileName = "query4.txt";
 	
 	private static final int TIME_INTERVAL_UNIT = Calendar.MONTH;
-	private static final int TIME_INTERVAL = 1;
+	private static final int TIME_INTERVAL_MONTHS = 8;// 2/3 of a whole year
 	
 	private final RandomUtil ru;
 	private final Date initialDate;
@@ -26,8 +26,7 @@ public class Query4Template extends MustacheTemplate {
 		super(queryTemplates);
 		this.ru = ru;
 		
-		//initial date will be one year from now, and randomly picked month between Jan and Apr
-		this.initialDate = ru.randomDateTime(-1, 4);
+		this.initialDate = ru.randomDateTime(-1, 12);
 	}
 	
 	/**
@@ -43,7 +42,7 @@ public class Query4Template extends MustacheTemplate {
 	public String cwEndDateTime() {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(initialDate);
-		calendar.add(TIME_INTERVAL_UNIT, TIME_INTERVAL);
+		calendar.add(TIME_INTERVAL_UNIT, TIME_INTERVAL_MONTHS);
 		return ru.dateTimeString(calendar.getTime());
 	}	
 

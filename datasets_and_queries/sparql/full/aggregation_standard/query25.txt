@@ -34,15 +34,31 @@ PREFIX ldbc:<http://www.ldbc.eu/ontologies/sempub#>
 
 #  Query name : query25
 #  Query Description : 
-#  Retrieve creative works that have been modified within a defined date-time range. 
-#  A drill-down query which retrieves a list of N creative works that have been modified in a specific time range.
-#  Additional constraint is the type of creative works modified in that time range.
-#  Picks from that list a creative work, and updates the time range based on its modification time. 
-#  The time range constraint could narrow down or expand, depending on the previous result.
+#  Finds the 10 most popular entities related to a selected one. Having selected one entity, retrieves an ordered list
+#  of other entities that have participated in a correlation with that entity for maximum number of days
+#    - looks for co-occurrences
+#    - takes into account how long co-occurences last
 
-SELECT ?cwork ?dateModif {
-  ?cwork a {{{cwType}}}  .
-  ?cwork cwork:dateModified ?dateModif .
-  {{{cwFilterDateModifiedCondition}}} 
+SELECT ?who ?interactionDays {
+  {
+    SELECT ?who ((COUNT(*)) AS ?interactionDays) {
+      {
+        SELECT DISTINCT ?year ?month ?day ?who {
+          ?cw a cwork:CreativeWork .
+          ?cw cwork:about {{{entityA}}} .
+          ?cw cwork:about ?who .
+          ?cw cwork:dateCreated ?dateCreated .
+          BIND (day(?dateCreated) AS ?day) . 
+          BIND (month(?dateCreated) AS ?month) . 
+          BIND (year(?dateCreated) AS ?year) . 
+          FILTER (?who != {{{entityA}}}) .
+        }
+        GROUP BY ?year ?month ?day ?who
+      }
+    }
+    GROUP BY ?who
+  }
 }
-LIMIT 1000
+ORDER BY DESC(?interactionDays)
+LIMIT 10
+

@@ -35,7 +35,6 @@ PREFIX fb:<http://rdf.freebase.com/ns/>
 #  Retrieve the greatest amount of types of creative works that have been modified in some larger reriod of time (2/3 of a whole year).
 #  reasoning : rdf:type
 
-
 SELECT ?type ((COUNT(*)) as ?count) 
 WHERE {
   ?creativeWork a ?type  .

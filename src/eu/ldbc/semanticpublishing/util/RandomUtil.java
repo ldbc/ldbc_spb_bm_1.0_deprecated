@@ -21,12 +21,14 @@ public class RandomUtil {
 	private static final ArrayList<String> wordsList = new ArrayList<String>();
 	private String wordsFilePath;
 	private int seedYear = 2000;
+	private int dataGenerationPeriodYears = 1;
 
-	public RandomUtil(String wordsFile, long seed, int seedYear) {
+	public RandomUtil(String wordsFile, long seed, int seedYear, int dataGenerationPeriodYears) {
 		buildWordsArray(wordsFile);
 		this.wordsFilePath = wordsFile;
 		randomGenerator.setSeed(seed);
 		this.seedYear = seedYear;
+		this.dataGenerationPeriodYears = dataGenerationPeriodYears;
 	}	
 	
 	static {
@@ -58,6 +60,10 @@ public class RandomUtil {
 	
 	public void setSeedYear(int seedYear) {
 		this.seedYear = seedYear;
+	}
+	
+	public int getDataGenerationPeriodYears() {
+		return this.dataGenerationPeriodYears;
 	}
 	
 	public int nextInt(int min, int max) {
@@ -113,8 +119,12 @@ public class RandomUtil {
 	 * Produces a random xsd:dateTime literal with a fixed year set in seedYear
 	 *   e.g. "2011-10-21T20:55:58.379+03:00"^^xsd:dateTime
 	 */
-	public String randomDateTimeString() {	
+	public String randomDateTimeString() {
 		int year = seedYear;
+		if ((dataGenerationPeriodYears - 1) > 0) {
+			year += nextInt(dataGenerationPeriodYears - 1);
+		}
+
 		int month = nextInt(0, 11);
 
 		int day;
@@ -159,6 +169,10 @@ public class RandomUtil {
 		Calendar calendar = Calendar.getInstance();
 		
 		int year = seedYear;
+		if ((dataGenerationPeriodYears - 1) > 0) {
+			year += nextInt(dataGenerationPeriodYears - 1);
+		}
+
 		int month = nextInt(0, 11);
 
 		int day;
@@ -183,12 +197,17 @@ public class RandomUtil {
 	/**
 	 * Produces a random Date object starting with 1.1.seedYear and a random offset of maxDaysAfterSeedYear
 	 */
-	public Date randomDateTime(int maxDaysAfterSeedYear) {
+	public Date randomDateTime(int maxDaysAfter) {
 		Calendar calendar = Calendar.getInstance();
 		
-		calendar.set(seedYear, 0, 1, nextInt(23), nextInt(59), nextInt(59));
+		int year = seedYear;
+		if ((dataGenerationPeriodYears - 1) > 0) {
+			year += nextInt(dataGenerationPeriodYears - 1);
+		}
 		
-		int offset = nextInt(maxDaysAfterSeedYear);
+		calendar.set(year, 0, 1, nextInt(23), nextInt(59), nextInt(59));
+		
+		int offset = nextInt(maxDaysAfter);
 		
 		calendar.add(Calendar.DAY_OF_YEAR, offset);
 		
@@ -202,11 +221,15 @@ public class RandomUtil {
 	public Date randomDateTime(int maxYear, int maxMonth) {
 		Calendar calendar = Calendar.getInstance();
 		
+		int year = maxYear;
+		
 		if (maxYear < 0) {
-			maxYear = seedYear;
+			year = seedYear;
 		}
 		
-		int year = seedYear;
+		if  ((dataGenerationPeriodYears - 1) > 0) {
+			year += (dataGenerationPeriodYears - 1);
+		}
 		
 		int month = 0;
 		

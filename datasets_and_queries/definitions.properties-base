@@ -27,7 +27,7 @@ aboutAndMentionsAllocation=0.85, 0.15
 editorialOperationsAllocation=0.8, 0.1, 0.1
 
 #Defines the allocation amount of aggregation queries starting from query1, query2, query3...
-#  e.g. execution of query1.txt from the querymix will be 20%. To skip execution of particular query, set its corresponding allocation to 0.0
+#  e.g. #  e.g. chance for execution of each query will be equally distributed in the query mix
 aggregationOperationsAllocation=0.12, 0.11, 0.11, 0.11, 0.11, 0.11, 0.11, 0.11, 0.11
 
 #Defines the maximum number of creative works that an entity can be tagged about. Exponential decay function will start from the value defined

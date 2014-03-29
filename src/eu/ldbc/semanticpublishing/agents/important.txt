@@ -1,0 +1,2 @@
+Important : before compiling with build.xml, make sure that modified file(s) are first merged with existing .base or .full file
+            Build process will use contents of AggregationAgent.base or AggregationAgent.full and will override your changes!!!

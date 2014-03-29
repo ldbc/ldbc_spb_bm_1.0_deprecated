@@ -1,72 +1,77 @@
 package eu.ldbc.semanticpublishing.templates.aggregation;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection.QueryType;
+import eu.ldbc.semanticpublishing.refdataset.DataManager;
 import eu.ldbc.semanticpublishing.templates.MustacheTemplate;
 import eu.ldbc.semanticpublishing.util.RandomUtil;
 
 /**
  * A class extending the MustacheTemplate, used to generate a query string
  * corresponding to file Configuration.QUERIES_PATH/aggregation/query24.txt
- * A geo-locations drill-down query template
+ * A time-line of relatedness query
  */
 public class Query24Template extends MustacheTemplate {
 	//must match with corresponding file name of the mustache template file
 	private static final String templateFileName = "query24.txt";
-	//south boundary
-	private static final double minLat = 50.45;	
-	//north boundary
-	private static final double maxLat = 53.25;
-	//west boundary
-	private static final double minLong = -2.15;
-	//east boundary
-	private static final double maxLong = 0.25;
+	private static final int TIME_PERIOD_MONTHS = 9;
 	
-	private final RandomUtil ru;
+	protected final RandomUtil ru;
+	private int correlationPosition;
 	
-	private double referenceLat = 0.0;
-	private double referenceLong = 0.0;
-	//deviation value, sets the range by adding/subtracting it from referenceLat and referenceLong
-	private double deviationValue = 0.25;
+//	private boolean useCorrelatedEntities = false;
 	
 	public Query24Template(RandomUtil ru, HashMap<String, String> queryTemplates) {
 		super(queryTemplates);
 		this.ru = ru;
-		preInitialize();
-	}
-	
-	private void preInitialize() {
-		referenceLat = ru.nextDouble(minLat, maxLat);
-		referenceLong = ru.nextDouble(minLong, maxLong);
-		deviationValue = ru.nextDouble(0.20, 0.25);
-	}
-	
-	public void initialize(double latitude, double longtitude, double deviationDecrease) {
-		referenceLat = latitude;
-		referenceLong = longtitude;
-		deviationValue = ((deviationValue - deviationDecrease) > 0.0) ? (deviationValue - deviationDecrease) : 0.0 ;
+		if (DataManager.correlatedEntitiesList.size() > 0 /*&& useCorrelatedEntities*/) {
+			//correlatedEntitiesList contains URIs of correlated entities in the sequence : entityA1, entityB1, entityC1, entityA2, entityB2, entityC2...etc.
+			this.correlationPosition = ru.nextInt(DataManager.correlatedEntitiesList.size() / 3);
+		}
+//		this.useCorrelatedEntities = ru.nextBoolean();
 	}
 	
 	/**
-	 * A method for replacing mustache template : {{{refLatitude}}}
+	 * A method for replacing mustache template : {{{entityA}}}
 	 */
-	public String refLatitude() {
-		return "" + referenceLat;
+	public String entityA() {
+		if (DataManager.correlatedEntitiesList.size() > 0 /*&& useCorrelatedEntities*/) {
+			return DataManager.correlatedEntitiesList.get(correlationPosition * 3);
+		} else {
+			return DataManager.popularEntitiesList.get(ru.nextInt(DataManager.popularEntitiesList.size())).getURI();
+		}
 	}
 	
 	/**
-	 * A method for replacing mustache template : {{{refLongtitude}}}
+	 * A method for replacing mustache template : {{{entityB}}}
 	 */
-	public String refLongtitude() {
-		return "" + referenceLong;
+	public String entityB() {
+		if (DataManager.correlatedEntitiesList.size() > 0 /*&& useCorrelatedEntities*/) {
+			return DataManager.correlatedEntitiesList.get(correlationPosition * 3 + 1);
+		} else {
+			return DataManager.popularEntitiesList.get(ru.nextInt(DataManager.regularEntitiesList.size())).getURI();
+		}
 	}
 	
 	/**
-	 * A method for replacing mustache template : {{{refDeviation}}}
+	 * A method for replacing mustache template : {{{timeFilter}}}
 	 */
-	public String refDeviation() {
-		return "" + deviationValue;
+	public String timeFilter() {
+		Date date = ru.randomDateTime(-1, 12);
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+
+		String startDate = ru.dateTimeString(calendar.getTime());
+		
+		calendar.add(Calendar.MONTH, TIME_PERIOD_MONTHS);
+		
+		String endDate = ru.dateTimeString(calendar.getTime());
+		
+		return String.format("FILTER (?dateCreated >= %s && ?dateCreated < %s) . ", startDate, endDate);
 	}
 	
 	@Override
@@ -77,5 +82,5 @@ public class Query24Template extends MustacheTemplate {
 	@Override
 	public QueryType getTemplateQueryType() {
 		return QueryType.SELECT;
-	}	
+	}			
 }

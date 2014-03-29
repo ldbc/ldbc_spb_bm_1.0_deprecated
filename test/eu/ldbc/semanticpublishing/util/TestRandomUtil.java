@@ -8,7 +8,7 @@ public class TestRandomUtil {
 
 	@Test
 	public void testNextInt_IntInt() {
-		RandomUtil rg = new RandomUtil("./data/WordsDictionary.txt", 0, 2000);
+		RandomUtil rg = new RandomUtil("./data/WordsDictionary.txt", 0, 2000, 1);
 		
 		checkNextInt_IntInt(rg, 0, 2);
 		checkNextInt_IntInt(rg, -10, 10);
@@ -28,7 +28,7 @@ public class TestRandomUtil {
 
 	@Test
 	public void testNextLong() {
-		RandomUtil rg = new RandomUtil("./data/WordsDictionary.txt", 0, 2000);
+		RandomUtil rg = new RandomUtil("./data/WordsDictionary.txt", 0, 2000, 1);
 
 		checkNextLong(rg, 1);
 		checkNextLong(rg, 2);

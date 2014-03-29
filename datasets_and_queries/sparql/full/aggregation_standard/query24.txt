@@ -33,28 +33,20 @@ PREFIX geo:<http://www.w3.org/2003/01/geo/wgs84_pos#>
 PREFIX ldbc:<http://www.ldbc.eu/ontologies/sempub#>
 
 #  Query name : query24
-#  Query Description :
-#  Retrieve creative works within a certain range defined by geo-coordinates 
-#  A drill-down query using geo coordinates of tagged geonames ids.
-#  Retrieves a list of all creative works that are mentioning entities within a geo-range.
-#  Picks from that list another creative work, and extracts its geo coordinates and defines a new range, and repeats that action
+#  Query Description : 
+#  Retrieve a time-line of relatedness between two entities in dataset. Query explores correlations of entities tagged
+#  Additional constraint of time interval of 6 months limits the result.
+#  together in creative works i.e. a history of interactions.
 
-SELECT DISTINCT ?cwork ?geonamesId ?lat ?long   {
-
-    ?cwork a cwork:CreativeWork . 
-    ?cwork cwork:mentions ?geonamesId . 
-    ?geonamesId geo:lat ?lat . 
-    ?geonamesId geo:long ?long . 
-    FILTER(CONTAINS(STR(?geonamesId), "geonames")) . 
-
-    BIND({{{refLatitude}}} AS ?referenceLat) .
-    BIND({{{refLongtitude}}} AS ?referenceLong) .
-    BIND({{{refDeviation}}} AS ?deviation) . 
-
-    FILTER( 
-     (xsd:double(?lat) >= (?referenceLat - ?deviation)) &&
-     (xsd:double(?lat) <= (?referenceLat + ?deviation)) && 
-     (xsd:double(?long) >= (?referenceLong - ?deviation)) && 
-     (xsd:double(?long) <= (?referenceLong + ?deviation)) ) . 
+SELECT DISTINCT ?year ?month ?day ((COUNT(*)) AS ?cwsPerDay) {
+  ?cw a cwork:CreativeWork .
+  ?cw cwork:about {{{entityA}}} .
+  ?cw cwork:about {{{entityB}}} .
+  ?cw cwork:dateCreated ?dateCreated .
+  BIND (day(?dateCreated) AS ?day) . 
+  BIND (month(?dateCreated) AS ?month) . 
+  BIND (year(?dateCreated) AS ?year) . 
+  {{{timeFilter}}}
 }
-LIMIT 1000
+GROUP BY ?year ?month ?day
+ORDER BY ?year ?month ?day

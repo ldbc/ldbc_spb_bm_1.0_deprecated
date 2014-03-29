@@ -37,6 +37,7 @@ public class CorrelationsWorker extends GeneralWorker {
 	private double correlationEntityLifespanPercent = 0.4;
 	private double correlationDurationPercent = 0.1;
 	
+	//a distance in days between third entity appearance in a correlation
 	private static final int THRID_ENTITY_CORRELATION_DISTANCE = 9;
 	
 	public CorrelationsWorker(RandomUtil ru, Entity entityA, Entity entityB, Entity entityC, int dataGenerationPeriodYears, int correlationsMagnitude, 
@@ -54,8 +55,6 @@ public class CorrelationsWorker extends GeneralWorker {
 
 	@Override
 	public void execute() throws Exception {
-
-//System.out.println(Thread.currentThread().getName() + " : entity A : " + entityA.getURI() + " : entity B : " + entityB.getURI() + " : entity C : " + entityC.getURI());		
 		
 		//skip data generation if targetTriples size has already been reached 
 		if (triplesGeneratedSoFar.get() > targetTriples) {
@@ -70,12 +69,14 @@ public class CorrelationsWorker extends GeneralWorker {
 		int cwsInFileCount = 0;
 		int currentTriplesCount = 0;
 		int thirdEntityCountdown = 0;
+		int thirdEntityOutsideCorrelationCountdown = 0;
 		int correlationsMagnitudeForIteration = this.correlationsMagnitude;
 		long currentFilesCount = filesCount.incrementAndGet();		
 		String fileName = String.format(FILENAME_FORMAT + rdfFormat.getDefaultFileExtension(), destinationPath, File.separator, currentFilesCount);
 				
 		Date startDate;
-		int thirdEntityInCorrelationOccurence = (int) ((365 * dataGenerationPeriodYears * correlationDurationPercent) / 10);
+		int thirdEntityInCorrelationOccurences = (int) ((365 * dataGenerationPeriodYears * correlationDurationPercent) / 10);
+		int thirdEntityOutsideCorrelationOccurences = (int) ((365 * dataGenerationPeriodYears * (correlationEntityLifespanPercent * 2 - correlationDurationPercent)) / 10) / 2;
 		int totalCorrelationPeriodDays = (int) (365 * dataGenerationPeriodYears * (correlationEntityLifespanPercent * 2 - correlationDurationPercent));
 		
 		fos = new FileOutputStream(fileName);
@@ -85,7 +86,8 @@ public class CorrelationsWorker extends GeneralWorker {
 			//pick a random date starting from 1.Jan to the value of totalCorrelationPeriodDays
 			startDate = ru.randomDateTime(365 * dataGenerationPeriodYears - totalCorrelationPeriodDays);
 			thirdEntityCountdown = ru.nextInt((int)(THRID_ENTITY_CORRELATION_DISTANCE * 0.6), THRID_ENTITY_CORRELATION_DISTANCE);
-		
+			thirdEntityOutsideCorrelationCountdown = ru.nextInt((int)(THRID_ENTITY_CORRELATION_DISTANCE * 0.6), THRID_ENTITY_CORRELATION_DISTANCE) / 2;
+			
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(startDate);
 			
@@ -93,7 +95,7 @@ public class CorrelationsWorker extends GeneralWorker {
 				for (int dayIncrement = 0; dayIncrement < totalCorrelationPeriodDays; dayIncrement++) {
 					correlationsMagnitudeForIteration = ru.nextInt((int)(this.correlationsMagnitude * 0.75), this.correlationsMagnitude);
 					
-					boolean thirdEntitySet = false;				
+					boolean thirdEntityForCurrentDaySet = false;				
 					
 					//generate Creative Works with correlations for that day
 					for (int i = 0; i < correlationsMagnitudeForIteration; i++) {
@@ -117,20 +119,34 @@ public class CorrelationsWorker extends GeneralWorker {
 						Model sesameModel = null;
 						
 						if (dayIncrement < 365 * dataGenerationPeriodYears * (correlationEntityLifespanPercent - correlationDurationPercent)) {
-							sesameModel = buildCreativeWork(entityA, entityC, null, true, calendar.getTime(), 0);
+							if ((thirdEntityOutsideCorrelationCountdown <= 0) && (thirdEntityOutsideCorrelationOccurences > 0) && !thirdEntityForCurrentDaySet) {
+								sesameModel = buildCreativeWork(entityA, entityC, null, true, calendar.getTime(), 0);
+								thirdEntityForCurrentDaySet = true;
+								thirdEntityOutsideCorrelationOccurences--;
+							} else {
+								sesameModel = buildCreativeWork(entityA, null, null, true, calendar.getTime(), 0);
+							}
 						} else if ((dayIncrement >= 365 * dataGenerationPeriodYears * (correlationEntityLifespanPercent - correlationDurationPercent)) && dayIncrement < (365 * dataGenerationPeriodYears * (correlationEntityLifespanPercent))) {
-							//ru.nextBoolean() is used so that not all of third entity correlations to be set on each following day 
-							if ((thirdEntityCountdown <= 0) && (thirdEntityInCorrelationOccurence > 0) && !thirdEntitySet) {
+							//reset for the last third of correlation period
+							thirdEntityOutsideCorrelationOccurences = (int) ((365 * dataGenerationPeriodYears * (correlationEntityLifespanPercent * 2 - correlationDurationPercent)) / 10) / 2;
+							
+							if ((thirdEntityCountdown <= 0) && (thirdEntityInCorrelationOccurences > 0) && !thirdEntityForCurrentDaySet) {
 								//introduce a third entity correlation in a tiny amount of all correlations
 								sesameModel = buildCreativeWork(entityA, entityB, entityC, true, calendar.getTime(), 0);
-								thirdEntitySet = true;
-								thirdEntityInCorrelationOccurence--;
+								thirdEntityForCurrentDaySet = true;
+								thirdEntityInCorrelationOccurences--;
 								thirdEntityCountdown = ru.nextInt((int)(THRID_ENTITY_CORRELATION_DISTANCE * 0.6), THRID_ENTITY_CORRELATION_DISTANCE);
 							} else {
 								sesameModel = buildCreativeWork(entityA, entityB, null, true, calendar.getTime(), 0);
 							}
 						} else if (dayIncrement >= 365 * dataGenerationPeriodYears * correlationEntityLifespanPercent) {
-							sesameModel = buildCreativeWork(entityB, entityC, null, true, calendar.getTime(), 0);
+							if ((thirdEntityOutsideCorrelationCountdown <= 0) && (thirdEntityOutsideCorrelationOccurences > 0) && !thirdEntityForCurrentDaySet) {
+								sesameModel = buildCreativeWork(entityB, entityC, null, true, calendar.getTime(), 0);
+								thirdEntityForCurrentDaySet = true;
+								thirdEntityOutsideCorrelationOccurences--;
+							} else {
+								sesameModel = buildCreativeWork(entityB, null, null, true, calendar.getTime(), 0);
+							}
 						} else {
 							sesameModel = buildCreativeWork(entityA, entityC, null, true, calendar.getTime(), 0);
 							System.out.println(Thread.currentThread().getName() + " :: Warning : Unexpected stage in data generation reached, defaulting");						
@@ -144,6 +160,7 @@ public class CorrelationsWorker extends GeneralWorker {
 						triplesGeneratedSoFar.addAndGet(sesameModel.size());				
 					}
 					thirdEntityCountdown--;
+					thirdEntityOutsideCorrelationCountdown--;
 					calendar.add(Calendar.DAY_OF_YEAR, 1);
 				}		
 			} catch(RDFHandlerException e) {
@@ -159,10 +176,12 @@ public class CorrelationsWorker extends GeneralWorker {
 		CreativeWorkBuilder creativeWorkBuilder = new CreativeWorkBuilder("", ru);
 		creativeWorkBuilder.setDateIncrement(startDate, dayIncrement);
 		creativeWorkBuilder.setAboutPresetUri(a.getURI());
-		if (aboutOrMentionsB) {
-			creativeWorkBuilder.setOptionalAboutPresetUri(b.getURI());
-		} else {
-			creativeWorkBuilder.setMentionsPresetUri(b.getURI());
+		if (b != null) {
+			if (aboutOrMentionsB) {
+				creativeWorkBuilder.setOptionalAboutPresetUri(b.getURI());
+			} else {
+				creativeWorkBuilder.setMentionsPresetUri(b.getURI());
+			}
 		}
 		if (c != null) {
 			creativeWorkBuilder.setOptionalMentionsPresetUri(c.getURI());

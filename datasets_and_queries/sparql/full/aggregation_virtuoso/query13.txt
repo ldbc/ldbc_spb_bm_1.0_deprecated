@@ -34,9 +34,9 @@ PREFIX fb:<http://rdf.freebase.com/ns/>
 
 #  Query name : query13
 #  Query Description : 
-#  Retrieve a list of N creative works, the ’things’ they are about and mention, their categories, the modification date
-# (star query)
-# reasoning features: rdfs:subClassOf
+#  Retrieve a list of N creative works, the 'things' they are about and mention, their modification date. Limit results by two categories.
+#  (star query)
+#  reasoning features: rdfs:subClassOf
 
 SELECT DISTINCT ?thing ?about ?mentions ?category ?dateModified
 WHERE 

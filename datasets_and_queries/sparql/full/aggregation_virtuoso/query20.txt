@@ -1,6 +1,4 @@
-
 define input:inference "ldbc"
-define input:same-as 'yes'
 
 PREFIX bbcevent:<http://www.bbc.co.uk/ontologies/event/> 
 PREFIX geo-pos:<http://www.w3.org/2003/01/geo/wgs84_pos#> 
@@ -33,22 +31,37 @@ PREFIX curric:<http://www.bbc.co.uk/ontologies/curriculum/>
 PREFIX skos:<http://www.w3.org/2004/02/skos/core#> 
 PREFIX cwork:<http://www.bbc.co.uk/ontologies/creativework/> 
 PREFIX fb:<http://rdf.freebase.com/ns/>
+PREFIX geo:<http://www.w3.org/2003/01/geo/wgs84_pos#>
 PREFIX ldbc:<http://www.ldbc.eu/ontologies/sempub#>
 
 #  Query name : query20
 #  Query Description : 
-#  Retrieve a list of N creative works, their thumbnail and their type.
-#  reasoning : rdfs:subClassOf, owl:propertyChainAxiom, owl:ObjectProperty
+#  Retrieve creative works and their properties, which contain a a certain word in their title or description, using a regex expression. 
+#  A Full text search query.
 
-SELECT DISTINCT ?thing ?thumbnail ?thumbnailType 
-WHERE 
-{ 
-  ?thing rdf:type cwork:CreativeWork . 
-  ?thing cwork:thumbnail ?thumbnail . 
-  OPTIONAL {
-    ?thumbnail cwork:thumbnailType ?thumbnailType2 . 
-  	?thing ldbc:thumbnailType ?thumbnailType . 
-	  FILTER (( ?thumbnailType = ?thumbnailType2) || (EXISTS {?thumbnailType owl:sameAs ?thumbnailType2}))
-  }
+CONSTRUCT { 
+  ?cWork a cwork:CreativeWork ; 
+    a ?type ; 
+    cwork:title ?title ; 
+    cwork:description ?description ; 
+    cwork:dateCreated ?dateCreated ;
+    cwork:dateModified ?dateModified ;
+    cwork:about ?about ; 
+    cwork:category ?category ; 
+    bbc:primaryContentOf ?pco . 
+  ?pco bbc:webDocumentType ?webDocType . 
+} 
+WHERE { 
+  ?cWork a cwork:CreativeWork ; 
+    a ?type ; 
+    cwork:title ?title ;
+    cwork:description ?description .
+  ?type rdfs:subClassOf cwork:CreativeWork . 
+  OPTIONAL { ?cWork cwork:about ?about .} 
+  OPTIONAL { 
+    ?cWork bbc:primaryContentOf ?pco . 
+    ?pco bbc:webDocumentType ?webDocType . 
+  } 
+  FILTER (REGEX(?title, {{{regexExpression}}}, "i") || REGEX(?description, {{{regexExpression}}}, "i")) .
 }
-LIMIT 100
+LIMIT 1000

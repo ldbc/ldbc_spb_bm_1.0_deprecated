@@ -70,6 +70,10 @@
   <target name="setup-query-mix">
 		<delete file="${dir.src}/eu/ldbc/semanticpublishing/agents/AggregationAgent.java"/>
 		<copy file="${dir.src}/eu/ldbc/semanticpublishing/agents/AggregationAgent.${query_mix}" tofile="${dir.src}/eu/ldbc/semanticpublishing/agents/AggregationAgent.java"/>
+		
+		<delete file="${dir.src}/eu/ldbc/semanticpublishing/statistics/Statistics.java"/>
+		<copy file="${dir.src}/eu/ldbc/semanticpublishing/statistics/Statistics.${query_mix}" tofile="${dir.src}/eu/ldbc/semanticpublishing/statistics/Statistics.java"/>
+		
 		<delete dir="${dir.data}"/>
 		
 		<mkdir dir="./data-temp"/>
@@ -107,7 +111,7 @@
   	
 		<move file="./data-temp" toFile="./data"/>
 		<delete dir="./data-temp"/>
-				
+		
 		<delete>
 			<fileset dir="./src/eu/ldbc/semanticpublishing/templates/aggregation" includes="*.java"/>
 		</delete>
@@ -255,6 +259,7 @@
 	</target>
 	
 	<!-- this target requires that an svn client is installed -->
+	<!--
 	<target name="build.release.version">
 		<exec executable="svn" outputproperty="svn.revision.number">
 			<arg line="info"/>
@@ -271,6 +276,7 @@
 		</exec>
 		<echo>Benchmark Release Version : ${version.number.major}.${version.number.minor}.${svn.revision.number}</echo>
 	</target>
+	-->
 	
 	<target name="show-usage">
     <echo>
@@ -279,9 +285,11 @@ To BUILD the LDBC Semantic Publishing Benchmark, you should execute :
       
 	Standard version :
 		ant build-base-querymix-standard (builds the benchmark driver with base query mix, standard SPARQL 1.1 compliance)
+		ant build-full-querymix-standard (builds the benchmark driver with full query mix, standard SPARQL 1.1 compliance)
     	
 	Virtuoso customized : 
 		ant build-base-querymix-virtuoso (builds the benchmark driver with base query mix and customized query syntax for Virtuoso)
+		ant build-full-querymix-virtuoso (builds the benchmark driver with full query mix and customized query syntax for Virtuoso)
 ---------------------------------------------------------------------------------------------------------------------------------------
     </echo>
 	</target>

@@ -51,4 +51,5 @@ SELECT ?cwork ?dateModif ?title ?category ?liveCoverage ?audience {
   ?cwork cwork:audience ?audience .
   {{{cwFilterDateModifiedCondition}}} 
 }
+ORDER BY ?dateModif
 LIMIT 100

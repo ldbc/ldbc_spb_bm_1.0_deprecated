@@ -34,7 +34,7 @@ PREFIX fb:<http://rdf.freebase.com/ns/>
 
 #  Query name : query10
 #  Query Description : 
-#  Retrieve a list of N creative works that are mentioning the maximum number of topics and their number
+#  Retrieve a list of 10 creative works that are mentioning the maximum number of topics, their number, creation date and the topics.
 #  reasoning : owl:ObjectProperty
 
 SELECT ?creativeWork2 ?mentionsCount ?dateCreated ?thing2

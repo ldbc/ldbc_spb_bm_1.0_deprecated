@@ -174,7 +174,7 @@ import eu.ldbc.semanticpublishing.refdataset.model.Entity;
 /**
  * SAX Parser for transforming an RDF-XML result stream into a list
  */
-public class SAXQuery24TemplateTransformer extends DefaultHandler implements SAXResultTransformer {
+public class SAXQuery17TemplateTransformer extends DefaultHandler implements SAXResultTransformer {
 	private boolean entityConstructionBegin = false;
 	private boolean resultElementBeginFlag = false;
 	private boolean uriElementBeginFlag = false;

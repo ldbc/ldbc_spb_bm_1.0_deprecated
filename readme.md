@@ -22,8 +22,14 @@ Apache Ant build tool is required. Use one of the following tasks :
 #to build a standard version of the benchmark, compliant to SPARQL 1.1 standard
 ant build-base-querymix-standard
 
+#to build a standard version of the benchmark, compliant to SPARQL 1.1 standard with extended query mix
+ant build-full-querymix-standard
+
 #to build a version of the benchmark customized for Virtuoso Database
 ant build-base-querymix-virtuoso
+
+#to build a version of the benchmark customized for Virtuoso Database with extended query mix
+ant build-full-querymix-virtuoso
 ```
 
 Result of the build process is saved to the distribution folder (dist/) : 
@@ -76,7 +82,9 @@ All items should be saved in same location with the benchmark jar file.
   * ***aggregationAgents*** - number of aggregation agents that will execute a mix of aggregation queries simultaneously
   * ***editorialAgents*** - number of editorial agents that will execute a mix of update operations simultaneously
   * ***dataGeneratorWorkers*** - number of worker threads used by the data generator to produce data
-  * ***generatorRandomSeed*** - use it to set a value for the random seed used by the data generator (default value is 0). e.g. in cases when several benchmark drivers are started in separate processes to generate data
+  * ***generatorRandomSeed*** - use it to set the random set for the data generator (default value is 0). e.g. in cases when several benchmark drivers are started in separate processes to generate data - to be used with creativeWorkNextId parameter
+  * ***creativeWorkNextId*** - set the next ID for the data generator of Creative Works. When running the benchmark driver in separate processes, to guarantee that generated creative works will not overlap their IDs. e.g. for generating 50M dataset, expected number of Creative Works is ~2.5M and next ID should start at that value
+  * ***creativeWorksInfo*** - file name, that will be saved in creativeWorksPath and will contain system info about the generated dataset, e.g. interesting entities, etc.
   
 * Benchmark Phases (test.properties)
     One, some or all phases can be enabled and will run in the sequence listed below. Running first three phases is mandatory with optionally enabling fourth one (*loadCreativeWorks*) - for the case when generated data will not be loaded manually into the database.

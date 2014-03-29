@@ -27,9 +27,8 @@ aboutAndMentionsAllocation=0.85, 0.15
 editorialOperationsAllocation=0.8, 0.1, 0.1
 
 #Defines the allocation amount of aggregation queries starting from query1, query2, query3...
-#  e.g. execution of query1.txt from the querymix will be 20%. To skip execution of particular query, set its corresponding allocation to 0.0
-#aggregationOperationsAllocation=0.05, 0.05, 0.05, 0.01, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.01, 0.01, 0.05, 0.01, 0.01, 0.05, 0.05, 0.01, 0.05, 0.05, 0.02, 0.02, 0.05
-aggregationOperationsAllocation=0.0625, 0.0625, 0.0625, 0.0625, 0.0625, 0.0625, 0.0625, 0.0625, 0.0625, 0.0625, 0.0625, 0.0625, 0.0625, 0.0625, 0.0625, 0.0625
+#  e.g. chance for execution of each query will be equally distributed in the query mix
+aggregationOperationsAllocation=0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04
 
 #Defines the maximum number of creative works that an entity can be tagged about. Exponential decay function will start from the value defined
 exponentialDecayUpperLimitOfCWs=5000

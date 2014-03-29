@@ -1,4 +1,3 @@
-
 define input:inference "ldbc"
 define input:same-as 'yes'
 
@@ -33,33 +32,26 @@ PREFIX curric:<http://www.bbc.co.uk/ontologies/curriculum/>
 PREFIX skos:<http://www.w3.org/2004/02/skos/core#> 
 PREFIX cwork:<http://www.bbc.co.uk/ontologies/creativework/> 
 PREFIX fb:<http://rdf.freebase.com/ns/>
+PREFIX geo:<http://www.w3.org/2003/01/geo/wgs84_pos#>
+PREFIX ldbc:<http://www.ldbc.eu/ontologies/sempub#>
 
 #  Query name : query18
 #  Query Description : 
-#  Retrieve a list of N creative works, their tags, categories and titles that contain 
-#  the term "policy", ordered by their tag
+#  Retrieve creative works that have been modified within a defined date-time range. 
+#  Additional constraint is the type of creative works modified in that time range.
+#  Picks from that list a creative work, and updates the time range based on its modification time. 
+#  The time range constraint could narrow down or expand, depending on the previous result.
+#  A drill-down query which retrieves a list of N creative works that have been modified in a specific time range.
+#  All query iterations from current drill-down will have same query IDs!
 
-# reasoning rdfs:subClassOf
-# reasoning rdfs:subPropertyOf
-# join ordering
-# distinct & orderby & contains & limit
-
-SELECT DISTINCT ?thing ?tag ?category ?title
-WHERE 
-{ 
-  ?thing rdf:type cwork:CreativeWork . 
-  ?thing rdf:type ?class . 
-  ?class rdfs:subClassOf cwork:CreativeWork . 
-  ?thing cwork:tag ?tag . 
-  ?thing ?a ?o . 
-  ?a rdfs:subPropertyOf cwork:tag . 
-  ?thing cwork:category ?category . 
-  ?thing cwork:title ?title . 
-  FILTER (CONTAINS (STR(?title), "policy") ) . 
-  OPTIONAL {
-    ?thing cwork:audience ?audience . 
-  FILTER ( ?audience = cwork:NationalAudience ) .
-  }
+SELECT ?cwork ?dateModif ?title ?category ?liveCoverage ?audience {
+  ?cwork a {{{cwType}}}  .
+  ?cwork cwork:dateModified ?dateModif .
+  ?cwork cwork:title ?title .
+  ?cwork cwork:category ?category .
+  ?cwork cwork:liveCoverage ?liveCoverage .
+  ?cwork cwork:audience ?audience .
+  {{{cwFilterDateModifiedCondition}}} 
 }
-ORDER BY ?tag
-LIMIT 500
+ORDER BY ?dateModif
+LIMIT 100

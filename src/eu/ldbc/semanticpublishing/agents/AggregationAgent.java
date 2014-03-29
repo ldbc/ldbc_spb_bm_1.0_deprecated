@@ -14,8 +14,10 @@ import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection;
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryExecuteManager;
 import eu.ldbc.semanticpublishing.properties.Definitions;
 import eu.ldbc.semanticpublishing.refdataset.model.Entity;
-import eu.ldbc.semanticpublishing.resultanalyzers.Query24Analyzer;
-import eu.ldbc.semanticpublishing.resultanalyzers.Query25Analyzer;
+import eu.ldbc.semanticpublishing.resultanalyzers.Query17Analyzer;
+import eu.ldbc.semanticpublishing.resultanalyzers.Query18Analyzer;
+import eu.ldbc.semanticpublishing.resultanalyzers.Query21Analyzer;
+import eu.ldbc.semanticpublishing.resultanalyzers.Query22Analyzer;
 import eu.ldbc.semanticpublishing.statistics.Statistics;
 import eu.ldbc.semanticpublishing.templates.MustacheTemplate;
 import eu.ldbc.semanticpublishing.templates.aggregation.*;
@@ -30,19 +32,22 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 	private final RandomUtil ru;
 	private final AtomicBoolean benchmarkingState;
 	private final HashMap<String, String> queryTemplates;
-	private SparqlQueryConnection connection;	
+	private SparqlQueryConnection connection;
+	private int seedYear;
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(AggregationAgent.class.getName());
 	private final static Logger BRIEF_LOGGER = LoggerFactory.getLogger(TestDriver.class.getName());
 	private final static int MAX_DRILL_DOWN_ITERATIONS = 5;
+	private final static int MAX_FACETED_SEARCH_ITERATIONS = 5;
 	
-	public AggregationAgent(AtomicBoolean benchmarkingState, SparqlQueryExecuteManager queryExecuteManager, RandomUtil ru, AtomicBoolean runFlag, HashMap<String, String> queryTamplates) {
+	public AggregationAgent(AtomicBoolean benchmarkingState, SparqlQueryExecuteManager queryExecuteManager, RandomUtil ru, AtomicBoolean runFlag, HashMap<String, String> queryTamplates, int seedYear) {
 		super(runFlag);
 		this.queryExecuteManager = queryExecuteManager;
 		this.ru = ru;
 		this.benchmarkingState = benchmarkingState;
 		this.queryTemplates = queryTamplates;
 		this.connection = new SparqlQueryConnection(queryExecuteManager.getEndpointUrl(), queryExecuteManager.getEndpointUpdateUrl(), queryExecuteManager.getTimeoutMilliseconds(), true);
+		this.seedYear = seedYear;
 	}
 	
 	@Override
@@ -59,6 +64,7 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 
 		try {
 			boolean drillDownQuery = false;
+			boolean facetedSearchQuery = false;
 			
 			//important : queryDistribution is zero-based, while QueryNTemplate is not!
 			queryId = Statistics.aggregateQueriesArray[aggregateQueryIndex].getNewQueryId();
@@ -83,7 +89,7 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 					aggregateQuery = new Query6Template(ru, queryTemplates);
 					break;
 				case 6 :
-					aggregateQuery = new Query7Template(queryTemplates);
+					aggregateQuery = new Query7Template(ru, queryTemplates);
 					break;
 				case 7 : 
 					aggregateQuery = new Query8Template(ru, queryTemplates);
@@ -113,39 +119,42 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 					aggregateQuery = new Query16Template(queryTemplates);
 					break;
 				case 16 : 
-					aggregateQuery = new Query17Template(queryTemplates);
-					break;
-				case 17 : 
-					aggregateQuery = new Query18Template(queryTemplates);
-					break;
-				case 18 : 
-					aggregateQuery = new Query19Template(queryTemplates);
-					break;
-				case 19 : 
-					aggregateQuery = new Query20Template(queryTemplates);
-					break;
-				case 20 : 
-					aggregateQuery = new Query21Template(queryTemplates);
-					break;
-				case 21 : 
-					aggregateQuery = new Query22Template(queryTemplates);
-					break;
-				case 22 : 
-					aggregateQuery = new Query23Template(queryTemplates);
-					break;
-				case 23 :
 					//Drill-Down query with constraints on Geo-locations
 					drillDownQuery = true;
+					aggregateQuery = new Query17Template(ru, queryTemplates);
+					break;
+				case 17 : 
+					//Drill-Down query with constraints on Date intervals
+					drillDownQuery = true;
+					aggregateQuery = new Query18Template(ru, queryTemplates, seedYear);
+					break;
+				case 18 : 
+					aggregateQuery = new Query19Template(ru, queryTemplates, seedYear);
+					break;
+				case 19 : 
+				  //FTS Query
+					aggregateQuery = new Query20Template(ru, queryTemplates);
+					break;
+				case 20 : 
+					//Faceted Search Query
+					facetedSearchQuery = true;
+					aggregateQuery = new Query21Template(ru, queryTemplates);
+					break;
+				case 21 : 
+					//Faceted Search Query
+					facetedSearchQuery = true;
+					aggregateQuery = new Query22Template(ru, queryTemplates);
+					break;
+				case 22 :
+					//Faceted Search Query
+					facetedSearchQuery = true;
+					aggregateQuery = new Query23Template(ru, queryTemplates);
+					break;
+				case 23 :
 					aggregateQuery = new Query24Template(ru, queryTemplates);
 					break;
 				case 24 :
-					//Drill-Down query with constraints on Date intervals
-					drillDownQuery = true;
 					aggregateQuery = new Query25Template(ru, queryTemplates);
-					break;
-				case 25 :
-					//FTS Query
-					aggregateQuery = new Query26Template(ru, queryTemplates);
 					break;
 			}
 			
@@ -157,14 +166,17 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 			long executionTimeMs = System.currentTimeMillis();
 			
 			queryResult = queryExecuteManager.executeQuery(connection, aggregateQuery.getTemplateFileName(), queryString, aggregateQuery.getTemplateQueryType(), true, false);			
-			
+						
 			updateQueryStatistics(true, startedDuringBenchmarkPhase, aggregateQuery.getTemplateQueryType(), aggregateQuery.getTemplateFileName(), queryString, queryResult, queryId, System.currentTimeMillis() - executionTimeMs);
 			
 			if (drillDownQuery) {
 				//further loop the drill-down query using results from previous run
-				executeDrillDown(aggregateQuery, aggregateQueryIndex, queryString, queryResult);
+				executeDrillDown(aggregateQuery, aggregateQueryIndex, queryString, queryResult, queryId);
 			}
-
+			
+			if (facetedSearchQuery) {
+				executeFacetedSearch(aggregateQuery, aggregateQueryIndex, queryString, queryResult, queryId);
+			}
 		} catch (IOException ioe) {
 			String msg = "Warning : AggregationAgent : IOException caught : " + ioe.getMessage() + ", attempting a new connection" + "\n" + "\tfor query : \n" + queryString;
 			
@@ -179,17 +191,26 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 		return true;
 	}
 	
-	private void executeDrillDown(MustacheTemplate aggregateQuery, int queryDistribution, String queryString, String queryResult) throws IOException {
+	/**
+	 * @param aggregateQuery - the aggregateQuery object
+	 * @param queryDistribution - pre-computed distribution
+	 * @param queryString - the query
+	 * @param queryResult - result of the query, RDFXML
+	 * @param queryId - will reuse the queryId of the first query iteration, easier to recognize query sequence in query log
+	 * @throws IOException
+	 */
+	private void executeDrillDown(MustacheTemplate aggregateQuery, int queryDistribution, String queryString, String queryResult, long queryId) throws IOException {
 		String qString = queryString;
 		String qResult = queryResult;
 		ArrayList<Entity> entitiesList;
 		
-		for (int i = 0; i < MAX_DRILL_DOWN_ITERATIONS ; i++) {
+		//iteration starts from 1, first execution was already completed
+		for (int i = 1; i < MAX_DRILL_DOWN_ITERATIONS ; i++) {
 			
 			switch (queryDistribution) {
-				case 23 :
-					Query24Analyzer query24Analyzer = new Query24Analyzer();
-					entitiesList = query24Analyzer.collectEntitiesList(qResult);
+				case 16 :
+					Query17Analyzer query17Analyzer = new Query17Analyzer();
+					entitiesList = query17Analyzer.collectEntitiesList(qResult);
 					if (entitiesList.size() > 0) {
 						int randomEntity = ru.nextInt(entitiesList.size());
 						Entity entity = entitiesList.get(randomEntity);
@@ -197,37 +218,135 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 						double latitude = Double.parseDouble(entity.getObjectFromTriple("geo:lat"));
 						double longtitude = Double.parseDouble(entity.getObjectFromTriple("geo:long"));
 
-						((Query24Template)aggregateQuery).initialize(latitude, longtitude, ru.nextDouble(0.01, 0.08));
+						((Query17Template)aggregateQuery).initialize(latitude, longtitude, ru.nextDouble(0.01, 0.08));
 
 						qString = aggregateQuery.compileMustacheTemplate();
+						
+						long executionTimeMs = System.currentTimeMillis();
+						
 						qResult = queryExecuteManager.executeQuery(connection, aggregateQuery.getTemplateFileName(), qString, aggregateQuery.getTemplateQueryType(), true, false);
 
-						//If uncommented each execution of the query will be logged in result
-						//updateQueryStatistics(true, aggregateQuery.getTemplateQueryType(), aggregateQuery.getTemplateFileName(), qString, queryResult);
+						updateQueryStatistics(true, benchmarkingState.get(), aggregateQuery.getTemplateQueryType(), aggregateQuery.getTemplateFileName(), qString, qResult, queryId, System.currentTimeMillis() - executionTimeMs);
 					} else {
 					return;
 				}
 				
 				break;
 				
-			case 24 :
-				Query25Analyzer query25Analyzer = new Query25Analyzer();
-				entitiesList = query25Analyzer.collectEntitiesList(qResult);
+			case 17 :
+				Query18Analyzer query18Analyzer = new Query18Analyzer();
+				entitiesList = query18Analyzer.collectEntitiesList(qResult);
 				if (entitiesList.size() > 0) {
 					int randomEntity = ru.nextInt(entitiesList.size());
 					Entity entity = entitiesList.get(randomEntity);
 					
-					((Query25Template)aggregateQuery).initialize(entity.getObjectFromTriple("cwork:dateModified"), ru.nextInt(1, 3));
+					((Query18Template)aggregateQuery).initialize(entity.getObjectFromTriple("cwork:dateModified"), ru.nextInt(1, 3));
 
 					qString = aggregateQuery.compileMustacheTemplate();
+					
+					long executionTimeMs = System.currentTimeMillis();
+					
 					qResult = queryExecuteManager.executeQuery(connection, aggregateQuery.getTemplateFileName(), qString, aggregateQuery.getTemplateQueryType(), true, false);
 
-					//If uncommented each execution of the query will be logged in result
-					//updateQueryStatistics(true, aggregateQuery.getTemplateQueryType(), aggregateQuery.getTemplateFileName(), qString, queryResult);
+					updateQueryStatistics(true, benchmarkingState.get(), aggregateQuery.getTemplateQueryType(), aggregateQuery.getTemplateFileName(), qString, qResult, queryId, System.currentTimeMillis() - executionTimeMs);
 				} else {
 					return;
 				}
 				break;	
+			}
+		}
+	}
+	
+	/**
+	 * @param aggregateQuery - the aggregateQuery object
+	 * @param queryDistribution - pre-computed distribution
+	 * @param queryString - the query
+	 * @param queryResult - result of the query, RDFXML
+	 * @param queryId - will reuse the queryId of the first query iteration, easier to recognize query sequence in query log
+	 * @throws IOException
+	 */
+	private void executeFacetedSearch(MustacheTemplate aggregateQuery, int queryDistribution, String queryString, String queryResult, long queryId) throws IOException {
+		String qString = queryString;
+		String qResult = queryResult;
+		String dateString = "";
+		long executionTimeMs = 0;
+		ArrayList<String> datesList;
+		
+		//iteration starts from 1, first execution was already completed
+		for (int i = 1; i < MAX_FACETED_SEARCH_ITERATIONS ; i++) {
+			
+			switch (queryDistribution) {
+			
+				case 20 :
+					
+					//collect results from previous iteration (note that last iteration is 4, but iteration 3 is executed at the end and result is kept in qResult)
+					if (i == 4) {
+						Query21Analyzer query21Analyzer = new Query21Analyzer();
+						//date string format : 2010-10-02
+						datesList = query21Analyzer.collectDatesList(qResult);
+						
+						if (datesList.size() == 0) {
+							//no results from previous query
+							break;
+						}
+						
+						//get random date
+						int randomDate = ru.nextInt(datesList.size());
+						dateString = datesList.get(randomDate);
+					}
+					
+					((Query21Template)aggregateQuery).initialize(i, dateString);
+					qString = aggregateQuery.compileMustacheTemplate();
+					
+					executionTimeMs = System.currentTimeMillis();
+									
+					qResult = queryExecuteManager.executeQuery(connection, aggregateQuery.getTemplateFileName(), qString, aggregateQuery.getTemplateQueryType(), true, false);
+					
+					updateQueryStatistics(true, benchmarkingState.get(), aggregateQuery.getTemplateQueryType(), aggregateQuery.getTemplateFileName(), qString, qResult, queryId, System.currentTimeMillis() - executionTimeMs);
+					
+					break;
+					
+				case 21 :
+					
+					//collect results from previous iteration (note that last iteration is 4, but iteration 3 is executed at the end and result is kept in qResult)
+					if (i == 4) {
+						Query22Analyzer query22Analyzer = new Query22Analyzer();
+						//date string format : 2010-10
+						datesList = query22Analyzer.collectDatesList(qResult);
+						
+						if (datesList.size() == 0) {
+							//no results from previous query
+							break;
+						}
+						
+						//get random date
+						int randomDate = ru.nextInt(datesList.size());
+						dateString = datesList.get(randomDate);
+					}
+					
+					((Query22Template)aggregateQuery).initialize(i, dateString);
+					qString = aggregateQuery.compileMustacheTemplate();
+					
+					executionTimeMs = System.currentTimeMillis();
+									
+					qResult = queryExecuteManager.executeQuery(connection, aggregateQuery.getTemplateFileName(), qString, aggregateQuery.getTemplateQueryType(), true, false);
+					
+					updateQueryStatistics(true, benchmarkingState.get(), aggregateQuery.getTemplateQueryType(), aggregateQuery.getTemplateFileName(), qString, qResult, queryId, System.currentTimeMillis() - executionTimeMs);
+					
+					break;
+					
+				case 22 :
+					
+					((Query23Template)aggregateQuery).initialize(i, "");
+					qString = aggregateQuery.compileMustacheTemplate();
+					
+					executionTimeMs = System.currentTimeMillis();
+									
+					qResult = queryExecuteManager.executeQuery(connection, aggregateQuery.getTemplateFileName(), qString, aggregateQuery.getTemplateQueryType(), true, false);
+					
+					updateQueryStatistics(true, benchmarkingState.get(), aggregateQuery.getTemplateQueryType(), aggregateQuery.getTemplateFileName(), qString, qResult, queryId, System.currentTimeMillis() - executionTimeMs);
+					
+					break;					
 			}
 		}
 	}

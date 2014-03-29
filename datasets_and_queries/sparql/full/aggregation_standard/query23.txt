@@ -29,19 +29,35 @@ PREFIX curric:<http://www.bbc.co.uk/ontologies/curriculum/>
 PREFIX skos:<http://www.w3.org/2004/02/skos/core#> 
 PREFIX cwork:<http://www.bbc.co.uk/ontologies/creativework/> 
 PREFIX fb:<http://rdf.freebase.com/ns/>
+PREFIX geo:<http://www.w3.org/2003/01/geo/wgs84_pos#>
 PREFIX ldbc:<http://www.ldbc.eu/ontologies/sempub#>
 
 #  Query name : query23
 #  Query Description : 
-#  Retrieve an ordered list of web documents and their subdocuments.
-#  owl:AsymmetricProperty
+#  A faceted search query, several iterations of that query follow, adding up more constraints to previous iterations:
+#    - FTS search on a random word in Creative Works' titles and adding a category type constraint
+#    - Group by year and month of creation
+#    - Group by tag (tagged entity being mentioned or tagged about)
+#    - Group by primary format
+#    - Finally returning days and count of tags grouped by tag
+#  All query iterations from current drill-down will have same query IDs!
 
-SELECT ?webDoc ?webDoc2 ?webDoc3
-WHERE 
-{
-  ?webDoc ldbc:partOf ?webDoc2 . 
-  ?webDoc2 ldbc:partOf ?webdDoc3 . 
-  ?webDoc3 ldbc:partOf ?webDoc . 
-  FILTER ( ( ?webDoc != ?webDoc2) && (?webDoc3 !=?webDoc2))
+SELECT {{{projection}}} {
+	?creativework a cwork:CreativeWork .
+	?creativework cwork:title ?title .
+	?creativework cwork:description ?description .
+	?creativework cwork:category ?category .
+	?creativework cwork:tag ?tag .
+	?creativework cwork:audience ?audience .
+	?creativework cwork:liveCoverage ?liveCoverage .
+	?creativework cwork:primaryFormat ?primaryFormat .
+	?creativework cwork:dateCreated ?dateCreated .
+	BIND (day(?dateCreated) as ?day) .
+	BIND (year(?dateCreated) as ?year) .
+	BIND (month(?dateCreated) as ?month) .
+	{{{filter1}}}
+	{{{filter2}}}
 }
-ORDER BY ?webDoc
+{{{groupBy}}}
+{{{orderBy}}}
+LIMIT 500

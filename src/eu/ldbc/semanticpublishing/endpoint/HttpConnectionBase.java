@@ -29,8 +29,7 @@ public abstract class HttpConnectionBase {
 		
 		int code = httpUrlConnection.getResponseCode();
 		if ((code < 200 || code >= 300) && verbose) {
-			System.out.println("HttpConnectionBase : received error code : " + code + " from server.");
-			System.out.println("\tError message : " + httpUrlConnection.getResponseMessage());
+			System.out.println("HttpConnectionBase : received error code : " + code + " from server. Error message : " + httpUrlConnection.getResponseMessage());
 		}
 		
 		return httpUrlConnection.getInputStream();

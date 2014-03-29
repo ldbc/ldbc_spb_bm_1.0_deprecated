@@ -42,21 +42,21 @@ PREFIX fb:<http://rdf.freebase.com/ns/>
 SELECT ?other ?dt ((?cnt_2 * 2 + ?cnt_1 + ?cnt_0_5 * 5e-1) AS ?score) 
 WHERE {
   {
-    SELECT (COUNT(*) AS ?cnt_2) 
+    SELECT ((COUNT(*)) AS ?cnt_2) 
     WHERE { 
       ?other cwork:about ?oa . 
       {{{cwUri}}} cwork:about ?oa .
     }      
   } .
   {
-     SELECT (COUNT(*) AS ?cnt_1) 
+     SELECT ((COUNT(*)) AS ?cnt_1) 
      WHERE {
        ?other cwork:mentions ?oa . 
        {{{cwUri}}} cwork:about ?oa .
      }      
   } .
   {
-     SELECT (COUNT(*) AS ?cnt_0_5)
+     SELECT ((COUNT(*)) AS ?cnt_0_5)
      WHERE { 
        ?other cwork:mentions ?om . 
        {{{cwUri}}} cwork:mentions ?om .

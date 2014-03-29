@@ -35,8 +35,6 @@ PREFIX fb:<http://rdf.freebase.com/ns/>
 #  Retrieve creative works that have been modified in a time range of one hour
 #  reasoning : owl:DataProperty, rdfs:isDefinedBy
 
-#  DO WE KEEP THIS QUERY IN THE QUERY MIX ?
-
 SELECT ?minute ((COUNT(*)) as ?count)
 WHERE {
   ?r cwork:dateModified ?dateTime .

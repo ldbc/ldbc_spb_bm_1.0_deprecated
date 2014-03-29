@@ -39,12 +39,12 @@ SELECT ?mentions ((COUNT(*)) as ?count)
 WHERE {
   ?creativeWork cwork:mentions ?mentions .
   {
-    SELECT ?cw (count(*) as ?pcCount) {
-      ?cw bbc:primaryContentOf ?pc .
+    SELECT ?creativeWork (count(*) as ?pcCount) {
+      ?creativeWork bbc:primaryContentOf ?pc .
     }
-    GROUP BY (?cw)
+    GROUP BY (?creativeWork)
   }
-  FILTER(?pcCount > 2) 
+  FILTER(?pcCount > {{{pcCountLimit}}}) 
 } 
 GROUP BY ?mentions
 ORDER BY DESC(?count)

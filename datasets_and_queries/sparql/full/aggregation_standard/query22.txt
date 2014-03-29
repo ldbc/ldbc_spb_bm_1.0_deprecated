@@ -29,22 +29,36 @@ PREFIX curric:<http://www.bbc.co.uk/ontologies/curriculum/>
 PREFIX skos:<http://www.w3.org/2004/02/skos/core#> 
 PREFIX cwork:<http://www.bbc.co.uk/ontologies/creativework/> 
 PREFIX fb:<http://rdf.freebase.com/ns/>
+PREFIX geo:<http://www.w3.org/2003/01/geo/wgs84_pos#>
+PREFIX ldbc:<http://www.ldbc.eu/ontologies/sempub#>
 
 #  Query name : query22
 #  Query Description : 
-#  Retrieve a list of N creative works, the document they are primary content of, and its platform
-#  reasoning : rdf:type, owl:inverseOf
+#  A faceted search query, several iterations of that query follow, adding up more constraints to previous iterations:
+#    - FTS search on a random word in Creative Works' titles and adding a category type constraint
+#    - Group by year and month of creation
+#    - Group by tag (tagged entity being mentioned or tagged about)
+#    - Group by primary format
+#    - Finally selecting title and date of creation by adding a constraint on: month of the year
+#  All query iterations from current drill-down will have same query IDs!
 
-SELECT ?cWork ?webDoc ?platform
-WHERE 
-{
-  ?cWork rdf:type ?type . 
-  ?cWork bbc:primaryContentOf ?webDoc . 
-  ?webDoc bbc:primaryContent ?cWork . 
-  OPTIONAL {
-  	?webDoc bbc:platform ?platform . 
-	  FILTER (?platform = bbc:Mobile) 
-  }
+SELECT {{{projection}}} {
+	?creativework a cwork:CreativeWork .
+	?creativework cwork:title ?title .
+	?creativework cwork:description ?description .
+	?creativework cwork:category ?category .
+	?creativework cwork:tag ?tag .
+	?creativework cwork:audience ?audience .
+	?creativework cwork:liveCoverage ?liveCoverage .
+	?creativework cwork:primaryFormat ?primaryFormat .
+	?creativework cwork:dateCreated ?dateCreated .
+	BIND (day(?dateCreated) as ?day) .
+	BIND (year(?dateCreated) as ?year) .
+	BIND (month(?dateCreated) as ?month) .
+	{{{filter1}}}
+	{{{filter2}}}
+	{{{filter3}}}
 }
-ORDER BY ?type
-LIMIT 100
+{{{groupBy}}}
+{{{orderBy}}}
+LIMIT 500

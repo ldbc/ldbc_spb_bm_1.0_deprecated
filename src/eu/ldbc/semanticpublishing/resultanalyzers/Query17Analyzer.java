@@ -5,15 +5,14 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import eu.ldbc.semanticpublishing.refdataset.model.Entity;
-import eu.ldbc.semanticpublishing.resultanalyzers.saxparsers.SAXQuery24TemplateTransformer;
+import eu.ldbc.semanticpublishing.resultanalyzers.saxparsers.SAXQuery17TemplateTransformer;
 
 /**
- * A class used to extract cwork uris, geonamesids, lat and long properties from a query24.txt result.
- * Results is passed as a string, and parsed by SAXQuery24TemplateTransformer class
+ * A class used to extract cwork uris, geonamesids, lat and long properties from a query17.txt result.
  */
-public class Query24Analyzer {
+public class Query17Analyzer {
 	public ArrayList<Entity> collectEntitiesList(String result) throws UnsupportedEncodingException {
-		SAXQuery24TemplateTransformer transformer = new SAXQuery24TemplateTransformer();
+		SAXQuery17TemplateTransformer transformer = new SAXQuery17TemplateTransformer();
 		transformer.transform(new ByteArrayInputStream(result.getBytes("UTF-8")));
 		return transformer.getEntitiesList();
 	}
