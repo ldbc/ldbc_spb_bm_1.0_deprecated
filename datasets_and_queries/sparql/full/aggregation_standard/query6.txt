@@ -32,7 +32,7 @@ PREFIX fb:<http://rdf.freebase.com/ns/>
 
 #  Query name : query6
 #  Query Description : 
-#  Retrieve the N most popular topic types that creative works are about
+#  Retrieve the N most popular topic types that creative works are about. Adds a filter on coverage and audience properties.
 #  reasoning : owl:ObjectProperty, rdf:type
 
 SELECT ?aboutType ((COUNT (*)) as ?count) ?coverage ?audience

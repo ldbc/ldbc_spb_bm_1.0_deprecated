@@ -36,9 +36,6 @@ PREFIX fb:<http://rdf.freebase.com/ns/>
 #  Query Description : 
 #  Retrieve a list of N creative works, their tags, categories and titles that contain 
 #  the term "policy", ordered by their tag
-#  Retrieve a list of N creative works that are about or mention 'things', extract several properties like : title, category.
-#  Inferencing is tested by comparing the types of things being mentioned. Further limitation is added on title contents where selected creative works
-#  will contain a not so common word, e.g. "policy".
 
 # reasoning rdfs:subClassOf
 # reasoning rdfs:subPropertyOf

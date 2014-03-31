@@ -37,8 +37,9 @@ PREFIX ldbc:<http://www.ldbc.eu/ontologies/sempub#>
 #  Query name : query24
 #  Query Description : 
 #  Retrieve a time-line of relatedness between two entities in dataset. Query explores correlations of entities tagged
-#  Additional constraint of time interval of 6 months limits the result.
 #  together in creative works i.e. a history of interactions.
+#  Additional constraint of time interval of 6 months limits the result.
+
 
 SELECT DISTINCT ?year ?month ?day ((COUNT(*)) AS ?cwsPerDay) {
   ?cw a cwork:CreativeWork .

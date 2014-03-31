@@ -36,7 +36,6 @@ PREFIX ldbc:<http://www.ldbc.eu/ontologies/sempub#>
 
 #  Query name : query17
 #  Query Description :
-#  Retrieve creative works within a certain range defined by geo-coordinates 
 #  Retrieves a list of all creative works that are mentioning entities within a geo-range.
 #  Picks from that list another creative work, and extracts its geo coordinates and defines a new range, and repeats that action
 #  A drill-down query using geo coordinates of tagged geonames ids. 

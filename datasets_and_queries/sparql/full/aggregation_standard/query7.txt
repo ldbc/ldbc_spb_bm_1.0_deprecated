@@ -32,7 +32,7 @@ PREFIX fb:<http://rdf.freebase.com/ns/>
 
 #  Query name : query7
 #  Query Description : 
-#  Retrieve the N most popular topics that creative works mention
+#  Retrieve the N most popular topics that creative works mention. Further limiting the results above some primary content limit.
 #  reasoning : owl:ObjectProperty
 
 SELECT ?mentions ((COUNT(*)) as ?count) 
