@@ -88,17 +88,34 @@ public class DataGenerator {
 
 		ExecutorService executorService = null;
 		executorService = Executors.newFixedThreadPool(generatorThreads);
+		
+		//preinitialize
 		if (definitions.getInt(Definitions.MAJOR_EVENTS_PER_YEAR) > 0) {
-
 			expDecayingMajorEntitiesList = new ArrayList<Entity>();
 			
+			for (int i = 0; i < definitions.getInt(Definitions.MAJOR_EVENTS_PER_YEAR); i++) {
+				Entity e = DataManager.popularEntitiesList.get(ru.nextInt(DataManager.popularEntitiesList.size()));
+				expDecayingMajorEntitiesList.add(e);				
+			}			
+		}
+		
+		if (definitions.getInt(Definitions.MINOR_EVENT_PER_YEAR) > 0) {
+			expDecayingMinorEntitiesList = new ArrayList<Entity>();
+			
+			for (int i = 0; i < definitions.getInt(Definitions.MINOR_EVENT_PER_YEAR); i++) {
+				Entity e = DataManager.regularEntitiesList.get(ru.nextInt(DataManager.regularEntitiesList.size()));
+				expDecayingMinorEntitiesList.add(e);
+			}			
+		}
+		
+		if (definitions.getInt(Definitions.MAJOR_EVENTS_PER_YEAR) > 0) {			
 			for (int i = 0; i < definitions.getInt(Definitions.MAJOR_EVENTS_PER_YEAR); i++) {
 				edgu =  new ExponentialDecayNumberGeneratorUtil(/*ru.nextInt(1000, */exponentialDecayUpperLimitOfCws, 
 							  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_RATE), 
 							  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_THRESHOLD_PERCENT));
 				Date startDate = ru.randomDateTime();
-				Entity e = DataManager.popularEntitiesList.get(ru.nextInt(DataManager.popularEntitiesList.size()));
-				expDecayingMajorEntitiesList.add(e);
+
+				Entity e = expDecayingMajorEntitiesList.get(i);
 				for (int j = 0; j < generatorThreads; j++) {
 					ExpDecayWorker edw = new ExpDecayWorker(edgu, startDate, e, ru, syncLock, filesCount, triplesPerFile, targetedTriplesSize, triplesGeneratedSoFar, destinationPath, serializationFormat);
 					executorService.execute(edw);				
@@ -112,17 +129,13 @@ public class DataGenerator {
 		}
 		
 		//Generate MINOR EVENTS with exponential decay
-		if (definitions.getInt(Definitions.MINOR_EVENT_PER_YEAR) > 0) {
-			
-			expDecayingMinorEntitiesList = new ArrayList<Entity>();
-			
+		if (definitions.getInt(Definitions.MINOR_EVENT_PER_YEAR) > 0) {			
 			for (int i = 0; i < definitions.getInt(Definitions.MINOR_EVENT_PER_YEAR); i++) {
 				edgu =  new ExponentialDecayNumberGeneratorUtil(/*ru.nextInt(1000,*/ exponentialDecayUpperLimitOfCws / 10, 
 							  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_RATE), 
 							  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_THRESHOLD_PERCENT));
 				Date startDate = ru.randomDateTime();
-				Entity e = DataManager.regularEntitiesList.get(ru.nextInt(DataManager.regularEntitiesList.size()));
-				expDecayingMinorEntitiesList.add(e);
+				Entity e = expDecayingMinorEntitiesList.get(i);
 				for (int j = 0; j < generatorThreads; j++) {			
 					ExpDecayWorker edw = new ExpDecayWorker(edgu, startDate, e, ru, syncLock, filesCount, triplesPerFile, targetedTriplesSize, triplesGeneratedSoFar, destinationPath, serializationFormat);
 					executorService.execute(edw);
@@ -169,66 +182,4 @@ public class DataGenerator {
 		
 		return arrayList;
 	}
-	
-	/**
-	 * The method will serialize entity URIs into a system file which will help with identifying the important entities.
-	 * Location of the file will be in creativeWorksPath and will be part of the generated data
-	 * FileName will be stored in the property file :   
-	 * @param correlatedEntitiesList
-	 * @param exponentialDecayingMajorEntitiesList
-	 * @param exponentialDecayingMinorEntitiesList
-	 */
-/*	
-	private void persistImportantEntities(List<Entity> correlatedEntitiesList, List<Entity> exponentialDecayingMajorEntitiesList, List<Entity> exponentialDecayingMinorEntitiesList) throws IOException {
-		Writer writer = null;
-		String creativeWorksDetailsFileName = configuration.getString(Configuration.CREATIVE_WORKS_DETAILS);
-		
-		//do not serialize if no file name is specified
-		if (!creativeWorksDetailsFileName.isEmpty()) {
-			
-			try {
-				writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(String.format("%s%s%s", destinationPath, File.separator, creativeWorksDetailsFileName))));
-				
-				//serialize next ID of creative Work
-				writer.write(String.format("%s\n", CREATIVE_WORK_NEXT_ID_TEXT));
-				writer.write(String.format("%d\n", DataManager.creativeWorksNexId.get()));
-				writer.write("\n");
-				
-				if (exponentialDecayingMajorEntitiesList != null) {
-					writer.write(String.format("%s\n", EXP_DECAY_ENTITIES_MAJOR_TEXT));
-					
-					for (int i = 0; i < exponentialDecayingMajorEntitiesList.size(); i++) {
-						writer.write(String.format("%s\n", exponentialDecayingMajorEntitiesList.get(i).getURI()));
-					}					
-					writer.write("\n");
-				}
-				
-				if (exponentialDecayingMinorEntitiesList != null) {
-					writer.write(String.format("%s\n", EXP_DECAY_ENTITIES_MINOR_TEXT));
-					
-					for (int i = 0; i < exponentialDecayingMinorEntitiesList.size(); i++) {
-						writer.write(String.format("%s\n", exponentialDecayingMinorEntitiesList.get(i).getURI()));
-					}										
-					writer.write("\n");					
-				}
-				
-				if (correlatedEntitiesList != null) {
-					writer.write(String.format("%s\n", CORRELATED_ENTITIES_TEXT));
-					
-					//write entities that participate in correlation first (entityA and entityB)
-					for (int i = 0; i < correlatedEntitiesList.size(); i++) {
-						writer.write(String.format("%s\n", correlatedEntitiesList.get(i).getURI()));
-					}											
-					writer.write("\n");							
-				}
-				
-			} finally {
-				try {
-					writer.close(); 
-				} catch (Exception e) {
-				}
-			}
-		}
-	}
-*/	
 }
