@@ -57,6 +57,9 @@ public class DataGenerator {
 		if (creativeWorksInDatabase > 0) {
 			System.out.println("\t" + creativeWorksInDatabase + " Creative Works currently exist.");
 		}
+
+		ExecutorService executorService = null;
+		executorService = Executors.newFixedThreadPool(generatorThreads);
 		
 		long currentTime = System.currentTimeMillis();
 
@@ -77,7 +80,7 @@ public class DataGenerator {
 															   triplesGeneratedSoFar, destinationPath, serializationFormat);
 				//running it single threaded to guarantee integrity of generated data in sequential runs. TODO : make it run in parallel 
 				cw.start();
-				cw.join();
+				cw.join();			
 			}
 		}
 		
@@ -85,9 +88,6 @@ public class DataGenerator {
 		ExponentialDecayNumberGeneratorUtil edgu;
 
 		int exponentialDecayUpperLimitOfCws = definitions.getInt(Definitions.EXPONENTIAL_DECAY_UPPER_LIMIT_OF_CWS);
-
-		ExecutorService executorService = null;
-		executorService = Executors.newFixedThreadPool(generatorThreads);
 		
 		//preinitialize
 		if (definitions.getInt(Definitions.MAJOR_EVENTS_PER_YEAR) > 0) {
@@ -148,7 +148,7 @@ public class DataGenerator {
 			System.out.println("* Skipping execution of GeneralWorkers in data generation, see test.properties parameter: useGeneralDataGenerators");
 		}
 		if ((triplesGeneratedSoFar.get() < targetedTriplesSize) && configuration.getBoolean(Configuration.USE_GENERAL_DATA_GENERATORS)) {
-			for (int i = 0; i < configuration.getInt(Configuration.DATA_GENERATOR_WORKERS); i++) {				
+			for (int i = 0; i < generatorThreads; i++) {				
 				GeneralWorker gw = new GeneralWorker(ru, syncLock, filesCount, targetedTriplesSize, triplesPerFile, triplesGeneratedSoFar, destinationPath, serializationFormat);
 				executorService.execute(gw);
 			}
