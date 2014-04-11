@@ -56,7 +56,7 @@ Benchmark Phases :
                                               Note : in order to execute generateCreativeWorks phase, ontologies and reference data from previous two phases must be present in database
     - generateQuerySubstitutionParameters : Controls generation of query substitution parameters which later can be used during the warmup and benchmark phases. For each query a
                                             substitution parameters file is created and saved into 'creativeWorksPath' location. 
-                                              Note : If no files are found at that location, queries executed during warmup and benchmark phases are randomly generated.
+                                              Note : If no files are found at that location, queries executed during warmup and benchmark phases will use randomly generated parameters.
     - loadCreativeWorks	  		            : load generated creative works into database (Tested for N-Quads)
     - warmUp                		          : a series of Aggregation queries are executed for a fixed amount of time.
     - benchmark             		          : all aggregation and editorial agents are started and kept running for a period of 'benchmarkRunPeriodSeconds'.
