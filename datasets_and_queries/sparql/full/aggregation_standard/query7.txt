@@ -44,7 +44,7 @@ WHERE {
     }
     GROUP BY (?creativeWork)
   }
-  FILTER(?pcCount > {{{pcCountLimit}}}) 
+  {{{filterCondition}}}
 } 
 GROUP BY ?mentions
 ORDER BY DESC(?count)

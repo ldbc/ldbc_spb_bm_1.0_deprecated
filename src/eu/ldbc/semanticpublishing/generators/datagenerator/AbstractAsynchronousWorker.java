@@ -1,4 +1,4 @@
-package eu.ldbc.semanticpublishing.datagenerator;
+package eu.ldbc.semanticpublishing.generators.datagenerator;
 
 /**
  * Abstract class for extending Workers for the DataGenerator.

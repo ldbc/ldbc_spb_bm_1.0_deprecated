@@ -1,9 +1,12 @@
 package eu.ldbc.semanticpublishing.templates.aggregation;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
 
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection.QueryType;
+import eu.ldbc.semanticpublishing.generators.querygenerator.QueryParametersGenerator;
 import eu.ldbc.semanticpublishing.templates.MustacheTemplate;
 import eu.ldbc.semanticpublishing.util.RandomUtil;
 
@@ -12,7 +15,7 @@ import eu.ldbc.semanticpublishing.util.RandomUtil;
  * corresponding to file Configuration.QUERIES_PATH/aggregation/query18.txt
  * A time range drill-down query template
  */
-public class Query18Template extends MustacheTemplate {
+public class Query18Template extends MustacheTemplate implements QueryParametersGenerator {
 	//must match with corresponding file name of the mustache template file
 	private static final String templateFileName = "query18.txt";
 	
@@ -27,14 +30,14 @@ public class Query18Template extends MustacheTemplate {
 	private int iteration;
 	private int seedYear;
 
-	public Query18Template(RandomUtil ru, HashMap<String, String> queryTemplates, int seedYear) {
-		super(queryTemplates);
+	public Query18Template(RandomUtil ru, HashMap<String, String> queryTemplates, int seedYear, String[] substitutionParameters) {
+		super(queryTemplates, substitutionParameters);
 		this.ru = ru;
 		this.seedYear = seedYear;
 		preInitialize();
 	}
 	
-	private void preInitialize() {
+	protected void preInitialize() {
 		Calendar calendar = Calendar.getInstance();
 		//Initializing year with a value that is certain to be used. see RandomUtil.YEARS_OFFSET
 		year = this.seedYear;
@@ -46,9 +49,10 @@ public class Query18Template extends MustacheTemplate {
 		minute = ru.nextInt(0, 59);
 		deviation = 0;
 		iteration = 0;
+		parameterIndex = 0;
 	}	
 	
-	public void initialize(String dateTimeString, int deviation) {
+	public void initialize(String dateTimeString, int deviation, String[] substitutionParameters) {
 		//example of dateTime literal : 2012-08-22T18:22:38.240+03:00
 		if (dateTimeString.indexOf("T") > 0) {
 			String dateString = dateTimeString.substring(0, dateTimeString.indexOf("T"));
@@ -75,6 +79,7 @@ public class Query18Template extends MustacheTemplate {
 		}
 		
 		this.deviation = deviation;
+		this.substitutionParameters = substitutionParameters;
 		
 		iteration++;
 	}
@@ -83,6 +88,10 @@ public class Query18Template extends MustacheTemplate {
 	 * A method for replacing mustache template : {{{cwType}}}
 	 */	
 	public String cwType() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}
+		
 		String cwType = "cwork:NewsItem";
 		int cwTypeAllocation = ru.nextInt(3);
 		switch (cwTypeAllocation) {
@@ -104,6 +113,10 @@ public class Query18Template extends MustacheTemplate {
 	 * with a FILTER constraint evaluating time range conditions
 	 */		
 	public String cwFilterDateModifiedCondition() {	
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}		
+		
 		if (iteration % 4 == 0) {
 			//first iteration starts with a filter constraint for the whole month
 			if (iteration > 0) {
@@ -231,6 +244,20 @@ public class Query18Template extends MustacheTemplate {
 
 		return sb.toString();
 	}	
+	
+	@Override
+	public void generateSubstitutionParameters(BufferedWriter bw, int amount) throws IOException {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < amount; i++) {
+			preInitialize();
+			sb.setLength(0);
+			sb.append(cwType());
+			sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+			sb.append(cwFilterDateModifiedCondition());
+			sb.append("\n");
+			bw.write(sb.toString());
+		}
+	}
 	
 	@Override
 	public String getTemplateFileName() {

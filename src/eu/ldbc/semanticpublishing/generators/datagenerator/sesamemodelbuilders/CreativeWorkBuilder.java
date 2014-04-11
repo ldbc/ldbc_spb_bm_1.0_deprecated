@@ -1,4 +1,4 @@
-package eu.ldbc.semanticpublishing.datagenerator.sesamemodelbuilders;
+package eu.ldbc.semanticpublishing.generators.datagenerator.sesamemodelbuilders;
 
 import java.util.Calendar;
 import java.util.Date;

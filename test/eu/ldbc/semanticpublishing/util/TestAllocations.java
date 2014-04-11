@@ -2,6 +2,8 @@ package eu.ldbc.semanticpublishing.util;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.Random;
+
 import org.junit.Test;
 
 public class TestAllocations {
@@ -37,7 +39,7 @@ public class TestAllocations {
 	}
 
 	private void checkAllocations(double[] allocations ) {
-		AllocationsUtil d = new AllocationsUtil(allocations);
+		AllocationsUtil d = new AllocationsUtil(allocations, new Random(0));
 		int counts[] = new int[allocations.length];
 		
 		final int LOOP = 100000;

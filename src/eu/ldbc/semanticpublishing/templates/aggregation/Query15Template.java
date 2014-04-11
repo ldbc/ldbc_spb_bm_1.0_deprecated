@@ -1,22 +1,37 @@
 package eu.ldbc.semanticpublishing.templates.aggregation;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.util.HashMap;
 
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection.QueryType;
+import eu.ldbc.semanticpublishing.generators.querygenerator.QueryParametersGenerator;
 import eu.ldbc.semanticpublishing.properties.Definitions;
+import eu.ldbc.semanticpublishing.util.RandomUtil;
 
 /**
  * A class extending the MustacheTemplate, used to generate a query string
  * corresponding to file Configuration.QUERIES_PATH/aggregation/query15.txt
  */
-public class Query15Template  extends DefaultSelectTemplate {
+public class Query15Template  extends DefaultSelectTemplate implements QueryParametersGenerator {
 	//must match with corresponding file name of the mustache template file
 	private static final String templateFileName = "query15.txt";
 
-	private final int creativeWorkType;
+//	private final RandomUtil ru;
 	
-	public Query15Template(HashMap<String, String> queryTemplates) {
+	private int creativeWorkType;
+	
+	private int parameterIndex;
+	private final String[] substitutionParameters;	
+	
+	public Query15Template(RandomUtil ru, HashMap<String, String> queryTemplates, int seedYear, String[] substitutionParameters) {
 		super(queryTemplates);
+		this.substitutionParameters = substitutionParameters;
+		this.parameterIndex = 0;
+		preInitialize();
+	}
+	
+	private void preInitialize() {
 		this.creativeWorkType = Definitions.creativeWorkTypesAllocation.getAllocation();
 	}
 	
@@ -24,6 +39,10 @@ public class Query15Template  extends DefaultSelectTemplate {
 	 * A method for replacing mustache template : {{{cwAudienceType}}}
 	 */
 	public String cwAudienceType() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}		
+		
 		switch (creativeWorkType) {
 		//cwork:BlogPost
 		case 0 :
@@ -36,6 +55,18 @@ public class Query15Template  extends DefaultSelectTemplate {
 			return "cwork:InternationalAudience";
 		}
 		return "cwork:InternationalAudience";		
+	}
+	
+	@Override
+	public void generateSubstitutionParameters(BufferedWriter bw, int amount) throws IOException {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < amount; i++) {
+			preInitialize();
+			sb.setLength(0);
+			sb.append(cwAudienceType());
+			sb.append("\n");
+			bw.write(sb.toString());
+		}				
 	}
 	
 	@Override

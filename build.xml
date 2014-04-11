@@ -180,7 +180,9 @@
 		</jar>
 		<antcall target="copy-config-files-to-dist"/>
 		<antcall target="unzip-all-compressed-datasets"/>
-		<antcall target="zip-reference-knowledge-and-queries"/>
+		<antcall target="zip-reference-knowledge-and-queries">
+			<param name="query_mix" value="base"/>
+		</antcall>
 		<delete dir="./data"/>
 		<delete file="./definitions.properties" />
 	</target>
@@ -199,7 +201,9 @@
 		</jar>
 		<antcall target="copy-config-files-to-dist"/>
 		<antcall target="unzip-all-compressed-datasets"/>
-		<antcall target="zip-reference-knowledge-and-queries"/>	
+		<antcall target="zip-reference-knowledge-and-queries">
+			<param name="query_mix" value="base"/>
+		</antcall>	
 		<delete dir="./data"/>
 		<delete file="./definitions.properties" />
 	</target>	
@@ -218,7 +222,9 @@
 		</jar>
 		<antcall target="copy-config-files-to-dist"/>
 		<antcall target="unzip-all-compressed-datasets"/>
-		<antcall target="zip-reference-knowledge-and-queries"/>		
+		<antcall target="zip-reference-knowledge-and-queries">
+			<param name="query_mix" value="full"/>
+		</antcall>		
 		<delete dir="./data"/>
 		<delete file="./definitions.properties" />
 	</target>
@@ -237,14 +243,16 @@
 		</jar>
 		<antcall target="copy-config-files-to-dist"/>
 		<antcall target="unzip-all-compressed-datasets"/>
-		<antcall target="zip-reference-knowledge-and-queries"/>		
+		<antcall target="zip-reference-knowledge-and-queries">
+			<param name="query_mix" value="full"/>
+		</antcall>		
 		<delete dir="./data"/>
 		<delete file="./definitions.properties" />
 	</target>	
 
 	<!-- Zip reference knowledge (ontologies and reference datasets) -->
 	<target name="zip-reference-knowledge-and-queries">
-		<zip destfile="${dir.dist}/${ref.knowledge.and.queries.archive.name}.zip">
+		<zip destfile="${dir.dist}/${ref.knowledge.and.queries.archive.name}-${query_mix}.zip">
 			<zipfileset dir="." includes="data/**" excludes="data/datasets/*.zip"/>
 		</zip>
 	</target>

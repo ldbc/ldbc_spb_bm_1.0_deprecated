@@ -111,7 +111,7 @@ public class DataManager {
 		}
 	}
 	
-	public static void initDatasetInfo(String filePath) {
+	public static void initDatasetInfo(String filePath, boolean suppressWarnings) {
 		BufferedReader br = null;
 		boolean canRead = false;
 		actionsEnum action = actionsEnum.NONE;
@@ -169,13 +169,15 @@ public class DataManager {
 			}
 		} catch (IOException e) {
 			//sink the exception if file doesn't exist
-			System.out.println("Details about generated dataset not found at location : " + filePath + ", continuing with default settings");
+			if (!suppressWarnings) {
+				System.out.println("\nDetails about generated dataset were not found at location : " + filePath + " - generate data to fix that, continuing with default settings now.");
+			}
 		} finally {
 			try { br.close(); } catch(Exception e) {}
 		}
 	}
 	
-	public static String buildPersistDataInfoPath(Configuration configuration) {
+	public static String buildDataInfoFilePath(Configuration configuration) {
 		if (!configuration.getString(Configuration.CREATIVE_WORKS_INFO).isEmpty()) {
 			return String.format("%s%s%s", StringUtil.normalizePath(configuration.getString(Configuration.CREATIVE_WORKS_PATH)), File.separator, configuration.getString(Configuration.CREATIVE_WORKS_INFO));  
 		}		

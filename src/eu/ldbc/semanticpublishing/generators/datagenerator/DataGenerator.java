@@ -1,4 +1,4 @@
-package eu.ldbc.semanticpublishing.datagenerator;
+package eu.ldbc.semanticpublishing.generators.datagenerator;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,6 +14,7 @@ import eu.ldbc.semanticpublishing.properties.Definitions;
 import eu.ldbc.semanticpublishing.refdataset.DataManager;
 import eu.ldbc.semanticpublishing.refdataset.model.Entity;
 import eu.ldbc.semanticpublishing.util.ExponentialDecayNumberGeneratorUtil;
+import eu.ldbc.semanticpublishing.util.FileUtils;
 import eu.ldbc.semanticpublishing.util.RandomUtil;
 
 /**
@@ -58,6 +59,9 @@ public class DataGenerator {
 			System.out.println("\t" + creativeWorksInDatabase + " Creative Works currently exist.");
 		}
 
+		//create destination directory
+		FileUtils.makeDirectories(this.destinationPath);
+		
 		ExecutorService executorService = null;
 		executorService = Executors.newFixedThreadPool(generatorThreads);
 		
@@ -123,11 +127,6 @@ public class DataGenerator {
 			}
 		}
 		
-		if (triplesGeneratedSoFar.get() >= targetedTriplesSize) {
-			System.out.println("Generated triples abount (" + triplesGeneratedSoFar.get() + ") has reached targeted triples size (" + targetedTriplesSize + "), stopping generation...");
-			return;
-		}
-		
 		//Generate MINOR EVENTS with exponential decay
 		if (definitions.getInt(Definitions.MINOR_EVENT_PER_YEAR) > 0) {			
 			for (int i = 0; i < definitions.getInt(Definitions.MINOR_EVENT_PER_YEAR); i++) {
@@ -157,7 +156,7 @@ public class DataGenerator {
 		executorService.awaitTermination(AWAIT_PERIOD_HOURS, TimeUnit.HOURS);		
 		
 		//persist information about generated dataset
-		String persistFilePath = DataManager.buildPersistDataInfoPath(configuration);
+		String persistFilePath = DataManager.buildDataInfoFilePath(configuration);
 		if (!persistFilePath.isEmpty()) {			
 			DataManager.persistDatasetInfo(persistFilePath, correlatedEntitiesList, expDecayingMajorEntitiesList, expDecayingMinorEntitiesList);
 		}

@@ -1,12 +1,16 @@
 package eu.ldbc.semanticpublishing;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -18,16 +22,19 @@ import org.slf4j.LoggerFactory;
 import eu.ldbc.semanticpublishing.agents.AbstractAsynchronousAgent;
 import eu.ldbc.semanticpublishing.agents.AggregationAgent;
 import eu.ldbc.semanticpublishing.agents.EditorialAgent;
-import eu.ldbc.semanticpublishing.datagenerator.DataGenerator;
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection.QueryType;
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryExecuteManager;
+import eu.ldbc.semanticpublishing.generators.datagenerator.DataGenerator;
+import eu.ldbc.semanticpublishing.generators.querygenerator.QueryParametersGenerator;
 import eu.ldbc.semanticpublishing.properties.Configuration;
 import eu.ldbc.semanticpublishing.properties.Definitions;
 import eu.ldbc.semanticpublishing.refdataset.DataManager;
+import eu.ldbc.semanticpublishing.refdataset.SubstitutionQueryParametersManager;
 import eu.ldbc.semanticpublishing.refdataset.model.Entity;
 import eu.ldbc.semanticpublishing.resultanalyzers.CreativeWorksAnalyzer;
 import eu.ldbc.semanticpublishing.resultanalyzers.GeonamesAnalyzer;
 import eu.ldbc.semanticpublishing.resultanalyzers.ReferenceDataAnalyzer;
+import eu.ldbc.semanticpublishing.statistics.Statistics;
 import eu.ldbc.semanticpublishing.templates.MustacheTemplatesHolder;
 import eu.ldbc.semanticpublishing.util.FileUtils;
 import eu.ldbc.semanticpublishing.util.LoggingUtil;
@@ -51,6 +58,7 @@ public class TestDriver {
 	private final Definitions definitions = new Definitions();
 	private final MustacheTemplatesHolder mustacheTemplatesHolder = new MustacheTemplatesHolder();
 	private final RandomUtil randomGenerator;
+	private final SubstitutionQueryParametersManager substitutionQueryParamtersManager = new SubstitutionQueryParametersManager();
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(TestDriver.class.getName());
 	private final static Logger RLOGGER = LoggerFactory.getLogger(Reporter.class.getName());
@@ -65,7 +73,10 @@ public class TestDriver {
 		mustacheTemplatesHolder.loadFrom(configuration.getString(Configuration.QUERIES_PATH));
 
 		//will read the dictionary file from jar file as a resource
-		randomGenerator = initializeRandomUtil();
+		randomGenerator = initializeRandomUtil(configuration.getString(Configuration.ONTOLOGIES_PATH), configuration.getLong(Configuration.GENERATOR_RANDOM_SEED), definitions.getInt(Definitions.YEAR_SEED), definitions.getInt(Definitions.DATA_GENERATOR_PERIOD_YEARS));
+		
+		//will use initialized randomGenerator above
+		definitions.initializeAllocations(randomGenerator.getRandom());
 		
 		aggregationAgentsCount = configuration.getInt(Configuration.AGGREGATION_AGENTS_COUNT);
 		editorialAgentsCount = configuration.getInt(Configuration.EDITORIAL_AGENTS_COUNT);
@@ -88,15 +99,15 @@ public class TestDriver {
 		return queryExecuteManager;
 	}
 	
-	private RandomUtil initializeRandomUtil() {
+	private RandomUtil initializeRandomUtil(String ontologiesPath, long seed, int yearSeed, int generatedDataPeriodYears) {
 		//File WordsDictionary.txt is one level up
-		String ontologiesPath = StringUtil.normalizePath(configuration.getString(Configuration.ONTOLOGIES_PATH));
-		String oneLevelUp = ontologiesPath.substring(0, ontologiesPath.lastIndexOf(File.separator) + 1);
+		String ontPath = StringUtil.normalizePath(ontologiesPath);
+		String oneLevelUp = ontPath.substring(0, ontPath.lastIndexOf(File.separator) + 1);
 		String filePath = oneLevelUp + "WordsDictionary.txt";
 		
-		return new RandomUtil(filePath, configuration.getLong(Configuration.GENERATOR_RANDOM_SEED), definitions.getInt(Definitions.YEAR_SEED), definitions.getInt(Definitions.DATA_GENERATOR_PERIOD_YEARS));
+		return new RandomUtil(filePath, seed, yearSeed, generatedDataPeriodYears);
 	}
-	
+
 	private void loadOntologies() throws IOException {
 		if( configuration.getBoolean(Configuration.LOAD_ONTOLOGIES)) {
 			System.out.println("Loading ontologies...");
@@ -166,9 +177,9 @@ public class TestDriver {
 		}
 	}
 	
-	private void populateRefDataEntitiesLists() throws IOException {
+	private void populateRefDataEntitiesLists(boolean showDetails, boolean populateFromDatasetInfoFile, boolean suppressDatasetInfoWarnings) throws IOException {
 		
-		if (configuration.getBoolean(Configuration.VERBOSE)) {
+		if (configuration.getBoolean(Configuration.VERBOSE) && showDetails) {
 			System.out.println("Analyzing reference knowledge in data...");
 		}
 		
@@ -196,7 +207,17 @@ public class TestDriver {
 			DataManager.geonamesIdsList.add(s);
 		}
 		
-		if (configuration.getBoolean(Configuration.VERBOSE)) {
+		//initialize dataset info, required for query parameters
+		if (populateFromDatasetInfoFile) {
+			if ((DataManager.correlatedEntitiesList.size() + DataManager.exponentialDecayEntitiesMinorList.size() + DataManager.exponentialDecayEntitiesMajorList.size()) == 0) {
+				String datasetInfoFile = DataManager.buildDataInfoFilePath(configuration);
+				if (!datasetInfoFile.isEmpty()) {			
+					DataManager.initDatasetInfo(datasetInfoFile, suppressDatasetInfoWarnings);
+				}
+			}
+		}
+		
+		if (configuration.getBoolean(Configuration.VERBOSE) && showDetails) {
 			System.out.println("Ref. Dataset Entities count : " + entitiesList.size() + ", Max CW id : " + count + ", Geonames entities count : " + geonamesIds.size());
 		}
 	}
@@ -241,7 +262,7 @@ public class TestDriver {
 			
 			//assuming that if regularEntitiesList is empty, no entity lists were populated
 			if (DataManager.regularEntitiesList.size() == 0) {
-				populateRefDataEntitiesLists();
+				populateRefDataEntitiesLists(true, false, true);
 			}
 			
 			long triplesPerFile = configuration.getLong(Configuration.GENERATED_TRIPLES_PER_FILE);
@@ -254,6 +275,90 @@ public class TestDriver {
 			DataGenerator dataGenerator = new DataGenerator(randomGenerator, configuration, definitions, generatorThreads, totalTriples, triplesPerFile, destinationPath, serializationFormat);
 			dataGenerator.produceData();
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void generateQuerySubstitutionParameters() throws InterruptedException, IOException {
+		if ( configuration.getBoolean(Configuration.GENERATE_QUERY_SUBSTITUTION_PARAMETERS)) {
+			System.out.print("Generating query parameters");
+			
+			//assuming that if regularEntitiesList is empty, no entity lists were populated
+			if (DataManager.regularEntitiesList.size() == 0 || DataManager.correlatedEntitiesList.size() == 0) {
+				populateRefDataEntitiesLists(false, true, false);
+			}
+			
+			if (DataManager.creativeWorksNexId.get() == 0) {
+				System.out.println("\tNo creative works were found in the database, load creative works first! aborting...");
+				return;
+			}
+
+			String targetFolder = configuration.getString(Configuration.CREATIVE_WORKS_PATH);
+			FileUtils.makeDirectories(targetFolder);
+			
+			BufferedWriter bw = null;
+			Class<QueryParametersGenerator> c = null;
+			Constructor<?> cc = null;
+			QueryParametersGenerator queryTemplate = null;
+			try {
+/*
+				//Editorial query parameters
+				//Insert
+				bw = new BufferedWriter(new FileWriter(new File(targetFolder + File.separator + String.format("%sSubstParameters.txt", "insert"))));
+				c = (Class<QueryParametersGenerator>) Class.forName(String.format("eu.ldbc.semanticpublishing.templates.editorial.%s", "InsertTemplate"));
+				cc = c.getConstructor(String.class, RandomUtil.class, HashMap.class, int.class);
+				queryTemplate = (QueryParametersGenerator) cc.newInstance("", randomGenerator, mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.EDITORIAL), definitions.getInt(Definitions.YEAR_SEED));			
+				queryTemplate.generateSubstitutionParameters(bw, configuration.getInt(Configuration.QUERY_SUBSTITUTION_PARAMETERS));
+				System.out.print(".");
+				bw.close();
+
+				//Update
+				bw = new BufferedWriter(new FileWriter(new File(targetFolder + File.separator + String.format("%sSubstParameters.txt", "update"))));
+				c = (Class<QueryParametersGenerator>) Class.forName(String.format("eu.ldbc.semanticpublishing.templates.editorial.%s", "UpdateTemplate"));
+				cc = c.getConstructor(String.class, RandomUtil.class, HashMap.class, int.class);
+				queryTemplate = (QueryParametersGenerator) cc.newInstance("", randomGenerator, mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.EDITORIAL), definitions.getInt(Definitions.YEAR_SEED));
+				queryTemplate.generateSubstitutionParameters(bw, configuration.getInt(Configuration.QUERY_SUBSTITUTION_PARAMETERS));
+				System.out.print(".");
+				bw.close();
+
+				//Delete
+				bw = new BufferedWriter(new FileWriter(new File(targetFolder + File.separator + String.format("%sSubstParameters.txt", "delete"))));
+				c = (Class<QueryParametersGenerator>) Class.forName(String.format("eu.ldbc.semanticpublishing.templates.editorial.%s", "DeleteTemplate"));
+				cc = c.getConstructor(RandomUtil.class, HashMap.class);
+				queryTemplate = (QueryParametersGenerator) cc.newInstance(randomGenerator, mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.EDITORIAL));
+				queryTemplate.generateSubstitutionParameters(bw, configuration.getInt(Configuration.QUERY_SUBSTITUTION_PARAMETERS));
+				System.out.print(".");
+				bw.close();
+*/
+				
+				//Aggregate query parameters
+				for (int i = 1; i <= Statistics.AGGREGATE_QUERIES_COUNT; i++) {
+					bw = new BufferedWriter(new FileWriter(new File(targetFolder + File.separator + String.format("query%01dSubstParameters", i) + ".txt")));
+					
+					c = (Class<QueryParametersGenerator>) Class.forName(String.format("eu.ldbc.semanticpublishing.templates.aggregation.Query%dTemplate", i));
+					cc = c.getConstructor(RandomUtil.class, HashMap.class, int.class, String[].class);
+					queryTemplate = (QueryParametersGenerator) cc.newInstance(randomGenerator, mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.AGGREGATION), definitions.getInt(Definitions.YEAR_SEED), null);					
+					queryTemplate.generateSubstitutionParameters(bw, configuration.getInt(Configuration.QUERY_SUBSTITUTION_PARAMETERS));
+					
+					bw.close();
+					
+					//indicate activity in console
+					if (i != Statistics.AGGREGATE_QUERIES_COUNT) {
+						System.out.print(".");
+					} else {
+						System.out.println(".");
+					}
+				}
+			} catch (Exception e) {
+				System.out.println("\n\tException caught during generation of query substitution parameters : " + e.getClass().getName() + " :: " + e.getMessage());
+			} finally {
+				try {bw.close();} catch(Exception e) {};
+			}
+		}
+	}	
+	
+	public void initializeQuerySubstitutionParameters() throws IOException, InterruptedException {
+		System.out.println("Initializing query substitution parameters...");
+		substitutionQueryParamtersManager.intiSubstitutionParameters(configuration.getString(Configuration.CREATIVE_WORKS_PATH));
 	}
 
 /*
@@ -328,7 +433,7 @@ public class TestDriver {
 	
 	private void setupAsynchronousAgents() {
 		for(int i = 0; i < aggregationAgentsCount; ++i ) {
-			aggregationAgents.add(new AggregationAgent(inBenchmarkState, queryExecuteManager, randomGenerator, runFlag, mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.AGGREGATION), definitions.getInt(Definitions.YEAR_SEED)));
+			aggregationAgents.add(new AggregationAgent(inBenchmarkState, queryExecuteManager, randomGenerator, runFlag, mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.AGGREGATION), definitions.getInt(Definitions.YEAR_SEED), substitutionQueryParamtersManager));
 		}
 
 		for(int i = 0; i < editorialAgentsCount; ++i ) {
@@ -345,17 +450,10 @@ public class TestDriver {
 		if( configuration.getBoolean(Configuration.WARM_UP)) {
 			//assuming that if regularEntitiesList is empty, no entity lists were populated
 			if (DataManager.regularEntitiesList.size() == 0) {
-				populateRefDataEntitiesLists();
+				populateRefDataEntitiesLists(false, true, false);
 				if (DataManager.creativeWorksNexId.get() == 0) {
 					System.err.println("Warmup : Warning : no Creative Works were found stored in the database, initialise it with ontologies and reference datasets first! Exiting.");
 					System.exit(-1);
-				}
-			}
-			//initialize dataset info, required for query parameters
-			if ((DataManager.correlatedEntitiesList.size() + DataManager.exponentialDecayEntitiesMinorList.size() + DataManager.exponentialDecayEntitiesMajorList.size()) == 0) {
-				String datasetInfoFile = DataManager.buildPersistDataInfoPath(configuration);
-				if (!datasetInfoFile.isEmpty()) {			
-					DataManager.initDatasetInfo(datasetInfoFile);
 				}
 			}
 			
@@ -375,18 +473,11 @@ public class TestDriver {
 	private void benchmark() throws IOException {
 		if( configuration.getBoolean(Configuration.RUN_BENCHMARK)) {
 			//assuming that if regularEntitiesList is empty, no entity lists were populated
-			if (DataManager.regularEntitiesList.size() == 0) {
-				populateRefDataEntitiesLists();
+			if (DataManager.regularEntitiesList.size() == 0 || DataManager.correlatedEntitiesList.size() == 0) {
+				populateRefDataEntitiesLists(false, true, false);
 				if (DataManager.creativeWorksNexId.get() == 0) {
 					System.err.println("Warmup : Warning : no Creative Works were found stored in the database, initialise it with ontologies and reference datasets first! Exiting.");
 					System.exit(-1);
-				}
-			}
-			//initialize dataset info, required for query parameters
-			if ((DataManager.correlatedEntitiesList.size() + DataManager.exponentialDecayEntitiesMinorList.size() + DataManager.exponentialDecayEntitiesMajorList.size()) == 0) {
-				String datasetInfoFile = DataManager.buildPersistDataInfoPath(configuration);
-				if (!datasetInfoFile.isEmpty()) {			
-					DataManager.initDatasetInfo(datasetInfoFile);
 				}
 			}
 			
@@ -526,7 +617,7 @@ public class TestDriver {
 		if( configuration.getBoolean(Configuration.CLEAR_DATABASE)) {
 			//assuming that if regularEntitiesList is empty, no entity lists were populated
 			if (DataManager.regularEntitiesList.size() == 0) {
-				populateRefDataEntitiesLists();
+				populateRefDataEntitiesLists(false, false, true);
 				if (DataManager.creativeWorksNexId.get() == 0) {
 					System.err.println("Warmup : Warning : no Creative Works were found stored in the database, initialise it with ontologies and reference datasets first! Exiting.");
 					System.exit(-1);
@@ -543,6 +634,8 @@ public class TestDriver {
 		loadDatasets();
 		generateCreativeWorks();
 		loadCreativeWorks();
+		generateQuerySubstitutionParameters();
+		initializeQuerySubstitutionParameters();
 		setupAsynchronousAgents();
 		warmUp();
 		benchmark();

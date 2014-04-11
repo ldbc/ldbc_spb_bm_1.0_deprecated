@@ -1,8 +1,11 @@
 package eu.ldbc.semanticpublishing.templates.aggregation;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.util.HashMap;
 
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection.QueryType;
+import eu.ldbc.semanticpublishing.generators.querygenerator.QueryParametersGenerator;
 import eu.ldbc.semanticpublishing.refdataset.DataManager;
 import eu.ldbc.semanticpublishing.templates.MustacheTemplate;
 import eu.ldbc.semanticpublishing.util.RandomUtil;
@@ -12,7 +15,7 @@ import eu.ldbc.semanticpublishing.util.RandomUtil;
  * corresponding to file Configuration.QUERIES_PATH/aggregation/query25.txt
  * A time-line of relatedness query
  */
-public class Query25Template extends MustacheTemplate {
+public class Query25Template extends MustacheTemplate implements QueryParametersGenerator {
 	//must match with corresponding file name of the mustache template file
 	private static final String templateFileName = "query25.txt";
 	
@@ -21,17 +24,25 @@ public class Query25Template extends MustacheTemplate {
 	
 //	private boolean useCorrelatedEntitiesOnly = false;
 	
-	public Query25Template(RandomUtil ru, HashMap<String, String> queryTemplates) {
-		super(queryTemplates);
-		this.ru = ru;
-		this.entityURI = selectEntityURI();
-//		this.useCorrelatedEntities = ru.nextBoolean();
+	public Query25Template(RandomUtil ru, HashMap<String, String> queryTemplates, int seedYear, String[] substitutionParameters) {
+		super(queryTemplates, substitutionParameters);
+		this.ru = ru;		
+		preInitialize();
 	}	
+	
+	private void preInitialize() {
+		this.entityURI = selectEntityURI();
+//		this.useCorrelatedEntities = ru.nextBoolean();		
+	}
 	
 	/**
 	 * A method for replacing mustache template : {{{entityA}}}
 	 */
 	public String entityA() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}
+		
 		return this.entityURI;
 	}
 	
@@ -45,6 +56,20 @@ public class Query25Template extends MustacheTemplate {
 			return DataManager.popularEntitiesList.get(ru.nextInt(DataManager.popularEntitiesList.size())).getURI();
 		}		
 	}
+	
+	@Override
+	public void generateSubstitutionParameters(BufferedWriter bw, int amount) throws IOException {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < amount; i++) {
+			preInitialize();
+			sb.setLength(0);
+			sb.append(entityA());
+			sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+			sb.append(entityA());
+			sb.append("\n");
+			bw.write(sb.toString());
+		}
+	}	
 	
 	@Override
 	public String getTemplateFileName() {

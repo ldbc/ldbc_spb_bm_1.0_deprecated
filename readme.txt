@@ -47,20 +47,24 @@ Benchmark Phases :
 
   * The Semantic Publishing Benchmark can be configured to run through these phases ordered by the sequence they should be run : 
 
-    - loadOntologies        		: load ontologies (from the 'data/ontologies' folder) into database
-    - adjustRefDatasetsSizes    	: optional phase, if reference dataset files exist with the extension '.adjustablettl', then for each, a new .ttl file
-                                 	  is created with adjusted size depending on the selected size of data to be generated (parameter 'datasetSize' in test.properties file).
-    - loadDatasets          		: load the reference datasets (from the 'data/datasets' folder) into database
-    - generateCreativeWorks 		: using uploaded data from previous two phases, generates Creative Works and saves them to files.
-                                  Generated files need to be loaded into database manually (or automatically if file format is n-quads)
-                                  Note : in order to execute generateCreativeWorks phase, ontologies and reference data from previous two phases must be present in database
-    - loadCreativeWorks	  		  : load generated creative works into database (Tested for N-Quads)
-    - warmUp                		: a series of Aggregation queries are executed for a fixed amount of time.
-    - benchmark             		: all aggregation and editorial agents are started and kept running for a period of 'benchmarkRunPeriodSeconds'.
-    - checkConformance          : executes predefined queries (from folder 'data/sparql/conformance'. Checking for OWL2-RL : prp-irp, prp-asyp, prp-pdw, prp-adp, cax-dw, cax-adc, cls-maxc1, prp-key, prp-spo2, prp-inv1)  
-                                  Note : in order to execute generateCreativeWorks phase, ontologies from loadOntologies phase must be present in database
-    - cleanup               		: optional, the benchmark can be set to clear all data from database
-                                  Note : all data will be erased from the repository
+    - loadOntologies        		          : load ontologies (from the 'data/ontologies' folder) into database
+    - adjustRefDatasetsSizes    	        : optional phase, if reference dataset files exist with the extension '.adjustablettl', then for each, a new .ttl file
+                                            is created with adjusted size depending on the selected size of data to be generated (parameter 'datasetSize' in test.properties file).
+    - loadDatasets          		          : load the reference datasets (from the 'data/datasets' folder) into database
+    - generateCreativeWorks 		          : using uploaded data from previous two phases, generates Creative Works and saves them to files.
+                                            Generated files need to be loaded into database manually (or automatically if file format is n-quads)
+                                              Note : in order to execute generateCreativeWorks phase, ontologies and reference data from previous two phases must be present in database
+    - generateQuerySubstitutionParameters : Controls generation of query substitution parameters which later can be used during the warmup and benchmark phases. For each query a
+                                            substitution parameters file is created and saved into 'creativeWorksPath' location. 
+                                              Note : If no files are found at that location, queries executed during warmup and benchmark phases are randomly generated.
+    - loadCreativeWorks	  		            : load generated creative works into database (Tested for N-Quads)
+    - warmUp                		          : a series of Aggregation queries are executed for a fixed amount of time.
+    - benchmark             		          : all aggregation and editorial agents are started and kept running for a period of 'benchmarkRunPeriodSeconds'.
+    - checkConformance                    : executes predefined queries (from folder 'data/sparql/conformance'. Checking for OWL2-RL : prp-irp, prp-asyp, prp-pdw, prp-adp, cax-dw, cax-adc,
+                                            cls-maxc1, prp-key, prp-spo2, prp-inv1)  
+                                              Note : in order to execute generateCreativeWorks phase, ontologies from loadOntologies phase must be present in database
+    - cleanup               		          : optional, the benchmark can be set to clear all data from database
+                                              Note : all data will be erased from the repository
   
     Each of those phases can be configured to run independently or in a sequence by setting appropriate property value in file : test.properties.
  
@@ -98,10 +102,13 @@ How to run the benchmark :
     - editorialAgents                   (editorial agents count which will execute a mix of editorial queries concurrently. Query mix can be configured by changing
                                          parameter editorialOperationsAllocation in definitions.properties file)
     - dataGeneratorWorkers              (number of simultaneously working data generator threads)
-    - generatorRandomSeed				        (use it to set the random set for the data generator (default value is 0). e.g. in cases when several benchmark drivers are started in separate processes to generate data - to be used with creativeWorkNextId parameter)
-    - creativeWorkNextId                (set the next ID for the data generator of Creative Works. When running the benchmark driver in separate processes, to guarantee that generated creative works will not overlap their IDs
+    - generatorRandomSeed				        (use it to set the random set for the data generator (default value is 0). e.g. in cases when several benchmark drivers are started in separate
+                                         processes to generate data - to be used with creativeWorkNextId parameter)
+    - creativeWorkNextId                (set the next ID for the data generator of Creative Works. When running the benchmark driver in separate processes, to guarantee that generated
+                                         creative works will not overlap their IDs
                                          e.g. for generating 50M dataset, expected number of Creative Works is ~2.5M and next ID should start at that value)
     - creativeWorksInfo                 (file name, that will be saved in creativeWorksPath and will contain system info about the generated dataset, e.g. interesting entities, etc.)
+    - querySubstitutionParameters       (number substitution parameters that will be generated for each query)
                                          
                                          Note : For optimal results the sum of editorial and aggregation agents should be set to be equal to the number of CPU cores.
 	
@@ -143,7 +150,7 @@ How to run the benchmark :
 
   	  java -jar semantic_publishing_benchmark-*.jar test.properties
   	  
-  	  Note: appropriate value for java maximum heap size may be required, e.g. -Xmx4096m
+  	  Note: appropriate value for java maximum heap size may be required, e.g. -Xmx8G
 
 
 

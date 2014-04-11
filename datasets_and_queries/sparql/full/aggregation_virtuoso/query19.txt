@@ -36,10 +36,10 @@ PREFIX ldbc:<http://www.ldbc.eu/ontologies/sempub#>
 
 #  Query name : query19
 #  Query Description : 
-#  Retrieve the top most topics that creative works are about in a fixed date-time range, ordered by modification date.
+#  Retrieve most popular topics that creative works are about in a fixed date-time range, ordered by most-recent modification date.
 #  Additional constraint is the type of creative tagging those topics and its audience.
 
-SELECT ?topic ((COUNT(*)) as ?topicsCount) {   
+SELECT ?topic ((COUNT(*)) as ?topicsCount) (MAX(?dateModif) AS ?maxDate) {   
   ?cwork a {{{cwType}}}  . 
   ?cwork cwork:audience {{{cwAudience}}} .
   ?cwork cwork:about ?topic .
@@ -47,4 +47,4 @@ SELECT ?topic ((COUNT(*)) as ?topicsCount) {
   {{{cwFilterDateModifiedCondition}}}
 }
 GROUP BY ?topic
-ORDER BY DESC(?dateModif)
+ORDER BY DESC(?maxDate) DESC(?topicsCount)

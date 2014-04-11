@@ -85,6 +85,7 @@ All items should be saved in same location with the benchmark jar file.
   * ***generatorRandomSeed*** - use it to set the random set for the data generator (default value is 0). e.g. in cases when several benchmark drivers are started in separate processes to generate data - to be used with creativeWorkNextId parameter
   * ***creativeWorkNextId*** - set the next ID for the data generator of Creative Works. When running the benchmark driver in separate processes, to guarantee that generated creative works will not overlap their IDs. e.g. for generating 50M dataset, expected number of Creative Works is ~2.5M and next ID should start at that value
   * ***creativeWorksInfo*** - file name, that will be saved in creativeWorksPath and will contain system info about the generated dataset, e.g. interesting entities, etc.
+  * ***querySubstitutionParameters*** - number substitution parameters that will be generated for each query
   
 * Benchmark Phases (test.properties)
     One, some or all phases can be enabled and will run in the sequence listed below. Running first three phases is mandatory with optionally enabling fourth one (*loadCreativeWorks*) - for the case when generated data will not be loaded manually into the database.
@@ -93,6 +94,7 @@ All items should be saved in same location with the benchmark jar file.
   * ***adjustRefDatasetsSizes*** - optional phase, if reference dataset files exist with the extension '.adjustablettl', then for each, a new .ttl file is created with adjusted size depending on the selected size of data to be generated (parameter 'datasetSize' in test.properties file).
   * ***loadReferenceDatasets*** - populate the RDF database with required reference data (from reference knowledge). It can be done manually by uploading all .ttl files located at : /data/datasets
   * ***generateCreativeWorks*** - generate the data used for benchmarking. Data is saved to files of defined size (*generatedTriplesPerFile*) and total number of triples (*datasetSize*)
+  * ***generateQuerySubstitutionParameters*** - Controls generation of query substitution parameters which later can be used during the warmup and benchmark phases. For each query a substitution parameters file is created and saved into 'creativeWorksPath' location. If no files are found at that location, queries executed during warmup and benchmark phases are randomly generated.
   * ***loadCreativeWorks*** - load generated data from previous phase into RDF database. Optional phase, verified from N-Quads serialization format
   * ***warmUp*** - runs the aggregation agents for *warmupPeriodSeconds* seconds, results are not collected
   * ***runBenchmark*** - runs the benchmark for *benchmarkRunPeriodSeconds* seconds, results are collected. Editorial and aggregation agents are run simultaneously.
@@ -106,7 +108,7 @@ All items should be saved in same location with the benchmark jar file.
 ```sh
 java -jar semantic_publishing_benchmark-*.jar test.properties
 ```
-*Note: appropriate value for java maximum heap size may be required, e.g. -Xmx4096m*
+*Note: appropriate value for java maximum heap size may be required, e.g. -Xmx8G*
 
 ###Results
 Results of the benchmark are saved to three types of log files :

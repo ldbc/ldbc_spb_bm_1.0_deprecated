@@ -23,8 +23,13 @@ public abstract class MustacheTemplate {
 	 */
 	protected final HashMap<String, String> queryTemplates;
 	
-	public MustacheTemplate(HashMap<String, String> queryTemplates) {
+	protected int parameterIndex;
+	protected String[] substitutionParameters;	
+	
+	public MustacheTemplate(HashMap<String, String> queryTemplates, String[] substitutionParameters) {
 		this.queryTemplates = queryTemplates;
+		this.substitutionParameters = substitutionParameters;
+		this.parameterIndex = 0;		
 	}
 	
 	/**

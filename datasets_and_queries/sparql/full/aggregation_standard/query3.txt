@@ -38,7 +38,7 @@ PREFIX fb:<http://rdf.freebase.com/ns/>
 SELECT ?minute ((COUNT(*)) as ?count)
 WHERE {
   ?r cwork:dateModified ?dateTime .
-  FILTER (?dateTime > {{{cwStartDataTime}}} && ?dateTime < {{{cwEndDateTime}}}) .
+  FILTER (?dateTime > {{{cwStartDateTime}}} && ?dateTime < {{{cwEndDateTime}}}) .
 }
 GROUP BY (MINUTES(?dateTime) as ?minute) 
 ORDER BY ?minute

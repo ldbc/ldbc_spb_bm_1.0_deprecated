@@ -1,23 +1,33 @@
 package eu.ldbc.semanticpublishing.templates.aggregation;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.util.HashMap;
 
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection.QueryType;
+import eu.ldbc.semanticpublishing.generators.querygenerator.QueryParametersGenerator;
 import eu.ldbc.semanticpublishing.properties.Definitions;
 import eu.ldbc.semanticpublishing.templates.MustacheTemplate;
+import eu.ldbc.semanticpublishing.util.RandomUtil;
 
 /**
  * A class extending the MustacheTemplate, used to generate a query string
  * corresponding to file Configuration.QUERIES_PATH/aggregation/query16.txt
  */
-public class Query16Template extends MustacheTemplate {
+public class Query16Template extends MustacheTemplate implements QueryParametersGenerator {
 	//must match with corresponding file name of the mustache template file
 	private static final String templateFileName = "query16.txt";
 	
-	private final int creativeWorkType;
+//	private final RandomUtil ru;
+	
+	private int creativeWorkType;
 
-	public Query16Template(HashMap<String, String> queryTemplates) {
-		super(queryTemplates);
+	public Query16Template(RandomUtil ru, HashMap<String, String> queryTemplates, int seedYear, String[] substitutionParameters) {
+		super(queryTemplates, substitutionParameters);	
+		preInitialize();
+	}
+	
+	private void preInitialize() {
 		this.creativeWorkType = Definitions.creativeWorkTypesAllocation.getAllocation();
 	}
 	
@@ -25,6 +35,10 @@ public class Query16Template extends MustacheTemplate {
 	 * A method for replacing mustache template : {{{cwAudienceType}}}
 	 */
 	public String cwAudienceType() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}		
+		
 		switch (creativeWorkType) {
 		//cwork:BlogPost
 		case 0 :
@@ -39,6 +53,18 @@ public class Query16Template extends MustacheTemplate {
 		return "cwork:InternationalAudience";		
 	}
 
+	@Override
+	public void generateSubstitutionParameters(BufferedWriter bw, int amount) throws IOException {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < amount; i++) {
+			preInitialize();
+			sb.setLength(0);
+			sb.append(cwAudienceType());
+			sb.append("\n");
+			bw.write(sb.toString());
+		}
+	}
+	
 	@Override
 	public String getTemplateFileName() {
 		return templateFileName;

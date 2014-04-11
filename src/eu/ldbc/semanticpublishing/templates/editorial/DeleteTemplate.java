@@ -1,8 +1,11 @@
 package eu.ldbc.semanticpublishing.templates.editorial;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.util.HashMap;
 
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection.QueryType;
+import eu.ldbc.semanticpublishing.generators.querygenerator.QueryParametersGenerator;
 import eu.ldbc.semanticpublishing.refdataset.DataManager;
 import eu.ldbc.semanticpublishing.templates.MustacheTemplate;
 import eu.ldbc.semanticpublishing.util.RandomUtil;
@@ -11,7 +14,7 @@ import eu.ldbc.semanticpublishing.util.RandomUtil;
  * A class extending the MustacheTemplate, used to generate a query string
  * corresponding to file Configuration.QUERIES_PATH/editorial/delete.txt
  */
-public class DeleteTemplate extends MustacheTemplate {
+public class DeleteTemplate extends MustacheTemplate implements QueryParametersGenerator {
 
 	//must match with corresponding file name of the mustache template file
 	private static final String templateFileName = "delete.txt"; 
@@ -19,7 +22,7 @@ public class DeleteTemplate extends MustacheTemplate {
 	private final RandomUtil ru;
 	
 	public DeleteTemplate(RandomUtil ru, HashMap<String, String> queryTemplates) {
-		super(queryTemplates);
+		super(queryTemplates, null);
 		this.ru = ru;
 	}
 	
@@ -29,6 +32,17 @@ public class DeleteTemplate extends MustacheTemplate {
 	public String cwGraphUri() {
 		long cwNextId = ru.nextInt((int)DataManager.creativeWorksNexId.get());
 		return ru.numberURI("context", cwNextId, true, true);
+	}
+	
+	@Override
+	public void generateSubstitutionParameters(BufferedWriter bw, int amount) throws IOException {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < amount; i++) {
+			sb.setLength(0);
+			sb.append(cwGraphUri());
+			sb.append("\n");
+			bw.write(sb.toString());
+		}
 	}
 
 	@Override

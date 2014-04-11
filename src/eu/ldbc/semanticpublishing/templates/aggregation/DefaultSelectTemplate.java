@@ -14,7 +14,7 @@ public class DefaultSelectTemplate extends MustacheTemplate {
 	private static final String templateFileName = "query-without-template.txt"; 
 	
 	public DefaultSelectTemplate(HashMap<String, String> queryTemplates) {
-		super(queryTemplates);
+		super(queryTemplates, null);
 	}
 
 	@Override

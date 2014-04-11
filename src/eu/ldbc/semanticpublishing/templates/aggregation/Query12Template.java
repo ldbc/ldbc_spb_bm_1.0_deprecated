@@ -1,8 +1,11 @@
 package eu.ldbc.semanticpublishing.templates.aggregation;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.util.HashMap;
 
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection.QueryType;
+import eu.ldbc.semanticpublishing.generators.querygenerator.QueryParametersGenerator;
 import eu.ldbc.semanticpublishing.refdataset.DataManager;
 import eu.ldbc.semanticpublishing.templates.MustacheTemplate;
 import eu.ldbc.semanticpublishing.util.RandomUtil;
@@ -11,16 +14,20 @@ import eu.ldbc.semanticpublishing.util.RandomUtil;
  * A class extending the MustacheTemplate, used to generate a query string
  * corresponding to file Configuration.QUERIES_PATH/aggregation/query12.txt
  */
-public class Query12Template extends MustacheTemplate {
+public class Query12Template extends MustacheTemplate implements QueryParametersGenerator {
 	//must match with corresponding file name of the mustache template file
 	private static final String templateFileName = "query12.txt";
 	
 	private final RandomUtil ru;
-	private final long cwNextId;
+	private long cwNextId;
 	
-	public Query12Template(RandomUtil ru, HashMap<String, String> queryTemplates) {
-		super(queryTemplates);
+	public Query12Template(RandomUtil ru, HashMap<String, String> queryTemplates, int seedYear, String[] substitutionParameters) {
+		super(queryTemplates, substitutionParameters);
 		this.ru = ru;
+		preInitialize();
+	}
+	
+	private void preInitialize() {
 		this.cwNextId = ru.nextInt((int)DataManager.creativeWorksNexId.get());
 	}
 	
@@ -28,7 +35,29 @@ public class Query12Template extends MustacheTemplate {
 	 * A method for replacing mustache template : {{{cwUri}}}
 	 */			
 	public String cwUri() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}
+		
 		return ru.numberURI("things", cwNextId, true, true);
+	}
+	
+	@Override
+	public void generateSubstitutionParameters(BufferedWriter bw, int amount) throws IOException {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < amount; i++) {
+			preInitialize();
+			sb.setLength(0);
+			sb.append(cwUri());
+			sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+			sb.append(cwUri());
+			sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+			sb.append(cwUri());
+			sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+			sb.append(cwUri());
+			sb.append("\n");
+			bw.write(sb.toString());
+		}				
 	}
 	
 	@Override

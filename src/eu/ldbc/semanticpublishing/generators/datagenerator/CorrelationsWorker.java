@@ -1,4 +1,4 @@
-package eu.ldbc.semanticpublishing.datagenerator;
+package eu.ldbc.semanticpublishing.generators.datagenerator;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -12,9 +12,8 @@ import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.Rio;
 
-import eu.ldbc.semanticpublishing.datagenerator.sesamemodelbuilders.CreativeWorkBuilder;
+import eu.ldbc.semanticpublishing.generators.datagenerator.sesamemodelbuilders.CreativeWorkBuilder;
 import eu.ldbc.semanticpublishing.refdataset.model.Entity;
-import eu.ldbc.semanticpublishing.util.FileUtils;
 import eu.ldbc.semanticpublishing.util.RandomUtil;
 import eu.ldbc.semanticpublishing.util.SesameUtils;
 
@@ -64,7 +63,6 @@ public class CorrelationsWorker extends GeneralWorker {
 		
 		FileOutputStream fos = null;
 		RDFFormat rdfFormat = SesameUtils.parseRdfFormat(serializationFormat);
-		FileUtils.makeDirectories(destinationPath);
 
 		int cwsInFileCount = 0;
 		int currentTriplesCount = 0;

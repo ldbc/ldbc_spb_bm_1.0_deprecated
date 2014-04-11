@@ -1,8 +1,11 @@
 package eu.ldbc.semanticpublishing.templates.aggregation;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.util.HashMap;
 
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection.QueryType;
+import eu.ldbc.semanticpublishing.generators.querygenerator.QueryParametersGenerator;
 import eu.ldbc.semanticpublishing.util.RandomUtil;
 
 /**
@@ -19,8 +22,13 @@ public class Query23Template extends Query21Template {
 	protected static final String GROUP_BY_STRING = "GROUP BY ?day ?tag";
 	protected static final String ORDER_BY_STRING = "ORDER BY ?day ?tag";
 	
-	public Query23Template(RandomUtil ru, HashMap<String, String> queryTemplates) {
-		super(ru, queryTemplates);
+	public Query23Template(RandomUtil ru, HashMap<String, String> queryTemplates, int seedYear, String[] substitutionParameters) {
+		super(ru, queryTemplates, seedYear, substitutionParameters);		
+	}
+	
+	@Override
+	public void initialize(int iteration, String dateString, String[] substitutionParameters) {
+		super.initialize(iteration, dateString, substitutionParameters);
 	}
 	
 	/**
@@ -28,6 +36,10 @@ public class Query23Template extends Query21Template {
 	 */
 	@Override
 	public String projection() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}		
+		
 		if (iteration == 4) {
 			return PROJECTION_STRING;
 		} else {
@@ -40,6 +52,10 @@ public class Query23Template extends Query21Template {
 	 */
 	@Override
 	public String groupBy() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}				
+		
 		if (iteration == 4) {
 			return GROUP_BY_STRING;
 		} else {
@@ -52,10 +68,34 @@ public class Query23Template extends Query21Template {
 	 */
 	@Override
 	public String orderBy() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}				
+		
 		if (iteration == 4) {
 			return ORDER_BY_STRING;
 		} else {
 			return super.orderBy();
+		}
+	}	
+	
+	@Override
+	public void generateSubstitutionParameters(BufferedWriter bw, int amount) throws IOException {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < amount; i++) {
+			super.preInitialize();
+			sb.setLength(0);
+			sb.append(projection());
+			sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+			sb.append(filter1());
+			sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+			sb.append(filter2());
+			sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+			sb.append(groupBy());
+			sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+			sb.append(orderBy());
+			sb.append("\n");
+			bw.write(sb.toString());	
 		}
 	}	
 	

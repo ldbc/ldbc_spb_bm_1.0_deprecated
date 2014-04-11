@@ -1,8 +1,11 @@
 package eu.ldbc.semanticpublishing.templates.aggregation;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.util.HashMap;
 
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection.QueryType;
+import eu.ldbc.semanticpublishing.generators.querygenerator.QueryParametersGenerator;
 import eu.ldbc.semanticpublishing.templates.MustacheTemplate;
 import eu.ldbc.semanticpublishing.util.RandomUtil;
 
@@ -11,7 +14,7 @@ import eu.ldbc.semanticpublishing.util.RandomUtil;
  * corresponding to file Configuration.QUERIES_PATH/aggregation/query21.txt
  * A time faceted search query template
  */
-public class Query21Template extends MustacheTemplate  {
+public class Query21Template extends MustacheTemplate implements QueryParametersGenerator {
 	//must match with corresponding file name of the mustache template file
 	private static final String templateFileName = "query21.txt";
 	
@@ -39,7 +42,7 @@ public class Query21Template extends MustacheTemplate  {
 	
 	protected int iteration;
 	
-	protected static final String[] categoryTypes = {	"<http://www.bbc.co.uk/category/PoliticsPersonsReference>", 
+	protected static final String[] categoryTypes = {"<http://www.bbc.co.uk/category/PoliticsPersonsReference>", 
 													"<http://www.bbc.co.uk/category/PoliticsPersons>", 
 													"<http://www.bbc.co.uk/category/PoliticsPersonsAdditional>", 
 													"<http://www.bbc.co.uk/category/SportsTeams>", 
@@ -53,22 +56,29 @@ public class Query21Template extends MustacheTemplate  {
 	protected String regexExpression2;
 	protected String category;
 	
-	public Query21Template(RandomUtil ru, HashMap<String, String> queryTemplates) {
-		super(queryTemplates);
-		this.ru = ru;
+	public Query21Template(RandomUtil ru, HashMap<String, String> queryTemplates, int seedYear, String[] substitutionParameters) {
+		super(queryTemplates, substitutionParameters);
+		this.ru = ru;		
+		preInitialize();
+	}
+	
+	protected void preInitialize() {
+		this.iteration = 0;
 		this.year = 0;
 		this.month = 0;
 		this.day = 0;
 		this.regexExpression1 = ru.randomWordFromDictionary(false, false);
 		this.regexExpression2 = ru.randomWordFromDictionary(false, false);
 		this.category = String.format(FILTER_CATEGORY_STRING, categoryTypes[ru.nextInt(categoryTypes.length)]);
+		this.parameterIndex = 0;
 	}
 	
 	/**
 	 * @param dateString - expected date string format : 2010-10-02T17:41:36.229+03:00
 	 */
-	public void initialize(int iteration, String dateString) {
+	public void initialize(int iteration, String dateString, String[] substitutionParameters) {
 		this.iteration = iteration;
+		this.substitutionParameters = substitutionParameters;
 		
 		try {
 			if (!dateString.isEmpty()) {			
@@ -88,6 +98,10 @@ public class Query21Template extends MustacheTemplate  {
 	 * A method for replacing mustache template : {{{projection}}}
 	 */
 	public String projection() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}		
+		
 		switch (iteration) {
 		case 0 :
 			return PROJECTION_STRING_ITERATION_0;
@@ -108,6 +122,10 @@ public class Query21Template extends MustacheTemplate  {
 	 * A method for replacing mustache template : {{{filter1}}}
 	 */
 	public String filter1() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}
+		
 		return String.format(FILTER_REGEX_STRING, regexExpression1, regexExpression2);
 	}
 
@@ -115,6 +133,10 @@ public class Query21Template extends MustacheTemplate  {
 	 * A method for replacing mustache template : {{{filter2}}}
 	 */
 	public String filter2() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}
+		
 		return category;
 	}
 	
@@ -122,10 +144,14 @@ public class Query21Template extends MustacheTemplate  {
 	 * A method for replacing mustache template : {{{filter3}}}
 	 */
 	public String filter3() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}
+		
 		if (iteration == 4) {
 			return String.format(FILTER_DATE_YMD_STRING, year, month, day);
 		} else {
-			return "";
+			return " ";
 		}
 	}
 	
@@ -133,9 +159,13 @@ public class Query21Template extends MustacheTemplate  {
 	 * A method for replacing mustache template : {{{groupBy}}}
 	 */
 	public String groupBy() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}
+		
 		switch (iteration) {
 		case 0 :
-			return "";
+			return " ";
 		case 1 :
 			return GROUP_BY_STRING_ITERATION_1;
 		case 2 :
@@ -145,7 +175,7 @@ public class Query21Template extends MustacheTemplate  {
 		case 4 :
 			return GROUP_BY_STRING_ITERATION_4;
 		default:
-			return "";
+			return " ";
 		}
 	}	
 
@@ -153,9 +183,13 @@ public class Query21Template extends MustacheTemplate  {
 	 * A method for replacing mustache template : {{{orderBy}}}
 	 */
 	public String orderBy() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}	
+		
 		switch (iteration) {
 		case 0 :
-			return "";
+			return " ";
 		case 1 :
 			return ORDER_BY_STRING_ITERATION_1;
 		case 2 :
@@ -165,9 +199,31 @@ public class Query21Template extends MustacheTemplate  {
 		case 4 :
 			return ORDER_BY_STRING_ITERATION_4;
 		default:
-			return "";
+			return " ";
 		}
 	}	
+	
+	@Override
+	public void generateSubstitutionParameters(BufferedWriter bw, int amount) throws IOException {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < amount; i++) {
+			preInitialize();
+			sb.setLength(0);
+			sb.append(projection());
+			sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+			sb.append(filter1());
+			sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+			sb.append(filter2());
+			sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+			sb.append(filter3());
+			sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+			sb.append(groupBy());
+			sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+			sb.append(orderBy());
+			sb.append("\n");
+			bw.write(sb.toString());	
+		}
+	}
 	
 	@Override
 	public String getTemplateFileName() {

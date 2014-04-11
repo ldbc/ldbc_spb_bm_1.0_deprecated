@@ -9,7 +9,7 @@ public class AllocationsUtil {
 	// Don't need to store allocations, but might be useful for debugging
 	private final double[] limits;
 
-	private final Random randomGenerator = new Random(0);
+	private final Random randomGenerator;
 
 	/**
 	 * Construct an allocator. For example, to randomly allocate 10% of objects
@@ -20,8 +20,9 @@ public class AllocationsUtil {
 	 *            A range of probability values, where each value is 0 <= v <=
 	 *            1.0 and the sum of all values must be exactly 1.0
 	 */
-	public AllocationsUtil(double[] allocations) {
+	public AllocationsUtil(double[] allocations, Random random) {
 		limits = new double[allocations.length];
+		randomGenerator = random;
 		calculateLimitsFromAllocations(allocations);
 	}
 

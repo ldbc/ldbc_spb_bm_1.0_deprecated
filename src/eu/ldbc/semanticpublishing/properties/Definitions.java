@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.Random;
 
 import eu.ldbc.semanticpublishing.util.AllocationsUtil;
 
@@ -75,7 +76,6 @@ public class Definitions {
 			input.close();
 		}
 		this.verbose = verbose;
-		initialize();
 	}
 	
 	/**
@@ -140,25 +140,25 @@ public class Definitions {
 		}
 	}	
 	
-	private void initialize() {
+	public void initializeAllocations(Random random) {
 		if (verbose) {
 			System.out.println("Initializing allocations...");
 		}
 		
-		initializeAllocation(ABOUTS_ALLOCATIONS);
-		initializeAllocation(MENTIONS_ALLOCATIONS);
-		initializeAllocation(ENTITY_POPULARITY);
-		initializeAllocation(USE_POPULAR_ENTITIES);
-		initializeAllocation(CREATIVE_WORK_TYPES_ALLOCATION);
-		initializeAllocation(ABOUT_AND_MENTIONS_ALLOCATION);
-		initializeAllocation(EDITORIAL_OPERATIONS_ALLOCATION);
-		initializeAllocation(AGGREGATION_OPERATIONS_ALLOCATION);
+		initializeAllocation(ABOUTS_ALLOCATIONS, random);
+		initializeAllocation(MENTIONS_ALLOCATIONS, random);
+		initializeAllocation(ENTITY_POPULARITY, random);
+		initializeAllocation(USE_POPULAR_ENTITIES, random);
+		initializeAllocation(CREATIVE_WORK_TYPES_ALLOCATION, random);
+		initializeAllocation(ABOUT_AND_MENTIONS_ALLOCATION, random);
+		initializeAllocation(EDITORIAL_OPERATIONS_ALLOCATION, random);
+		initializeAllocation(AGGREGATION_OPERATIONS_ALLOCATION, random);
 	}
 	
 	/**
 	 * Initialize allocations depending on allocationProperty name
 	 */
-	private void initializeAllocation(String allocationPorpertyName) {
+	private void initializeAllocation(String allocationPorpertyName, Random random) {
 		String allocations = getString(allocationPorpertyName);
 		String[] allocationsAsStrings = allocations.split(",");
 		double[] allocationsAsDoubles = new double[allocationsAsStrings.length];
@@ -168,21 +168,21 @@ public class Definitions {
 		}
 		
 		if (allocationPorpertyName.equals(ABOUTS_ALLOCATIONS)) {
-			aboutsAllocations = new AllocationsUtil(allocationsAsDoubles);
+			aboutsAllocations = new AllocationsUtil(allocationsAsDoubles, random);
 		} else if (allocationPorpertyName.equals(MENTIONS_ALLOCATIONS)) {
-			mentionsAllocations = new AllocationsUtil(allocationsAsDoubles);
+			mentionsAllocations = new AllocationsUtil(allocationsAsDoubles, random);
 		} else if (allocationPorpertyName.equals(ENTITY_POPULARITY)) {
-			entityPopularity = new AllocationsUtil(allocationsAsDoubles);
+			entityPopularity = new AllocationsUtil(allocationsAsDoubles, random);
 		} else if (allocationPorpertyName.equals(USE_POPULAR_ENTITIES)) {
-			usePopularEntities = new AllocationsUtil(allocationsAsDoubles);
+			usePopularEntities = new AllocationsUtil(allocationsAsDoubles, random);
 		} else if (allocationPorpertyName.equals(CREATIVE_WORK_TYPES_ALLOCATION)) {
-			creativeWorkTypesAllocation = new AllocationsUtil(allocationsAsDoubles);
+			creativeWorkTypesAllocation = new AllocationsUtil(allocationsAsDoubles, random);
 		} else if (allocationPorpertyName.equals(ABOUT_AND_MENTIONS_ALLOCATION)) {
-			aboutAndMentionsAllocation = new AllocationsUtil(allocationsAsDoubles);
+			aboutAndMentionsAllocation = new AllocationsUtil(allocationsAsDoubles, random);
 		} else if (allocationPorpertyName.equals(EDITORIAL_OPERATIONS_ALLOCATION)) {
-			editorialOperationsAllocation = new AllocationsUtil(allocationsAsDoubles);
+			editorialOperationsAllocation = new AllocationsUtil(allocationsAsDoubles, random);
 		} else if (allocationPorpertyName.equals(AGGREGATION_OPERATIONS_ALLOCATION)) {
-			aggregationOperationsAllocation = new AllocationsUtil(allocationsAsDoubles);
+			aggregationOperationsAllocation = new AllocationsUtil(allocationsAsDoubles, random);
 		}
 		
 		if (verbose) {

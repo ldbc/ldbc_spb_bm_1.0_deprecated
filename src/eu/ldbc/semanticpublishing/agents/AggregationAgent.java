@@ -13,6 +13,7 @@ import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection.QueryType;
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection;
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryExecuteManager;
 import eu.ldbc.semanticpublishing.properties.Definitions;
+import eu.ldbc.semanticpublishing.refdataset.SubstitutionQueryParametersManager;
 import eu.ldbc.semanticpublishing.refdataset.model.Entity;
 import eu.ldbc.semanticpublishing.resultanalyzers.Query17Analyzer;
 import eu.ldbc.semanticpublishing.resultanalyzers.Query18Analyzer;
@@ -34,13 +35,14 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 	private final HashMap<String, String> queryTemplates;
 	private SparqlQueryConnection connection;
 	private int seedYear;
+	private SubstitutionQueryParametersManager substitutionQueryParametersMngr;
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(AggregationAgent.class.getName());
 	private final static Logger BRIEF_LOGGER = LoggerFactory.getLogger(TestDriver.class.getName());
 	private final static int MAX_DRILL_DOWN_ITERATIONS = 5;
 	private final static int MAX_FACETED_SEARCH_ITERATIONS = 5;
 	
-	public AggregationAgent(AtomicBoolean benchmarkingState, SparqlQueryExecuteManager queryExecuteManager, RandomUtil ru, AtomicBoolean runFlag, HashMap<String, String> queryTamplates, int seedYear) {
+	public AggregationAgent(AtomicBoolean benchmarkingState, SparqlQueryExecuteManager queryExecuteManager, RandomUtil ru, AtomicBoolean runFlag, HashMap<String, String> queryTamplates, int seedYear, SubstitutionQueryParametersManager substitutionQueryParametersMngr) {
 		super(runFlag);
 		this.queryExecuteManager = queryExecuteManager;
 		this.ru = ru;
@@ -48,6 +50,7 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 		this.queryTemplates = queryTamplates;
 		this.connection = new SparqlQueryConnection(queryExecuteManager.getEndpointUrl(), queryExecuteManager.getEndpointUpdateUrl(), queryExecuteManager.getTimeoutMilliseconds(), true);
 		this.seedYear = seedYear;
+		this.substitutionQueryParametersMngr = substitutionQueryParametersMngr;
 	}
 	
 	@Override
@@ -68,93 +71,119 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 			
 			//important : queryDistribution is zero-based, while QueryNTemplate is not!
 			queryId = Statistics.aggregateQueriesArray[aggregateQueryIndex].getNewQueryId();
-			
+
+			String[] querySubstParameters;
 			switch (aggregateQueryIndex) {
 				case 0 :
-					aggregateQuery = new Query1Template(ru, queryTemplates);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					aggregateQuery = new Query1Template(ru, queryTemplates, seedYear, querySubstParameters);
 					break;
 				case 1 :
-					aggregateQuery = new Query2Template(ru, queryTemplates);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					aggregateQuery = new Query2Template(ru, queryTemplates, seedYear, querySubstParameters);
 					break;
 				case 2 : 
-					aggregateQuery = new Query3Template(ru, queryTemplates);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					aggregateQuery = new Query3Template(ru, queryTemplates, seedYear, querySubstParameters);
 					break;
 				case 3 :
-					aggregateQuery = new Query4Template(ru, queryTemplates);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					aggregateQuery = new Query4Template(ru, queryTemplates, seedYear, querySubstParameters);
 					break;
 				case 4 :
-					aggregateQuery = new Query5Template(ru, queryTemplates);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					aggregateQuery = new Query5Template(ru, queryTemplates, seedYear, querySubstParameters);
 					break;
 				case 5 : 
-					aggregateQuery = new Query6Template(ru, queryTemplates);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					aggregateQuery = new Query6Template(ru, queryTemplates, seedYear, querySubstParameters);
 					break;
 				case 6 :
-					aggregateQuery = new Query7Template(ru, queryTemplates);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					aggregateQuery = new Query7Template(ru, queryTemplates, seedYear, querySubstParameters);
 					break;
 				case 7 : 
-					aggregateQuery = new Query8Template(ru, queryTemplates);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					aggregateQuery = new Query8Template(ru, queryTemplates, seedYear, querySubstParameters);
 					break;
 				case 8 :
-					aggregateQuery = new Query9Template(queryTemplates);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					aggregateQuery = new Query9Template(ru, queryTemplates, seedYear, querySubstParameters);
 					break;
 				case 9 :
-					aggregateQuery = new Query10Template(queryTemplates);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					aggregateQuery = new Query10Template(ru, queryTemplates, seedYear, querySubstParameters);
 					break;
 				case 10 :
-					aggregateQuery = new Query11Template(ru, queryTemplates);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					aggregateQuery = new Query11Template(ru, queryTemplates, seedYear, querySubstParameters);
 					break;
 				case 11 : 
-					aggregateQuery = new Query12Template(ru, queryTemplates);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					aggregateQuery = new Query12Template(ru, queryTemplates, seedYear, querySubstParameters);
 					break;
 				case 12 : 
-					aggregateQuery = new Query13Template(ru, queryTemplates);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					aggregateQuery = new Query13Template(ru, queryTemplates, seedYear, querySubstParameters);
 					break;
 				case 13 : 
-					aggregateQuery = new Query14Template(ru, queryTemplates);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					aggregateQuery = new Query14Template(ru, queryTemplates, seedYear, querySubstParameters);
 					break;
 				case 14 : 
-					aggregateQuery = new Query15Template(queryTemplates);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					aggregateQuery = new Query15Template(ru, queryTemplates, seedYear, querySubstParameters);
 					break;
 				case 15 : 
-					aggregateQuery = new Query16Template(queryTemplates);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					aggregateQuery = new Query16Template(ru, queryTemplates, seedYear, querySubstParameters);
 					break;
 				case 16 : 
 					//Drill-Down query with constraints on Geo-locations
 					drillDownQuery = true;
-					aggregateQuery = new Query17Template(ru, queryTemplates);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					aggregateQuery = new Query17Template(ru, queryTemplates, seedYear, querySubstParameters);
 					break;
 				case 17 : 
 					//Drill-Down query with constraints on Date intervals
 					drillDownQuery = true;
-					aggregateQuery = new Query18Template(ru, queryTemplates, seedYear);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					aggregateQuery = new Query18Template(ru, queryTemplates, seedYear, querySubstParameters);
 					break;
 				case 18 : 
-					aggregateQuery = new Query19Template(ru, queryTemplates, seedYear);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					aggregateQuery = new Query19Template(ru, queryTemplates, seedYear, querySubstParameters);
 					break;
 				case 19 : 
-				  //FTS Query
-					aggregateQuery = new Query20Template(ru, queryTemplates);
+					//FTS Query
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					aggregateQuery = new Query20Template(ru, queryTemplates, seedYear, querySubstParameters);
 					break;
-				case 20 : 
+				case 20 : 					
 					//Faceted Search Query
 					facetedSearchQuery = true;
-					aggregateQuery = new Query21Template(ru, queryTemplates);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					aggregateQuery = new Query21Template(ru, queryTemplates, seedYear, querySubstParameters);
 					break;
-				case 21 : 
+				case 21 : 					
 					//Faceted Search Query
 					facetedSearchQuery = true;
-					aggregateQuery = new Query22Template(ru, queryTemplates);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					aggregateQuery = new Query22Template(ru, queryTemplates, seedYear, querySubstParameters);
 					break;
 				case 22 :
 					//Faceted Search Query
 					facetedSearchQuery = true;
-					aggregateQuery = new Query23Template(ru, queryTemplates);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					aggregateQuery = new Query23Template(ru, queryTemplates, seedYear, querySubstParameters);
 					break;
 				case 23 :
-					aggregateQuery = new Query24Template(ru, queryTemplates);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					aggregateQuery = new Query24Template(ru, queryTemplates, seedYear, querySubstParameters);
 					break;
 				case 24 :
-					aggregateQuery = new Query25Template(ru, queryTemplates);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					aggregateQuery = new Query25Template(ru, queryTemplates, seedYear, querySubstParameters);
 					break;
 			}
 			
@@ -218,7 +247,7 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 						double latitude = Double.parseDouble(entity.getObjectFromTriple("geo:lat"));
 						double longtitude = Double.parseDouble(entity.getObjectFromTriple("geo:long"));
 
-						((Query17Template)aggregateQuery).initialize(latitude, longtitude, ru.nextDouble(0.01, 0.08));
+						((Query17Template)aggregateQuery).initialize(latitude, longtitude, ru.nextDouble(0.01, 0.08), null);
 
 						qString = aggregateQuery.compileMustacheTemplate();
 						
@@ -240,7 +269,7 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 					int randomEntity = ru.nextInt(entitiesList.size());
 					Entity entity = entitiesList.get(randomEntity);
 					
-					((Query18Template)aggregateQuery).initialize(entity.getObjectFromTriple("cwork:dateModified"), ru.nextInt(1, 3));
+					((Query18Template)aggregateQuery).initialize(entity.getObjectFromTriple("cwork:dateModified"), ru.nextInt(1, 3), null);
 
 					qString = aggregateQuery.compileMustacheTemplate();
 					
@@ -295,7 +324,7 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 						dateString = datesList.get(randomDate);
 					}
 					
-					((Query21Template)aggregateQuery).initialize(i, dateString);
+					((Query21Template)aggregateQuery).initialize(i, dateString, null);
 					qString = aggregateQuery.compileMustacheTemplate();
 					
 					executionTimeMs = System.currentTimeMillis();
@@ -324,7 +353,7 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 						dateString = datesList.get(randomDate);
 					}
 					
-					((Query22Template)aggregateQuery).initialize(i, dateString);
+					((Query22Template)aggregateQuery).initialize(i, dateString, null);
 					qString = aggregateQuery.compileMustacheTemplate();
 					
 					executionTimeMs = System.currentTimeMillis();
@@ -337,7 +366,7 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 					
 				case 22 :
 					
-					((Query23Template)aggregateQuery).initialize(i, "");
+					((Query23Template)aggregateQuery).initialize(i, "", null);
 					qString = aggregateQuery.compileMustacheTemplate();
 					
 					executionTimeMs = System.currentTimeMillis();

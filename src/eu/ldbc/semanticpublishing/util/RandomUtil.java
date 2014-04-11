@@ -66,6 +66,10 @@ public class RandomUtil {
 		return this.dataGenerationPeriodYears;
 	}
 	
+	public Random getRandom() {
+		return randomGenerator;
+	}
+	
 	public int nextInt(int min, int max) {
 		if (min >= max) {
 			System.out.println("Warning : RandomUtil : wrong parameter value of : min (" + min + ") >= value of max (" + max + ")! Inconsistent behaviour expected!");
