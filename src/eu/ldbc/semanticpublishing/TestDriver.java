@@ -360,12 +360,6 @@ public class TestDriver {
 		System.out.println("Initializing query substitution parameters...");
 		substitutionQueryParamtersManager.intiSubstitutionParameters(configuration.getString(Configuration.CREATIVE_WORKS_PATH));
 	}
-	
-	public void validateQueryResults() {
-		if ( configuration.getBoolean(Configuration.VALIDATE_QUERY_RESULTS)) {
-			System.out.println("Validating query results...");
-		}
-	}
 
 /*
  * Method is commented out, using DataGenerator class instead
