@@ -284,7 +284,7 @@ public class TestDriver {
 			
 			//assuming that if regularEntitiesList is empty, no entity lists were populated
 			if (DataManager.regularEntitiesList.size() == 0 || DataManager.correlatedEntitiesList.size() == 0) {
-				populateRefDataEntitiesLists(false, true, false);
+				populateRefDataEntitiesLists(true, true, false);
 			}
 			
 			if (DataManager.creativeWorksNexId.get() == 0) {
@@ -359,6 +359,12 @@ public class TestDriver {
 	public void initializeQuerySubstitutionParameters() throws IOException, InterruptedException {
 		System.out.println("Initializing query substitution parameters...");
 		substitutionQueryParamtersManager.intiSubstitutionParameters(configuration.getString(Configuration.CREATIVE_WORKS_PATH));
+	}
+	
+	public void validateQueryResults() {
+		if ( configuration.getBoolean(Configuration.VALIDATE_QUERY_RESULTS)) {
+			System.out.println("Validating query results...");
+		}
 	}
 
 /*
