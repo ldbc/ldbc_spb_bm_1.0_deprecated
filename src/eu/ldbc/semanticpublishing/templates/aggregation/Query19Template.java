@@ -20,8 +20,8 @@ public class Query19Template extends Query18Template {
 	
 	private int creativeWorkType;
 	
-	public Query19Template(RandomUtil ru, HashMap<String, String> queryTemplates, int seedYear, String[] substitutionParameters) {
-		super(ru, queryTemplates, seedYear, substitutionParameters);
+	public Query19Template(RandomUtil ru, HashMap<String, String> queryTemplates, Definitions definitions, String[] substitutionParameters) {
+		super(ru, queryTemplates, definitions, substitutionParameters);
 		this.substitutionParameters = substitutionParameters;
 		preInitialize();
 	}

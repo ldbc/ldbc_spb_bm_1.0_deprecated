@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection.QueryType;
 import eu.ldbc.semanticpublishing.generators.querygenerator.QueryParametersGenerator;
+import eu.ldbc.semanticpublishing.properties.Definitions;
 import eu.ldbc.semanticpublishing.util.RandomUtil;
 
 /**
@@ -22,8 +23,8 @@ public class Query23Template extends Query21Template {
 	protected static final String GROUP_BY_STRING = "GROUP BY ?day ?tag";
 	protected static final String ORDER_BY_STRING = "ORDER BY ?day ?tag";
 	
-	public Query23Template(RandomUtil ru, HashMap<String, String> queryTemplates, int seedYear, String[] substitutionParameters) {
-		super(ru, queryTemplates, seedYear, substitutionParameters);		
+	public Query23Template(RandomUtil ru, HashMap<String, String> queryTemplates, Definitions definitions, String[] substitutionParameters) {
+		super(ru, queryTemplates, definitions, substitutionParameters);		
 	}
 	
 	@Override

@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection.QueryType;
 import eu.ldbc.semanticpublishing.generators.querygenerator.QueryParametersGenerator;
+import eu.ldbc.semanticpublishing.properties.Definitions;
 import eu.ldbc.semanticpublishing.templates.MustacheTemplate;
 import eu.ldbc.semanticpublishing.util.RandomUtil;
 
@@ -33,7 +34,7 @@ public class Query17Template extends MustacheTemplate implements QueryParameters
 	//deviation value, sets the range by adding/subtracting it from referenceLat and referenceLong
 	private double deviationValue = 0.25;
 	
-	public Query17Template(RandomUtil ru, HashMap<String, String> queryTemplates, int seedYear, String[] substitutionParameters) {
+	public Query17Template(RandomUtil ru, HashMap<String, String> queryTemplates, Definitions definitions, String[] substitutionParameters) {
 		super(queryTemplates, substitutionParameters);
 		this.ru = ru;	
 		preInitialize();

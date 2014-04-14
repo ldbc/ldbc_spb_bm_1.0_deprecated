@@ -30,7 +30,7 @@ public class Query14Template  extends MustacheTemplate implements QueryParameter
 													"cwork:InteractiveFormat"
 	};	
 	
-	public Query14Template(RandomUtil ru, HashMap<String, String> queryTemplates, int seedYear, String[] substitutionParameters) {
+	public Query14Template(RandomUtil ru, HashMap<String, String> queryTemplates, Definitions definitions, String[] substitutionParameters) {
 		super(queryTemplates, substitutionParameters);
 		this.ru = ru;	
 		preInitialize();

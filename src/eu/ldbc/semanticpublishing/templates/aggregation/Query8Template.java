@@ -28,7 +28,7 @@ public class Query8Template extends MustacheTemplate implements QueryParametersG
 	private Date initialDate;
 	private int creativeWorkType;
 	
-	public Query8Template(RandomUtil ru, HashMap<String, String> queryTemplates, int seedYear, String[] substitutionParameters) {
+	public Query8Template(RandomUtil ru, HashMap<String, String> queryTemplates, Definitions definitions, String[] substitutionParameters) {
 		super(queryTemplates, substitutionParameters);
 		this.ru = ru;		
 		preInitialize();

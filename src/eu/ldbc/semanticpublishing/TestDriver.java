@@ -335,8 +335,8 @@ public class TestDriver {
 					bw = new BufferedWriter(new FileWriter(new File(targetFolder + File.separator + String.format("query%01dSubstParameters", i) + ".txt")));
 					
 					c = (Class<QueryParametersGenerator>) Class.forName(String.format("eu.ldbc.semanticpublishing.templates.aggregation.Query%dTemplate", i));
-					cc = c.getConstructor(RandomUtil.class, HashMap.class, int.class, String[].class);
-					queryTemplate = (QueryParametersGenerator) cc.newInstance(randomGenerator, mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.AGGREGATION), definitions.getInt(Definitions.YEAR_SEED), null);					
+					cc = c.getConstructor(RandomUtil.class, HashMap.class, Definitions.class, String[].class);
+					queryTemplate = (QueryParametersGenerator) cc.newInstance(randomGenerator, mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.AGGREGATION), definitions, null);					
 					queryTemplate.generateSubstitutionParameters(bw, configuration.getInt(Configuration.QUERY_SUBSTITUTION_PARAMETERS));
 					
 					bw.close();
@@ -433,11 +433,11 @@ public class TestDriver {
 	
 	private void setupAsynchronousAgents() {
 		for(int i = 0; i < aggregationAgentsCount; ++i ) {
-			aggregationAgents.add(new AggregationAgent(inBenchmarkState, queryExecuteManager, randomGenerator, runFlag, mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.AGGREGATION), definitions.getInt(Definitions.YEAR_SEED), substitutionQueryParamtersManager));
+			aggregationAgents.add(new AggregationAgent(inBenchmarkState, queryExecuteManager, randomGenerator, runFlag, mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.AGGREGATION), definitions, substitutionQueryParamtersManager));
 		}
 
 		for(int i = 0; i < editorialAgentsCount; ++i ) {
-			editorialAgents.add(new EditorialAgent(inBenchmarkState, queryExecuteManager, randomGenerator, runFlag, mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.EDITORIAL), definitions.getInt(Definitions.YEAR_SEED)));
+			editorialAgents.add(new EditorialAgent(inBenchmarkState, queryExecuteManager, randomGenerator, runFlag, mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.EDITORIAL), definitions));
 		}
 	}
 	

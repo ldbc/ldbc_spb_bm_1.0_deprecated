@@ -8,6 +8,7 @@ import java.util.HashMap;
 
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection.QueryType;
 import eu.ldbc.semanticpublishing.generators.querygenerator.QueryParametersGenerator;
+import eu.ldbc.semanticpublishing.properties.Definitions;
 import eu.ldbc.semanticpublishing.refdataset.DataManager;
 import eu.ldbc.semanticpublishing.templates.MustacheTemplate;
 import eu.ldbc.semanticpublishing.util.RandomUtil;
@@ -27,7 +28,7 @@ public class Query24Template extends MustacheTemplate implements QueryParameters
 	
 //	private boolean useCorrelatedEntities = false;
 	
-	public Query24Template(RandomUtil ru, HashMap<String, String> queryTemplates, int seedYear, String[] substitutionParameters) {
+	public Query24Template(RandomUtil ru, HashMap<String, String> queryTemplates, Definitions definitions, String[] substitutionParameters) {
 		super(queryTemplates, substitutionParameters);
 		this.ru = ru;		
 		preInitialize();

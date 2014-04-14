@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection.QueryType;
 import eu.ldbc.semanticpublishing.generators.querygenerator.QueryParametersGenerator;
+import eu.ldbc.semanticpublishing.properties.Definitions;
 import eu.ldbc.semanticpublishing.util.RandomUtil;
 
 /**
@@ -18,7 +19,7 @@ public class Query10Template extends DefaultSelectTemplate implements QueryParam
 	
 //	private final RandomUtil ru;
 	
-	public Query10Template(RandomUtil ru, HashMap<String, String> queryTemplates, int seedYear, String[] substitutionParameters) {
+	public Query10Template(RandomUtil ru, HashMap<String, String> queryTemplates, Definitions definitions, String[] substitutionParameters) {
 		super(queryTemplates);
 	}
 	

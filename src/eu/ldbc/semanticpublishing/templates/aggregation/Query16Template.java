@@ -22,7 +22,7 @@ public class Query16Template extends MustacheTemplate implements QueryParameters
 	
 	private int creativeWorkType;
 
-	public Query16Template(RandomUtil ru, HashMap<String, String> queryTemplates, int seedYear, String[] substitutionParameters) {
+	public Query16Template(RandomUtil ru, HashMap<String, String> queryTemplates, Definitions definitions, String[] substitutionParameters) {
 		super(queryTemplates, substitutionParameters);	
 		preInitialize();
 	}

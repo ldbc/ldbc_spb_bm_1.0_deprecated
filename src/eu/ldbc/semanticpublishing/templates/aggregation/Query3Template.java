@@ -8,6 +8,7 @@ import java.util.HashMap;
 
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection.QueryType;
 import eu.ldbc.semanticpublishing.generators.querygenerator.QueryParametersGenerator;
+import eu.ldbc.semanticpublishing.properties.Definitions;
 import eu.ldbc.semanticpublishing.templates.MustacheTemplate;
 import eu.ldbc.semanticpublishing.util.RandomUtil;
 
@@ -25,7 +26,7 @@ public class Query3Template extends MustacheTemplate implements QueryParametersG
 	private static final int TIME_UNIT = Calendar.HOUR;
 	private static final int TIME_INTERVAL = 1;
 	
-	public Query3Template(RandomUtil ru, HashMap<String, String> queryTemplates, int seedYear, String[] substitutionParameters) {
+	public Query3Template(RandomUtil ru, HashMap<String, String> queryTemplates, Definitions definitions, String[] substitutionParameters) {
 		super(queryTemplates, substitutionParameters);
 		this.ru = ru;		
 		preInitialize();

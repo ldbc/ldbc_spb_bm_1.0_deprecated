@@ -39,11 +39,11 @@ public class InsertTemplate extends MustacheTemplate implements QueryParametersG
 		BLOG_POST, NEWS_ITEM, PROGRAMME
 	}	
 	
-	public InsertTemplate(String contextURI, RandomUtil ru, HashMap<String, String> queryTemplates, int seedYear) {
+	public InsertTemplate(String contextURI, RandomUtil ru, HashMap<String, String> queryTemplates, Definitions definitions) {
 		super(queryTemplates, null);
 		this.contextURI = contextURI;
 		this.ru = ru;
-		this.seedYear = seedYear;
+		this.seedYear = definitions.getInt(Definitions.YEAR_SEED);
 		preInitialize();
 		initializeCreativeWorkEntity(contextURI);
 	}

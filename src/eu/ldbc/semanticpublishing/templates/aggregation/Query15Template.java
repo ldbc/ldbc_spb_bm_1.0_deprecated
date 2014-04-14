@@ -24,7 +24,7 @@ public class Query15Template  extends DefaultSelectTemplate implements QueryPara
 	private int parameterIndex;
 	private final String[] substitutionParameters;	
 	
-	public Query15Template(RandomUtil ru, HashMap<String, String> queryTemplates, int seedYear, String[] substitutionParameters) {
+	public Query15Template(RandomUtil ru, HashMap<String, String> queryTemplates, Definitions definitions, String[] substitutionParameters) {
 		super(queryTemplates);
 		this.substitutionParameters = substitutionParameters;
 		this.parameterIndex = 0;

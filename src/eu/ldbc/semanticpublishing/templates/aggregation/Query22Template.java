@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection.QueryType;
 import eu.ldbc.semanticpublishing.generators.querygenerator.QueryParametersGenerator;
+import eu.ldbc.semanticpublishing.properties.Definitions;
 import eu.ldbc.semanticpublishing.util.RandomUtil;
 
 /**
@@ -19,8 +20,8 @@ public class Query22Template extends Query21Template {
 
 	protected static final String FILTER_DATE_YM_STRING = "FILTER (?year = %s && ?month = %s) .";
 	
-	public Query22Template(RandomUtil ru, HashMap<String, String> queryTemplates, int seedYear, String[] substitutionParameters) {
-		super(ru, queryTemplates, seedYear, substitutionParameters);
+	public Query22Template(RandomUtil ru, HashMap<String, String> queryTemplates, Definitions definitions, String[] substitutionParameters) {
+		super(ru, queryTemplates, definitions, substitutionParameters);
 	}
 	
 	/**
