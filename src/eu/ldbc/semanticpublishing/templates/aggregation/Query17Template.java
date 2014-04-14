@@ -19,13 +19,13 @@ public class Query17Template extends MustacheTemplate implements QueryParameters
 	//must match with corresponding file name of the mustache template file
 	private static final String templateFileName = "query17.txt";
 	//south boundary
-	private static final double minLat = 50.45;	
+	private double minLat = 50.45;	
 	//north boundary
-	private static final double maxLat = 53.25;
+	private double maxLat = 53.25;
 	//west boundary
-	private static final double minLong = -2.15;
+	private double minLong = -2.15;
 	//east boundary
-	private static final double maxLong = 0.25;
+	private double maxLong = 0.25;
 	
 	private final RandomUtil ru;
 	
@@ -34,13 +34,20 @@ public class Query17Template extends MustacheTemplate implements QueryParameters
 	//deviation value, sets the range by adding/subtracting it from referenceLat and referenceLong
 	private double deviationValue = 0.25;
 	
+	private Definitions definitions;
+	
 	public Query17Template(RandomUtil ru, HashMap<String, String> queryTemplates, Definitions definitions, String[] substitutionParameters) {
 		super(queryTemplates, substitutionParameters);
 		this.ru = ru;	
+		this.definitions = definitions;
 		preInitialize();
 	}
 	
 	private void preInitialize() {
+		minLat = definitions.getDouble(Definitions.GEO_MIN_LAT);
+		maxLat = definitions.getDouble(Definitions.GEO_MAX_LAT);
+		minLong = definitions.getDouble(Definitions.GEO_MIN_LONG);
+		maxLong = definitions.getDouble(Definitions.GEO_MAX_LONG);
 		referenceLat = ru.nextDouble(minLat, maxLat);
 		referenceLong = ru.nextDouble(minLong, maxLong);
 		deviationValue = ru.nextDouble(0.20, 0.25);

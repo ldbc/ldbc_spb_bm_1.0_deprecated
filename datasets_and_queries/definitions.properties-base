@@ -68,3 +68,16 @@ correlationDuration=0.2
 #Defines the lifespan of each entity that participates in a correlation
 # e.g. correlationEntityLifespan=0.5 defines that 50% of total generation period will be the lifespan of an entity that participates in a correlation, i.e. tagged in Creative Works
 correlationEntityLifespan=0.5
+
+#Geo-spatial properties
+#Defines minimum latitude
+minLat = 50.45
+ 
+#Defines maximum latitude
+maxLat = 53.25
+
+#Defines minimum longtitude
+minLong = -2.15
+
+#Defines maximum longtitude
+maxLong = 0.25

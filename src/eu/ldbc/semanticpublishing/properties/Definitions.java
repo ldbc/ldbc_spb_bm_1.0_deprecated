@@ -32,6 +32,10 @@ public class Definitions {
 	public static final String CORRELATIONS_MAGNITUDE = "correlationsMagnitude";
 	public static final String CORRELATIONS_DURATION = "correlationDuration";
 	public static final String CORRELATION_ENTITY_LIFESPAN = "correlationEntityLifespan";
+	public static final String GEO_MIN_LAT = "minLat";
+	public static final String GEO_MAX_LAT = "maxLat";
+	public static final String GEO_MIN_LONG = "minLong";
+	public static final String GEO_MAX_LONG = "maxLong";
 	
 	//About tags in Creative Works
 	public static AllocationsUtil aboutsAllocations;
