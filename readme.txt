@@ -54,10 +54,11 @@ Benchmark Phases :
     - generateCreativeWorks 		          : using uploaded data from previous two phases, generates Creative Works and saves them to files.
                                             Generated files need to be loaded into database manually (or automatically if file format is n-quads)
                                               Note : in order to execute generateCreativeWorks phase, ontologies and reference data from previous two phases must be present in database
+    - loadCreativeWorks	  		            : load generated creative works into database (Tested for N-Quads)
     - generateQuerySubstitutionParameters : Controls generation of query substitution parameters which later can be used during the warmup and benchmark phases. For each query a
                                             substitution parameters file is created and saved into 'creativeWorksPath' location. 
                                               Note : If no files are found at that location, queries executed during warmup and benchmark phases will use randomly generated parameters.
-    - loadCreativeWorks	  		            : load generated creative works into database (Tested for N-Quads)
+                                              Note2: Prior to generation of substitution parameters all of the phases above should have been completed.
     - warmUp                		          : a series of Aggregation queries are executed for a fixed amount of time.
     - benchmark             		          : all aggregation and editorial agents are started and kept running for a period of 'benchmarkRunPeriodSeconds'.
     - checkConformance                    : executes predefined queries (from folder 'data/sparql/conformance'. Checking for OWL2-RL : prp-irp, prp-asyp, prp-pdw, prp-adp, cax-dw, cax-adc,
