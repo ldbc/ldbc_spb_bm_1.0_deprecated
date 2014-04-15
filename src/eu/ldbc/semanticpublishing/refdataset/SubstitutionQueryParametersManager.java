@@ -11,21 +11,21 @@ import eu.ldbc.semanticpublishing.util.StringUtil;
  * substitution query parameters
  */
 public class SubstitutionQueryParametersManager {
-	public static final SubstitutionQueryParameters[] substitutionParametersQueues;
+	public static final SubstitutionQueryParameters[] substitutionParameters;
 
 	private static final String QUERY_NAME = "query";
 	private static final String SUBST_PARAMETERS_FILE_SUFFIX = "SubstParameters.txt";
 
 	static {
-		substitutionParametersQueues = new SubstitutionQueryParameters[Statistics.AGGREGATE_QUERIES_COUNT];
+		substitutionParameters = new SubstitutionQueryParameters[Statistics.AGGREGATE_QUERIES_COUNT];
 		for (int i = 0; i < Statistics.AGGREGATE_QUERIES_COUNT; i++) {
-			substitutionParametersQueues[i] = new SubstitutionQueryParameters(String.format("%s%d%s", QUERY_NAME, (i + 1),	SUBST_PARAMETERS_FILE_SUFFIX));
+			substitutionParameters[i] = new SubstitutionQueryParameters(String.format("%s%d%s", QUERY_NAME, (i + 1), SUBST_PARAMETERS_FILE_SUFFIX));
 		}
 	}
 
 	public void intiSubstitutionParameters(String location) throws IOException,	InterruptedException {
 		for (int i = 0; i < Statistics.AGGREGATE_QUERIES_COUNT; i++) {
-			substitutionParametersQueues[i].initFromFile(buildSubstParametersFilePath(location,	substitutionParametersQueues[i].getQueryName()));
+			substitutionParameters[i].initFromFile(buildSubstParametersFilePath(location,	substitutionParameters[i].getQueryName()));
 		}
 	}
 
@@ -42,8 +42,7 @@ public class SubstitutionQueryParametersManager {
 	 *            - Notice - queryIndex is zero based, while substitution query
 	 *            parameters are NOT
 	 */
-	public SubstitutionQueryParameters getSubstitutionParametersFor(
-			int queryIndex) {
-		return substitutionParametersQueues[queryIndex];
+	public SubstitutionQueryParameters getSubstitutionParametersFor(int queryIndex) {
+		return substitutionParameters[queryIndex];
 	}
 }

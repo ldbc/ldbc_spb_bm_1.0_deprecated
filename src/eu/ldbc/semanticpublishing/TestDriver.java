@@ -450,7 +450,7 @@ public class TestDriver {
 		if( configuration.getBoolean(Configuration.WARM_UP)) {
 			//assuming that if regularEntitiesList is empty, no entity lists were populated
 			if (DataManager.regularEntitiesList.size() == 0) {
-				populateRefDataEntitiesLists(false, true, false);
+				populateRefDataEntitiesLists(true, true, false);
 				if (DataManager.creativeWorksNexId.get() == 0) {
 					System.err.println("Warmup : Warning : no Creative Works were found stored in the database, initialise it with ontologies and reference datasets first! Exiting.");
 					System.exit(-1);
@@ -474,7 +474,7 @@ public class TestDriver {
 		if( configuration.getBoolean(Configuration.RUN_BENCHMARK)) {
 			//assuming that if regularEntitiesList is empty, no entity lists were populated
 			if (DataManager.regularEntitiesList.size() == 0 || DataManager.correlatedEntitiesList.size() == 0) {
-				populateRefDataEntitiesLists(false, true, false);
+				populateRefDataEntitiesLists(true, true, false);
 				if (DataManager.creativeWorksNexId.get() == 0) {
 					System.err.println("Warmup : Warning : no Creative Works were found stored in the database, initialise it with ontologies and reference datasets first! Exiting.");
 					System.exit(-1);
@@ -617,7 +617,7 @@ public class TestDriver {
 		if( configuration.getBoolean(Configuration.CLEAR_DATABASE)) {
 			//assuming that if regularEntitiesList is empty, no entity lists were populated
 			if (DataManager.regularEntitiesList.size() == 0) {
-				populateRefDataEntitiesLists(false, false, true);
+				populateRefDataEntitiesLists(true, false, true);
 				if (DataManager.creativeWorksNexId.get() == 0) {
 					System.err.println("Warmup : Warning : no Creative Works were found stored in the database, initialise it with ontologies and reference datasets first! Exiting.");
 					System.exit(-1);
