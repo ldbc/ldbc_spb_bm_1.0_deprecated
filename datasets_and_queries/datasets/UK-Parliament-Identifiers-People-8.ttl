@@ -1580,7 +1580,7 @@
 
 <http://www.bbc.co.uk/things/g3348ef7f-60e9-4a32-924c-f2dce2982459#id> a news:Person ;
 	bbc:preferredLabel "Sian James" ;
-	bbc:sameAs <http://dbpedia.org/resource/Si√¢n_James_(politician)> , <http://www.wikidata.org/wiki/Q727410> , <http://rdf.freebase.com/ns/m.062t9t> ;
+	bbc:sameAs <http://dbpedia.org/resource/Sion_James_(politician)> , <http://www.wikidata.org/wiki/Q727410> , <http://rdf.freebase.com/ns/m.062t9t> ;
 	rdfs:seeAlso <http://news.bbc.co.uk/democracylive/hi/representatives/profiles/35773.stm> , <http://www.guardian.co.uk/politics/person/12063/> .
 
 <http://www.bbc.co.uk/things/g461c835c-fdd2-4187-b232-53e1891bf549#id> a news:Person ;
