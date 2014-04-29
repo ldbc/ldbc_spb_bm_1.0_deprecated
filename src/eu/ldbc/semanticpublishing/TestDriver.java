@@ -511,6 +511,10 @@ public class TestDriver {
 				}
 			}
 			
+			if (DataManager.correlatedEntitiesList.size() == 0) {
+				System.out.println("Warning : Correlations could not be initalized, continuing with random distribution of substitution parameters. See dataset.info file or generate dataset.");
+			}
+			
 			System.out.println("Starting the benchmark...");
 			LOGGER.info("Starting the benchmark...");
 
