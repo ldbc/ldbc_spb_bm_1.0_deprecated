@@ -18,6 +18,14 @@ public class UpdateTemplate extends InsertTemplate {
 		super(contextURI, ru, queryTemplates, definitions);
 	}
 	
+	public UpdateTemplate(String contextURI, RandomUtil ru, HashMap<String, String> queryTemplates, Definitions definitions, boolean initializeCWEntity) {
+		super(contextURI, ru, queryTemplates, definitions, initializeCWEntity, null);
+	}
+	
+	public UpdateTemplate(String contextURI, RandomUtil ru, HashMap<String, String> queryTemplates, Definitions definitions, boolean initializeCWEntity, String[] substitutionParameters) {
+		super(contextURI, ru, queryTemplates, definitions, initializeCWEntity, substitutionParameters);
+	}	
+	
 	@Override
 	public String getTemplateFileName() {
 		return templateFileName;

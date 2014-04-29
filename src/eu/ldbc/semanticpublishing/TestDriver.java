@@ -24,17 +24,17 @@ import eu.ldbc.semanticpublishing.agents.AggregationAgent;
 import eu.ldbc.semanticpublishing.agents.EditorialAgent;
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection.QueryType;
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryExecuteManager;
-import eu.ldbc.semanticpublishing.generators.datagenerator.DataGenerator;
-import eu.ldbc.semanticpublishing.generators.querygenerator.QueryParametersGenerator;
+import eu.ldbc.semanticpublishing.generators.data.DataGenerator;
 import eu.ldbc.semanticpublishing.properties.Configuration;
 import eu.ldbc.semanticpublishing.properties.Definitions;
 import eu.ldbc.semanticpublishing.refdataset.DataManager;
-import eu.ldbc.semanticpublishing.refdataset.SubstitutionQueryParametersManager;
 import eu.ldbc.semanticpublishing.refdataset.model.Entity;
 import eu.ldbc.semanticpublishing.resultanalyzers.CreativeWorksAnalyzer;
 import eu.ldbc.semanticpublishing.resultanalyzers.GeonamesAnalyzer;
 import eu.ldbc.semanticpublishing.resultanalyzers.ReferenceDataAnalyzer;
 import eu.ldbc.semanticpublishing.statistics.Statistics;
+import eu.ldbc.semanticpublishing.substitutionparameters.SubstitutionParametersGenerator;
+import eu.ldbc.semanticpublishing.substitutionparameters.SubstitutionQueryParametersManager;
 import eu.ldbc.semanticpublishing.templates.MustacheTemplatesHolder;
 import eu.ldbc.semanticpublishing.util.FileUtils;
 import eu.ldbc.semanticpublishing.util.LoggingUtil;
@@ -42,6 +42,9 @@ import eu.ldbc.semanticpublishing.util.RandomUtil;
 import eu.ldbc.semanticpublishing.util.RdfUtils;
 import eu.ldbc.semanticpublishing.util.StringUtil;
 import eu.ldbc.semanticpublishing.util.ThreadUtil;
+import eu.ldbc.semanticpublishing.validation.AggregateOperationsValidator;
+import eu.ldbc.semanticpublishing.validation.EditorialOperationsValidator;
+import eu.ldbc.semanticpublishing.validation.ValidationValuesManager;
 
 /**
  * The start point of the semantic publishing test driver. Initializes and runs all parts of the benchmark.
@@ -59,6 +62,7 @@ public class TestDriver {
 	private final MustacheTemplatesHolder mustacheTemplatesHolder = new MustacheTemplatesHolder();
 	private final RandomUtil randomGenerator;
 	private final SubstitutionQueryParametersManager substitutionQueryParamtersManager = new SubstitutionQueryParametersManager();
+	private final ValidationValuesManager validationValuesManager = new ValidationValuesManager();
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(TestDriver.class.getName());
 	private final static Logger RLOGGER = LoggerFactory.getLogger(Reporter.class.getName());
@@ -92,7 +96,7 @@ public class TestDriver {
 				configuration.getBoolean(Configuration.VERBOSE));
 		
 		//set the nextId for Creative Works, default 0
-		DataManager.creativeWorksNexId.set(configuration.getLong(Configuration.CREATIVE_WORK_NEXT_ID));
+		DataManager.creativeWorksNextId.set(configuration.getLong(Configuration.CREATIVE_WORK_NEXT_ID));
 	}
 	
 	public SparqlQueryExecuteManager getQueryExecuteManager() { 
@@ -108,8 +112,8 @@ public class TestDriver {
 		return new RandomUtil(filePath, seed, yearSeed, generatedDataPeriodYears);
 	}
 
-	private void loadOntologies() throws IOException {
-		if( configuration.getBoolean(Configuration.LOAD_ONTOLOGIES)) {
+	private void loadOntologies(boolean enable) throws IOException {
+		if (enable) {
 			System.out.println("Loading ontologies...");
 			
 			String ontologiesPath = StringUtil.normalizePath(configuration.getString(Configuration.ONTOLOGIES_PATH));
@@ -130,8 +134,8 @@ public class TestDriver {
 		}
 	}
 	
-	private void adjustRefDatasetsSizes() throws IOException {
-		if ( configuration.getBoolean(Configuration.ADJUST_REF_DATASETS_SIZES)) {
+	private void adjustRefDatasetsSizes(boolean enable) throws IOException {
+		if (enable) {
 			System.out.println("Adjusting reference datasets size...");
 			int magnitudeOfEntities = 100000;//magnitude in terms of entities used to get from reference dataset
 			int avgTriplesPerCw = 19;//average number of triples per Creative Work
@@ -155,8 +159,8 @@ public class TestDriver {
 		}
 	}
 	 
-	private void loadDatasets() throws IOException {
-		if( configuration.getBoolean(Configuration.LOAD_REFERENCE_DATASETS)) {
+	private void loadDatasets(boolean enable) throws IOException {
+		if (enable) {
 			System.out.println("Loading reference datasets...");
 			
 			String datasetsPath = StringUtil.normalizePath(configuration.getString(Configuration.REFERENCE_DATASETS_PATH));
@@ -177,10 +181,10 @@ public class TestDriver {
 		}
 	}
 	
-	private void populateRefDataEntitiesLists(boolean showDetails, boolean populateFromDatasetInfoFile, boolean suppressDatasetInfoWarnings) throws IOException {
+	public void populateRefDataEntitiesLists(boolean showDetails, boolean populateFromDatasetInfoFile, boolean suppressDatasetInfoWarnings, String messagePrefix) throws IOException {
 		
 		if (configuration.getBoolean(Configuration.VERBOSE) && showDetails) {
-			System.out.println("Analyzing reference knowledge in data...");
+			System.out.println(messagePrefix + "Analyzing reference knowledge in data...");
 		}
 		
 		//retrieve entity uris frsom database
@@ -198,7 +202,7 @@ public class TestDriver {
 		//retrieve the greatest id of creative works from database
 		CreativeWorksAnalyzer cwk = new CreativeWorksAnalyzer(queryExecuteManager, mustacheTemplatesHolder);
 		long count = cwk.getResult();		
-		DataManager.creativeWorksNexId.set(count);
+		DataManager.creativeWorksNextId.set(count);
 		
 		//retrieve geonames ids from database
 		GeonamesAnalyzer gna = new GeonamesAnalyzer(queryExecuteManager, mustacheTemplatesHolder);
@@ -218,18 +222,17 @@ public class TestDriver {
 		}
 		
 		if (configuration.getBoolean(Configuration.VERBOSE) && showDetails) {
-			System.out.println("Ref. Dataset Entities count : " + entitiesList.size() + ", Max CW id : " + count + ", Geonames entities count : " + geonamesIds.size());
+			System.out.println(messagePrefix + "\t(reference data entities size : " + entitiesList.size() + ", max Creative Work id : " + count + ", geonames entities size : " + geonamesIds.size());
 		}
 	}
 	
-	private void loadCreativeWorks() throws IOException {
-		if( configuration.getBoolean(Configuration.LOAD_CREATIVE_WORKS)) {
+	public void loadCreativeWorks(boolean enable) throws IOException {
+		if (enable) {
 			System.out.println("Loading Creative Works...");
 			
-			String path = configuration.getString(Configuration.CREATIVE_WORKS_PATH);
 			String endpoint = configuration.getString(Configuration.ENDPOINT_UPDATE_URL);
 			
-			File[] files = new File(path).listFiles();
+			File[] files = new File(configuration.getString(Configuration.CREATIVE_WORKS_PATH)).listFiles();
 			
 			Arrays.sort(files);
 			int size=0;
@@ -256,13 +259,13 @@ public class TestDriver {
 		}
 	}
 	
-	private void generateCreativeWorks() throws IOException, InterruptedException {
-		if( configuration.getBoolean(Configuration.GENERATE_CREATIVE_WORKS)) {
+	private void generateCreativeWorks(boolean enable) throws IOException, InterruptedException {
+		if (enable) {
 			System.out.println("Generating Creative Works data files...");
 			
 			//assuming that if regularEntitiesList is empty, no entity lists were populated
 			if (DataManager.regularEntitiesList.size() == 0) {
-				populateRefDataEntitiesLists(true, false, true);
+				populateRefDataEntitiesLists(true, false, true, "");
 			}
 			
 			long triplesPerFile = configuration.getLong(Configuration.GENERATED_TRIPLES_PER_FILE);
@@ -278,16 +281,16 @@ public class TestDriver {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void generateQuerySubstitutionParameters() throws InterruptedException, IOException {
-		if ( configuration.getBoolean(Configuration.GENERATE_QUERY_SUBSTITUTION_PARAMETERS)) {
-			System.out.print("Generating query parameters");
+	public void generateQuerySubstitutionParameters(boolean enable) throws InterruptedException, IOException {
+		if (enable) {
+			System.out.println("Generating query parameters");
 			
 			//assuming that if regularEntitiesList is empty, no entity lists were populated
 			if (DataManager.regularEntitiesList.size() == 0 || DataManager.correlatedEntitiesList.size() == 0) {
-				populateRefDataEntitiesLists(true, true, false);
+				populateRefDataEntitiesLists(true, true, false, "");
 			}
 			
-			if (DataManager.creativeWorksNexId.get() == 0) {
+			if (DataManager.creativeWorksNextId.get() == 0) {
 				System.out.println("\tNo creative works were found in the database, load creative works first! aborting...");
 				return;
 			}
@@ -296,9 +299,9 @@ public class TestDriver {
 			FileUtils.makeDirectories(targetFolder);
 			
 			BufferedWriter bw = null;
-			Class<QueryParametersGenerator> c = null;
+			Class<SubstitutionParametersGenerator> c = null;
 			Constructor<?> cc = null;
-			QueryParametersGenerator queryTemplate = null;
+			SubstitutionParametersGenerator queryTemplate = null;
 			try {
 /*
 				//Editorial query parameters
@@ -334,9 +337,9 @@ public class TestDriver {
 				for (int i = 1; i <= Statistics.AGGREGATE_QUERIES_COUNT; i++) {
 					bw = new BufferedWriter(new FileWriter(new File(targetFolder + File.separator + String.format("query%01dSubstParameters", i) + ".txt")));
 					
-					c = (Class<QueryParametersGenerator>) Class.forName(String.format("eu.ldbc.semanticpublishing.templates.aggregation.Query%dTemplate", i));
+					c = (Class<SubstitutionParametersGenerator>) Class.forName(String.format("eu.ldbc.semanticpublishing.templates.aggregation.Query%dTemplate", i));
 					cc = c.getConstructor(RandomUtil.class, HashMap.class, Definitions.class, String[].class);
-					queryTemplate = (QueryParametersGenerator) cc.newInstance(randomGenerator, mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.AGGREGATION), definitions, null);					
+					queryTemplate = (SubstitutionParametersGenerator) cc.newInstance(randomGenerator, mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.AGGREGATION), definitions, null);					
 					queryTemplate.generateSubstitutionParameters(bw, configuration.getInt(Configuration.QUERY_SUBSTITUTION_PARAMETERS));
 					
 					bw.close();
@@ -348,6 +351,7 @@ public class TestDriver {
 						System.out.println(".");
 					}
 				}
+				System.out.println("\n");
 			} catch (Exception e) {
 				System.out.println("\n\tException caught during generation of query substitution parameters : " + e.getClass().getName() + " :: " + e.getMessage());
 			} finally {
@@ -356,9 +360,35 @@ public class TestDriver {
 		}
 	}	
 	
-	public void initializeQuerySubstitutionParameters() throws IOException, InterruptedException {
-		System.out.println("Initializing query substitution parameters...");
-		substitutionQueryParamtersManager.intiSubstitutionParameters(configuration.getString(Configuration.CREATIVE_WORKS_PATH));
+	public void initializeQuerySubstitutionParameters(boolean enable) throws IOException, InterruptedException {
+		if (enable) {
+			boolean validationPhaseIsEnabled = configuration.getBoolean(Configuration.VALIDATE_QUERY_RESULTS);
+			
+			if (!validationPhaseIsEnabled) {
+				System.out.println("Initializing query substitution parameters...");
+			}
+			substitutionQueryParamtersManager.intiSubstitutionParameters(configuration.getString(Configuration.CREATIVE_WORKS_PATH), validationPhaseIsEnabled, true);
+		}
+	}
+	
+	public void validateQueryResults(boolean enable) throws Exception {
+		if (enable) {
+			System.out.println("Validating query operations...");
+			
+			if (DataManager.regularEntitiesList.size() == 0 || DataManager.correlatedEntitiesList.size() == 0) {
+				populateRefDataEntitiesLists(false, true, true, "\t");
+			}
+			validationValuesManager.intiValidationValues(configuration.getString(Configuration.VALIDATION_PATH), false);
+
+			EditorialOperationsValidator eov = new EditorialOperationsValidator(queryExecuteManager, randomGenerator, mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.EDITORIAL), mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.VALIDATION), configuration, definitions);
+			eov.validate();
+			
+			//refresh info about reference data and CWs stored in database 
+			populateRefDataEntitiesLists(false, true, true, "");
+			
+			AggregateOperationsValidator aov = new AggregateOperationsValidator(this, validationValuesManager, queryExecuteManager, randomGenerator, mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.AGGREGATION), configuration, definitions);
+			aov.validate();
+		}
 	}
 
 /*
@@ -446,12 +476,12 @@ public class TestDriver {
 	private boolean aggregationAgentsStarted = false;
 	private boolean editorialAgentsStarted = false;
 	
-	private void warmUp() throws IOException {
-		if( configuration.getBoolean(Configuration.WARM_UP)) {
+	private void warmUp(boolean enable) throws IOException {
+		if (enable) {
 			//assuming that if regularEntitiesList is empty, no entity lists were populated
 			if (DataManager.regularEntitiesList.size() == 0) {
-				populateRefDataEntitiesLists(true, true, false);
-				if (DataManager.creativeWorksNexId.get() == 0) {
+				populateRefDataEntitiesLists(true, true, false, "");
+				if (DataManager.creativeWorksNextId.get() == 0) {
 					System.err.println("Warmup : Warning : no Creative Works were found stored in the database, initialise it with ontologies and reference datasets first! Exiting.");
 					System.exit(-1);
 				}
@@ -470,12 +500,12 @@ public class TestDriver {
 		}
 	}
 	
-	private void benchmark() throws IOException {
-		if( configuration.getBoolean(Configuration.RUN_BENCHMARK)) {
+	private void benchmark(boolean enable) throws IOException {
+		if (enable) {
 			//assuming that if regularEntitiesList is empty, no entity lists were populated
 			if (DataManager.regularEntitiesList.size() == 0 || DataManager.correlatedEntitiesList.size() == 0) {
-				populateRefDataEntitiesLists(true, true, false);
-				if (DataManager.creativeWorksNexId.get() == 0) {
+				populateRefDataEntitiesLists(true, true, false, "");
+				if (DataManager.creativeWorksNextId.get() == 0) {
 					System.err.println("Warmup : Warning : no Creative Works were found stored in the database, initialise it with ontologies and reference datasets first! Exiting.");
 					System.exit(-1);
 				}
@@ -538,8 +568,8 @@ public class TestDriver {
 		}		
 	}
 	
-	private void checkConformance() throws IOException {
-		if( configuration.getBoolean(Configuration.CHECK_CONFORMANCE)) {
+	private void checkConformance(boolean enable) throws IOException {
+		if (enable) {
 
 			String queriesPath = configuration.getString(Configuration.QUERIES_PATH) + File.separator + "conformance";	
 			String endpoint = configuration.getString(Configuration.ENDPOINT_UPDATE_URL);
@@ -613,12 +643,12 @@ public class TestDriver {
 		}
 	}
 	
-	private void clearDatabase() throws IOException {
-		if( configuration.getBoolean(Configuration.CLEAR_DATABASE)) {
+	public void clearDatabase(boolean enable) throws IOException {
+		if (enable) {
 			//assuming that if regularEntitiesList is empty, no entity lists were populated
 			if (DataManager.regularEntitiesList.size() == 0) {
-				populateRefDataEntitiesLists(true, false, true);
-				if (DataManager.creativeWorksNexId.get() == 0) {
+				populateRefDataEntitiesLists(true, false, true, "");
+				if (DataManager.creativeWorksNextId.get() == 0) {
 					System.err.println("Warmup : Warning : no Creative Works were found stored in the database, initialise it with ontologies and reference datasets first! Exiting.");
 					System.exit(-1);
 				}
@@ -628,26 +658,27 @@ public class TestDriver {
 		}
 	}
 
-	public void executePhases() throws IOException, InterruptedException {
-		loadOntologies();
-		adjustRefDatasetsSizes();
-		loadDatasets();
-		generateCreativeWorks();
-		loadCreativeWorks();
-		generateQuerySubstitutionParameters();
-		initializeQuerySubstitutionParameters();
+	public void executePhases() throws Exception {
+		loadOntologies(configuration.getBoolean(Configuration.LOAD_ONTOLOGIES));
+		adjustRefDatasetsSizes(configuration.getBoolean(Configuration.ADJUST_REF_DATASETS_SIZES));
+		loadDatasets(configuration.getBoolean(Configuration.LOAD_REFERENCE_DATASETS));
+		generateCreativeWorks(configuration.getBoolean(Configuration.GENERATE_CREATIVE_WORKS));
+		loadCreativeWorks(configuration.getBoolean(Configuration.LOAD_CREATIVE_WORKS));
+		generateQuerySubstitutionParameters(configuration.getBoolean(Configuration.GENERATE_QUERY_SUBSTITUTION_PARAMETERS));
+		initializeQuerySubstitutionParameters(true);
+		validateQueryResults(configuration.getBoolean(Configuration.VALIDATE_QUERY_RESULTS));
 		setupAsynchronousAgents();
-		warmUp();
-		benchmark();
+		warmUp(configuration.getBoolean(Configuration.WARM_UP));
+		benchmark(configuration.getBoolean(Configuration.RUN_BENCHMARK));
 		stopAynchronousAgents();
-		checkConformance();
-		clearDatabase();
+		checkConformance(configuration.getBoolean(Configuration.CHECK_CONFORMANCE));
+		clearDatabase(configuration.getBoolean(Configuration.CLEAR_DATABASE));
 		
 		System.out.println("END OF BENCHMARK RUN, all agents shut down...");
 		System.exit(0);
 	}
 	
-	public static void main(String[] args) throws IOException, InterruptedException {
+	public static void main(String[] args) throws Exception {
 		LoggingUtil.Configure();
 		TestDriver testDriver = new TestDriver(args);
 		testDriver.executePhases();

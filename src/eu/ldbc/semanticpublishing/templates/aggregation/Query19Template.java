@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection.QueryType;
-import eu.ldbc.semanticpublishing.generators.querygenerator.QueryParametersGenerator;
+import eu.ldbc.semanticpublishing.substitutionparameters.SubstitutionParametersGenerator;
 import eu.ldbc.semanticpublishing.properties.Definitions;
 import eu.ldbc.semanticpublishing.util.RandomUtil;
 
@@ -55,19 +55,20 @@ public class Query19Template extends Query18Template {
 	}	
 	
 	@Override
-	public void generateSubstitutionParameters(BufferedWriter bw, int amount) throws IOException {
+	public String generateSubstitutionParameters(BufferedWriter bw, int amount) throws IOException {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < amount; i++) {
 			preInitialize();
 			sb.setLength(0);
 			sb.append(cwType());
-			sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
 			sb.append(cwAudience());
-			sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
 			sb.append(cwFilterDateModifiedCondition());
 			sb.append("\n");
 			bw.write(sb.toString());
 		}
+		return null;
 	}
 	
 	@Override

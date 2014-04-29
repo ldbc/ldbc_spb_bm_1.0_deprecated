@@ -1,0 +1,308 @@
+[SubstitutionParameters]
+cwork:Programme;FILTER(?dateModif >= "2011-10-01T00:00:00.000"^^<http://www.w3.org/2001/XMLSchema#dateTime> && ?dateModif < "2011-10-31T23:59:59.999"^^<http://www.w3.org/2001/XMLSchema#dateTime>) . 
+
+[Results]
+<http://www.bbc.co.uk/things/40717#id>
+<http://www.bbc.co.uk/things/25085#id>
+<http://www.bbc.co.uk/things/15078#id>
+<http://www.bbc.co.uk/things/18859#id>
+<http://www.bbc.co.uk/things/3082#id>
+<http://www.bbc.co.uk/things/14293#id>
+<http://www.bbc.co.uk/things/15733#id>
+<http://www.bbc.co.uk/things/27321#id>
+<http://www.bbc.co.uk/things/19822#id>
+<http://www.bbc.co.uk/things/46016#id>
+<http://www.bbc.co.uk/things/2234#id>
+<http://www.bbc.co.uk/things/25352#id>
+<http://www.bbc.co.uk/things/39700#id>
+<http://www.bbc.co.uk/things/31609#id>
+<http://www.bbc.co.uk/things/46425#id>
+<http://www.bbc.co.uk/things/20219#id>
+<http://www.bbc.co.uk/things/6775#id>
+<http://www.bbc.co.uk/things/43427#id>
+<http://www.bbc.co.uk/things/22254#id>
+<http://www.bbc.co.uk/things/43605#id>
+<http://www.bbc.co.uk/things/43002#id>
+<http://www.bbc.co.uk/things/17905#id>
+<http://www.bbc.co.uk/things/13370#id>
+<http://www.bbc.co.uk/things/28899#id>
+<http://www.bbc.co.uk/things/11991#id>
+<http://www.bbc.co.uk/things/4828#id>
+<http://www.bbc.co.uk/things/11160#id>
+<http://www.bbc.co.uk/things/867#id>
+<http://www.bbc.co.uk/things/25094#id>
+<http://www.bbc.co.uk/things/10931#id>
+<http://www.bbc.co.uk/things/39365#id>
+<http://www.bbc.co.uk/things/2863#id>
+<http://www.bbc.co.uk/things/9078#id>
+<http://www.bbc.co.uk/things/36838#id>
+<http://www.bbc.co.uk/things/21189#id>
+<http://www.bbc.co.uk/things/10965#id>
+<http://www.bbc.co.uk/things/24417#id>
+<http://www.bbc.co.uk/things/42191#id>
+<http://www.bbc.co.uk/things/35751#id>
+<http://www.bbc.co.uk/things/2970#id>
+<http://www.bbc.co.uk/things/42061#id>
+<http://www.bbc.co.uk/things/39584#id>
+<http://www.bbc.co.uk/things/14450#id>
+<http://www.bbc.co.uk/things/185#id>
+<http://www.bbc.co.uk/things/22107#id>
+<http://www.bbc.co.uk/things/40543#id>
+<http://www.bbc.co.uk/things/12040#id>
+<http://www.bbc.co.uk/things/24075#id>
+<http://www.bbc.co.uk/things/32929#id>
+<http://www.bbc.co.uk/things/33838#id>
+<http://www.bbc.co.uk/things/10806#id>
+<http://www.bbc.co.uk/things/647#id>
+<http://www.bbc.co.uk/things/24568#id>
+<http://www.bbc.co.uk/things/17424#id>
+<http://www.bbc.co.uk/things/18437#id>
+<http://www.bbc.co.uk/things/42920#id>
+<http://www.bbc.co.uk/things/17467#id>
+<http://www.bbc.co.uk/things/41979#id>
+<http://www.bbc.co.uk/things/10164#id>
+<http://www.bbc.co.uk/things/33715#id>
+<http://www.bbc.co.uk/things/23891#id>
+<http://www.bbc.co.uk/things/4051#id>
+<http://www.bbc.co.uk/things/37309#id>
+<http://www.bbc.co.uk/things/30681#id>
+<http://www.bbc.co.uk/things/5613#id>
+<http://www.bbc.co.uk/things/28208#id>
+<http://www.bbc.co.uk/things/32958#id>
+<http://www.bbc.co.uk/things/40018#id>
+<http://www.bbc.co.uk/things/6789#id>
+<http://www.bbc.co.uk/things/4556#id>
+<http://www.bbc.co.uk/things/27246#id>
+<http://www.bbc.co.uk/things/35773#id>
+<http://www.bbc.co.uk/things/35419#id>
+<http://www.bbc.co.uk/things/21867#id>
+<http://www.bbc.co.uk/things/27215#id>
+<http://www.bbc.co.uk/things/11620#id>
+<http://www.bbc.co.uk/things/10736#id>
+<http://www.bbc.co.uk/things/12063#id>
+<http://www.bbc.co.uk/things/29757#id>
+<http://www.bbc.co.uk/things/31954#id>
+<http://www.bbc.co.uk/things/33359#id>
+<http://www.bbc.co.uk/things/32063#id>
+<http://www.bbc.co.uk/things/13878#id>
+<http://www.bbc.co.uk/things/24225#id>
+<http://www.bbc.co.uk/things/11264#id>
+<http://www.bbc.co.uk/things/38598#id>
+<http://www.bbc.co.uk/things/43674#id>
+<http://www.bbc.co.uk/things/36404#id>
+<http://www.bbc.co.uk/things/28753#id>
+<http://www.bbc.co.uk/things/15488#id>
+<http://www.bbc.co.uk/things/43681#id>
+<http://www.bbc.co.uk/things/30883#id>
+<http://www.bbc.co.uk/things/46352#id>
+<http://www.bbc.co.uk/things/45958#id>
+<http://www.bbc.co.uk/things/3093#id>
+<http://www.bbc.co.uk/things/28583#id>
+<http://www.bbc.co.uk/things/2095#id>
+<http://www.bbc.co.uk/things/28030#id>
+<http://www.bbc.co.uk/things/17308#id>
+<http://www.bbc.co.uk/things/43837#id>
+2011-10-01T19:43:42.950+03:00
+2011-10-01T19:47:19.490+03:00
+2011-10-01T19:51:51.536+03:00
+2011-10-01T20:10:53.555+03:00
+2011-10-01T21:49:54.718+03:00
+2011-10-01T21:55:22.822+03:00
+2011-10-01T23:01:27.300+03:00
+2011-10-02T00:02:47.608+03:00
+2011-10-02T00:13:50.963+03:00
+2011-10-02T01:10:24.933+03:00
+2011-10-02T02:36:49.270+03:00
+2011-10-02T04:21:37.871+03:00
+2011-10-02T04:28:50.334+03:00
+2011-10-02T04:31:29.096+03:00
+2011-10-02T05:17:47.774+03:00
+2011-10-02T06:48:01.924+03:00
+2011-10-02T06:55:21.118+03:00
+2011-10-02T07:43:14.034+03:00
+2011-10-02T07:45:14.303+03:00
+2011-10-02T09:13:00.351+03:00
+2011-10-02T09:51:29.078+03:00
+2011-10-02T10:21:52.729+03:00
+2011-10-02T10:34:39.084+03:00
+2011-10-02T10:43:19.956+03:00
+2011-10-02T11:08:44.243+03:00
+2011-10-02T12:23:32.506+03:00
+2011-10-02T13:27:27.191+03:00
+2011-10-02T13:32:19.672+03:00
+2011-10-02T15:59:03.838+03:00
+2011-10-02T16:02:36.055+03:00
+2011-10-02T16:32:44.806+03:00
+2011-10-02T18:46:24.307+03:00
+2011-10-02T20:00:48.346+03:00
+2011-10-02T20:06:00.622+03:00
+2011-10-02T21:35:02.419+03:00
+2011-10-02T22:41:39.773+03:00
+2011-10-02T22:56:15.896+03:00
+2011-10-02T23:31:47.524+03:00
+2011-10-02T23:55:27.698+03:00
+2011-10-03T01:44:51.401+03:00
+2011-10-03T02:04:55.991+03:00
+2011-10-03T02:26:22.624+03:00
+2011-10-03T02:45:38.124+03:00
+2011-10-03T03:22:35.395+03:00
+2011-10-03T03:50:32.682+03:00
+2011-10-03T04:05:40.628+03:00
+2011-10-03T04:49:26.518+03:00
+2011-10-03T05:29:19.162+03:00
+2011-10-03T06:53:45.620+03:00
+2011-10-03T06:54:27.371+03:00
+2011-10-03T09:25:24.145+03:00
+2011-10-03T10:49:22.518+03:00
+2011-10-03T11:02:53.476+03:00
+2011-10-03T11:21:49.853+03:00
+2011-10-03T12:32:20.590+03:00
+2011-10-03T14:56:26.788+03:00
+2011-10-03T19:09:07.669+03:00
+2011-10-03T20:51:19.770+03:00
+2011-10-03T20:55:29.755+03:00
+2011-10-03T22:40:36.616+03:00
+2011-10-03T22:59:46.608+03:00
+2011-10-03T23:12:05.810+03:00
+2011-10-04T02:22:18.418+03:00
+2011-10-04T04:13:17.766+03:00
+2011-10-04T06:18:07.510+03:00
+2011-10-04T06:53:15.521+03:00
+2011-10-04T07:50:33.315+03:00
+2011-10-04T10:15:17.987+03:00
+2011-10-04T10:49:57.077+03:00
+2011-10-04T13:56:29.780+03:00
+2011-10-04T14:09:24.129+03:00
+2011-10-04T14:54:36.328+03:00
+2011-10-04T16:58:32.644+03:00
+2011-10-04T17:48:48.859+03:00
+2011-10-04T18:01:02.175+03:00
+2011-10-04T18:37:26.115+03:00
+2011-10-04T19:29:09.914+03:00
+2011-10-04T19:56:32.172+03:00
+2011-10-04T19:57:39.601+03:00
+2011-10-04T20:26:12.841+03:00
+2011-10-04T21:28:07.941+03:00
+2011-10-04T22:02:01.973+03:00
+2011-10-04T22:17:19.916+03:00
+2011-10-04T22:55:45.647+03:00
+2011-10-04T23:57:48.665+03:00
+2011-10-05T01:29:40.834+03:00
+2011-10-05T03:39:29.031+03:00
+2011-10-05T05:23:43.111+03:00
+2011-10-05T06:30:18.874+03:00
+2011-10-05T09:38:24.620+03:00
+2011-10-05T10:05:16.472+03:00
+2011-10-05T10:56:22.324+03:00
+2011-10-05T12:53:39.988+03:00
+2011-10-05T13:17:31.797+03:00
+2011-10-05T13:20:08.186+03:00
+2011-10-05T13:53:35.761+03:00
+2011-10-05T14:14:48.425+03:00
+2011-10-05T14:32:29.763+03:00
+2011-10-05T15:20:38.951+03:00
+2011-10-05T15:37:13.848+03:00
+<http://www.bbc.co.uk/category/PoliticsPersonsAdditional>
+<http://www.bbc.co.uk/category/PoliticsPersonsReference>
+<http://www.bbc.co.uk/category/Persons>
+<http://www.bbc.co.uk/category/SportsTeams>
+Paul Maynard members public trends its need basic also spectators saving purposes.
+John McDonnell so eventual still rugby internal assembly beginning confrontation address always.
+Ian Austin used cannot primitive until speaking pretty logged tensions competitions after.
+Michael Meacher fact where however proof they eligible venue laws particularly fixtures.
+Jessica Morden large 12th improve games not sake one should at elaborate.
+Eilidh Whiteford purpose where features only olympic unfair two place public contrary.
+Derek Twigg participants participants its institution realm ethos billion towards wealthy raise.
+Rochdale conscientious 15th refused privilege uncommon such against users also levels.
+Daniel Kawczynski around our layout see only tensions since parliament make click.
+Shrewsbury Town tables applicable spectators society broadcasters achieve referring athletes viewers opportunity.
+Angela Smith official phrase attract amassed still purely display site's africa transfers.
+Harriet Harman global whole charge could pretension been olympics entered purpose internet.
+Andrew Lansley personalize peasants century against after relate logged when viewers politics.
+Alok Sharma serve best identifiable politics provide ceased 2007 mentality but country.
+Angela Watkinson these administration purely olympics exist seen primitive normally appear most.
+Mark Harper would adopt responsible web principle administer ticket representative payment bargaining.
+David Miliband governments notion rule decided alone professionally at platform primitive within.
+George Mudie participation basis first grassroots attracted sums platform with a pits.
+Dan Rogerson retain always eventual individual's services started competitions development could provide.
+Rosie Cooper sporting hard paid used king appear whole consistent visit help.
+David Wright first person software themselves method union administration an entrance man.
+Paul Farrelly and/or reject approach mentality make faster activity movement representation competed.
+Lyn Brown number considered centuries fundamental player referring display effective representation institution.
+Glyn Davies time guaranteeing guaranteeing originally educated south public competed king around.
+Lilian Greenwood themselves pieces something facts asked entered three africa town ads.
+Gregory Barker domain mentality legislation which until the day lead another diagnose.
+Jamie Reed improve war parliaments place beginning use you users show serve.
+Tessa Jowell ads attracted secular normally guaranteeing fact rugby themselves rival royal.
+Nick Gibb eventual individual sprang both piece attracts allowing to view integrity.
+Adrian Sanders fundamental created venue refusing within attract enactments service exchange attracts.
+David Gauke progress purely page countries servers elections governments viewers millions broadcasters.
+Ann Clwyd first adaptability certain public royal radio tables each orders grassroots.
+Frank Doran should ads cut whole those olympics took wealthy ambition address.
+Menzies Campbell basic centuries is contribute viewers type or began criticism mediums.
+Julian Brazier these grassroots cricket man function although parliament attracts least seen.
+Greg Mulholland time accept estimated related sporting it page crown sport football.
+Penny Mordaunt being piece hobby around customer 23 times union could contrary.
+Stephen Phillips come allowing others from at represented name achievement least pages.
+Philip Davies radio visit a ends by also rival people holding components.
+Alan Whitehead refused object olympic areas you you other represented consistent took.
+Bill Wiggin boxing still worldwide within two main engine towards computer olympics.
+Andrew Smith originated enforced all fundamental carried referral reinforced mentality reporting certain.
+Heidi Alexander viewers a visit eg delete with came saving two person.
+David Jones server visit permitted meant experience originate boxing begins parliament estimated.
+Thomas Docherty historically kinds rights server inform you educated fact equality educated.
+Nadine Dorries personal internet transfers is crown entered facts components ticket contribute.
+Alan Meale referring educated already or liability there political users eventual tensions.
+Kris Hopkins ceased until related charge through lower pressure effects domestic teams.
+David Anderson already pressure the related ip took created lies soon competition.
+Chris Evans higher log modern europe serve analyze since petitions sometimes competitions.
+Andrew Smith transfers nobility bidding revolves others method central soon 15th levels.
+William McCrea internal power hard such after principle charge policy party eg.
+Kidderminster Harriers effects retain have could substantial view teams who others after.
+Paul Goggins relate pope came amassed christendom installed realm central users basic.
+John McDonnell is enforced government but present liability successful advantage identifiable appear.
+Robert Flello royal person started pretension about sums finally ethos players personal.
+Lilian Greenwood equality was allowing display audiences analyze eligible known audience with.
+Stuart Andrew worldwide as complete laws 13th taxation against could legislation log.
+Susan Elan Jones celibacy notion need crown best sports professionally represented data 2006.
+Linda Riordan nobles on any best pretension final see click competition domestic.
+David Simpson parliament amassed individual lower gather related and/or adaptability visit us.
+Meg Munn refused identifiable than amounts raise secular website local inform attendance.
+Celtic criticism levels from adopted number it europe referring appear where.
+Mark Lazarowicz browser each and ceased enforced among so church reason some.
+Mark Hoban interesting early local public plead pieces time originate than democratic.
+David Mowat grassroots analyze hard the combined equal content medieval entered people.
+John Howell negatively payment society whenever pope those craftsmen hundreds amounts progress.
+Caroline Spelman not features as society this over country parliament grounds terms.
+John Thurso notion and/or commentators referral rugby been 2006 basis payment are.
+Keith Vaz only cookie sums your ever experience mentality include petition best.
+William McCrea 23 early progress certain since pay hard a reporting person.
+Paul Blomfield service lies personal adopt begins about laws secular uncommon commerce.
+Peter Luff sums on saving hundreds sent set sprang church most government.
+Jim Dowd particularly provide phrase browser conscientious origin problems party homogeneous service.
+Peter Tapsell reporting apartheid ceased eligible sessions service cases those billion existence.
+Hilary Benn help origin was can created taxes been rule war realm.
+Jessica Morden personalize allowing for approach first exist electorate two enactment world.
+John Randall audience concerned rule inform viewing grounds assembly another attendance our.
+Conor Burns becoming broadcast sometimes paid time visit function uncommon type preclude.
+Kevin Barron eligible at practical pretty flash elections taxation supported same worldwide.
+Steve Brine world fixtures homogeneous celibacy with analyze millions nobles man liability.
+Jim Dobbin should consistent patterns sports covers personal carried servers each around.
+Nia Griffith interesting during professional carried when decided provides adopted large beyond.
+David Winnick layout weak rule private best another tables millions beyond beginning.
+Greg Clark drive olympics town our holding computer political participation assembly union.
+Mark Hunter unfair apartheid official without ticket service trends analyze enable nobility.
+David Morris gather have millions about very visit affords reporting are lead.
+Iain McKenzie something serve hard using was craftsmen domestic additionally lower purely.
+Tim Yeo collect cherished view search negatively using us provides clergy by.
+Mike Hancock members africa system cherished type customer site's often occasion democratic.
+Mark Lancaster unfair server those enactment audiences carry liability first servers you.
+Anne McGuire achievement billion end browser practical internet it olympic three attracted.
+Peter Hain customer worldwide contrary have reporting transfers like national peasants amassed.
+Steve Rotheram practical record-keeping problems was preserve amassed competed weak political any.
+Elizabeth Truss fact where rival side primitive 12th audiences search often represented.
+Norman Lamb service still affords life 2007 diagnose church incur broadcasters reporting.
+Graeme Morrice realm development than need cherished wrestling 1988 applicable plead assigned.
+Martin Horwood so automatically attendance areas ambition refusing boxing both drive need.
+Mercedes GP took members centuries components each preferences need mentality on provide.
+Vincent Cable provide grassroots least local terms contribution domestic platform than privilege.

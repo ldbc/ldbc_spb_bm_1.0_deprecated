@@ -10,6 +10,7 @@
 	<property name="dir.lib" location="lib/"/>
 	<property name="jar.file.name" value="semantic_publishing_benchmark"/>
 	<property name="ref.knowledge.and.queries.archive.name" value="${jar.file.name}_reference_knowledge_data"/>
+	<property name="validation.data.archive.name" value="validation_data"/>
 	
 	<path id="classpath-lib">
     <fileset dir="${dir.lib}">
@@ -89,6 +90,11 @@
 		<copy todir="./data-temp/sparql">
       		<fileset dir="datasets_and_queries/sparql/${query_mix}"/>
 		</copy>
+		<mkdir dir="./data-temp/validation"/>
+		<copy todir="./data-temp/validation">
+  			<fileset dir="datasets_and_queries/validation/${query_mix}"/>
+		</copy>
+		<unzip src="./datasets_and_queries/validation/data/${validation.data.archive.name}.zip" dest="./data-temp/validation/"/>
   	
 		<copy file="datasets_and_queries/WordsDictionary.txt" todir="./data-temp"/>
 
@@ -104,10 +110,18 @@
 			<fileset dir="./data-temp/sparql/system_${customization}"/>
 		</copy>	  	
   	
+  		<delete dir="./data-temp/sparql/validation"/>
+  		<mkdir dir="./data-temp/sparql/validation"/>
+		<copy todir="./data-temp/sparql/validation">
+			<fileset dir="./data-temp/sparql/validation_${customization}"/>
+		</copy>
+  	
  		<delete dir="./data-temp/sparql/aggregation_standard"/>
  		<delete dir="./data-temp/sparql/aggregation_virtuoso"/>
 		<delete dir="./data-temp/sparql/system_standard"/>
 		<delete dir="./data-temp/sparql/system_virtuoso"/>
+		<delete dir="./data-temp/sparql/validation_standard"/>
+		<delete dir="./data-temp/sparql/validation_virtuoso"/>  		
   	
 		<move file="./data-temp" toFile="./data"/>
 		<delete dir="./data-temp"/>

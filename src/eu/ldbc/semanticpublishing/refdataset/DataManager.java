@@ -45,7 +45,7 @@ public class DataManager {
 	public static final ArrayList<String> correlatedEntitiesList = new ArrayList<String>();
 	
 	//stores the ID of a Creative Work which is has the greatest value, used for further CRUD operations
-	public static AtomicLong creativeWorksNexId = new AtomicLong(0);
+	public static AtomicLong creativeWorksNextId = new AtomicLong(0);
 	
 	//Dataset info constants for persisting
 	private static final String CREATIVE_WORK_NEXT_ID_TEXT = "[CreativeWorkNextId]";
@@ -72,7 +72,7 @@ public class DataManager {
 			
 			//serialize next ID of creative Work
 			writer.write(String.format("%s\n", CREATIVE_WORK_NEXT_ID_TEXT));
-			writer.write(String.format("%d\n", DataManager.creativeWorksNexId.get()));
+			writer.write(String.format("%d\n", DataManager.creativeWorksNextId.get()));
 			writer.write("\n");
 			
 			if (exponentialDecayingMajorEntitiesList != null) {
@@ -170,7 +170,7 @@ public class DataManager {
 		} catch (IOException e) {
 			//sink the exception if file doesn't exist
 			if (!suppressWarnings) {
-				System.out.println("\nDetails about generated dataset were not found at location : " + filePath + " - generate data to fix that, continuing with default settings now.");
+				System.out.println("\nDetails about generated dataset were not found at location : " + filePath + " - generate data to fix that, continuing with default settings.");
 			}
 		} finally {
 			try { br.close(); } catch(Exception e) {}

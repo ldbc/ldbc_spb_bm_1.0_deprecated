@@ -1,0 +1,526 @@
+[SubstitutionParameters]
+"mediums";"faster"
+
+[Results]
+<http://www.bbc.co.uk/things/875240683#id>
+<http://www.bbc.co.uk/things/1328482924#id>
+<http://www.bbc.co.uk/things/850#id>
+<http://www.bbc.co.uk/things/482#id>
+<http://www.bbc.co.uk/things/372469204#id>
+<http://www.bbc.co.uk/things/650#id>
+<http://www.bbc.co.uk/things/1798689127#id>
+<http://www.bbc.co.uk/things/890#id>
+<http://www.bbc.co.uk/things/177#id>
+<http://www.bbc.co.uk/things/634302008#id>
+<http://www.bbc.co.uk/things/797217132#id>
+<http://www.bbc.co.uk/things/1866748456#id>
+<http://www.bbc.co.uk/things/917782640#id>
+<http://www.bbc.co.uk/things/610014571#id>
+<http://www.bbc.co.uk/things/869#id>
+<http://www.bbc.co.uk/things/1549727395#id>
+<http://www.bbc.co.uk/things/39#id>
+<http://www.bbc.co.uk/things/2029374724#id>
+<http://www.bbc.co.uk/things/247762929#id>
+<http://www.bbc.co.uk/things/370205315#id>
+<http://www.bbc.co.uk/things/748368065#id>
+<http://www.bbc.co.uk/things/292355103#id>
+<http://www.bbc.co.uk/things/1453721619#id>
+<http://www.bbc.co.uk/things/873667746#id>
+<http://www.bbc.co.uk/things/2082382719#id>
+<http://www.bbc.co.uk/things/53288917#id>
+<http://www.bbc.co.uk/things/524032720#id>
+<http://www.bbc.co.uk/things/1873447002#id>
+<http://www.bbc.co.uk/things/1747499336#id>
+<http://www.bbc.co.uk/things/1618225220#id>
+<http://www.bbc.co.uk/things/141#id>
+<http://www.bbc.co.uk/things/1430962106#id>
+<http://www.bbc.co.uk/things/1743308567#id>
+<http://www.bbc.co.uk/things/400#id>
+<http://www.bbc.co.uk/things/55#id>
+<http://www.bbc.co.uk/things/206446888#id>
+<http://www.bbc.co.uk/things/941#id>
+<http://www.bbc.co.uk/things/183078428#id>
+<http://www.bbc.co.uk/things/1374449725#id>
+<http://www.bbc.co.uk/things/2034703043#id>
+<http://www.bbc.co.uk/things/1190#id>
+<http://www.bbc.co.uk/things/1520163721#id>
+<http://www.bbc.co.uk/things/2023158305#id>
+<http://www.bbc.co.uk/things/2133320767#id>
+<http://www.bbc.co.uk/things/573#id>
+<http://www.bbc.co.uk/things/1094#id>
+<http://www.bbc.co.uk/things/1154663880#id>
+<http://www.bbc.co.uk/things/601510482#id>
+<http://www.bbc.co.uk/things/113408443#id>
+<http://www.bbc.co.uk/things/1478102544#id>
+<http://www.bbc.co.uk/things/2131644270#id>
+<http://www.bbc.co.uk/things/760778146#id>
+<http://www.bbc.co.uk/things/928#id>
+<http://www.bbc.co.uk/things/539#id>
+<http://www.bbc.co.uk/things/1416735180#id>
+<http://www.bbc.co.uk/things/1934920355#id>
+<http://www.bbc.co.uk/things/14#id>
+<http://www.bbc.co.uk/things/1595105936#id>
+<http://www.bbc.co.uk/things/649637074#id>
+<http://www.bbc.co.uk/things/1653144040#id>
+<http://www.bbc.co.uk/things/73005532#id>
+<http://www.bbc.co.uk/things/26#id>
+<http://www.bbc.co.uk/things/1149912952#id>
+<http://www.bbc.co.uk/things/1301881419#id>
+<http://www.bbc.co.uk/things/1083146158#id>
+<http://www.bbc.co.uk/things/945134732#id>
+<http://www.bbc.co.uk/things/314#id>
+<http://www.bbc.co.uk/things/1353633368#id>
+<http://www.bbc.co.uk/things/936084159#id>
+<http://www.bbc.co.uk/things/1349460062#id>
+<http://www.bbc.co.uk/things/1548304465#id>
+<http://www.bbc.co.uk/things/621#id>
+<http://www.bbc.co.uk/things/232389138#id>
+<http://www.bbc.co.uk/things/1673032553#id>
+<http://www.bbc.co.uk/things/1164214142#id>
+<http://www.bbc.co.uk/things/545459574#id>
+<http://www.bbc.co.uk/things/248#id>
+<http://www.bbc.co.uk/things/1233828867#id>
+<http://www.bbc.co.uk/things/877#id>
+<http://www.bbc.co.uk/things/1444455702#id>
+<http://www.bbc.co.uk/things/262#id>
+<http://www.bbc.co.uk/things/1036612348#id>
+<http://www.bbc.co.uk/things/1017#id>
+<http://www.bbc.co.uk/things/1927600670#id>
+<http://www.bbc.co.uk/things/1956279858#id>
+<http://www.bbc.co.uk/things/152#id>
+<http://www.bbc.co.uk/things/477#id>
+<http://www.bbc.co.uk/things/1065#id>
+<http://www.bbc.co.uk/things/1806378003#id>
+<http://www.bbc.co.uk/things/1934643293#id>
+<http://www.bbc.co.uk/things/324119123#id>
+<http://www.bbc.co.uk/things/142901501#id>
+<http://www.bbc.co.uk/things/1309119810#id>
+<http://www.bbc.co.uk/things/266#id>
+<http://www.bbc.co.uk/things/1333533563#id>
+<http://www.bbc.co.uk/things/1863955811#id>
+<http://www.bbc.co.uk/things/509811576#id>
+<http://www.bbc.co.uk/things/1783424548#id>
+<http://www.bbc.co.uk/things/131490936#id>
+<http://www.bbc.co.uk/things/326#id>
+<http://www.bbc.co.uk/things/245354021#id>
+<http://www.bbc.co.uk/things/1461420904#id>
+<http://www.bbc.co.uk/things/718067168#id>
+<http://www.bbc.co.uk/things/1452796216#id>
+<http://www.bbc.co.uk/things/1497627698#id>
+<http://www.bbc.co.uk/things/227#id>
+<http://www.bbc.co.uk/things/1594356828#id>
+<http://www.bbc.co.uk/things/476#id>
+<http://www.bbc.co.uk/things/1577578908#id>
+<http://www.bbc.co.uk/things/1054#id>
+<http://www.bbc.co.uk/things/386748273#id>
+<http://www.bbc.co.uk/things/384309946#id>
+<http://www.bbc.co.uk/things/2011109858#id>
+<http://www.bbc.co.uk/things/1012#id>
+<http://www.bbc.co.uk/things/989562794#id>
+<http://www.bbc.co.uk/things/2069752187#id>
+<http://www.bbc.co.uk/things/37#id>
+<http://www.bbc.co.uk/things/280#id>
+<http://www.bbc.co.uk/things/706595836#id>
+<http://www.bbc.co.uk/things/1668570906#id>
+<http://www.bbc.co.uk/things/381601523#id>
+<http://www.bbc.co.uk/things/663#id>
+<http://www.bbc.co.uk/things/481978956#id>
+<http://www.bbc.co.uk/things/1238757249#id>
+<http://www.bbc.co.uk/things/1735063007#id>
+<http://www.bbc.co.uk/things/1883993417#id>
+<http://www.bbc.co.uk/things/961791099#id>
+<http://www.bbc.co.uk/things/425#id>
+<http://www.bbc.co.uk/things/994#id>
+<http://www.bbc.co.uk/things/720781032#id>
+<http://www.bbc.co.uk/things/265074220#id>
+<http://www.bbc.co.uk/things/1089#id>
+<http://www.bbc.co.uk/things/536304198#id>
+<http://www.bbc.co.uk/things/1758455564#id>
+<http://www.bbc.co.uk/things/884#id>
+<http://www.bbc.co.uk/things/688#id>
+<http://www.bbc.co.uk/things/973006709#id>
+<http://www.bbc.co.uk/things/683654720#id>
+<http://www.bbc.co.uk/things/1123#id>
+<http://www.bbc.co.uk/things/121#id>
+<http://www.bbc.co.uk/things/426455404#id>
+<http://www.bbc.co.uk/things/125#id>
+<http://www.bbc.co.uk/things/657#id>
+<http://www.bbc.co.uk/things/36#id>
+<http://www.bbc.co.uk/things/1059#id>
+<http://www.bbc.co.uk/things/1110#id>
+<http://www.bbc.co.uk/things/995#id>
+<http://www.bbc.co.uk/things/867#id>
+<http://www.bbc.co.uk/things/844#id>
+<http://www.bbc.co.uk/things/47264133#id>
+<http://www.bbc.co.uk/things/328#id>
+<http://www.bbc.co.uk/things/199976736#id>
+<http://www.bbc.co.uk/things/1640180244#id>
+<http://www.bbc.co.uk/things/103874175#id>
+<http://www.bbc.co.uk/things/112#id>
+<http://www.bbc.co.uk/things/650215629#id>
+<http://www.bbc.co.uk/things/582778371#id>
+<http://www.bbc.co.uk/things/372469204#id>
+<http://google.com/search?btnI&q=site:http://www.guardian.co.uk/politics/person/+Gavin+Shuker>
+<http://www.bbc.co.uk/things/1798689127#id>
+<http://www.bbc.co.uk/things/634302008#id>
+"James Arbuthnot whenever inform computer without century rival software charge began mediums."
+"olympic assertion we principle only website among use members faster charge demographic."
+<http://www.bbc.co.uk/things/917782640#id>
+<http://www.keithsimpson.com/>
+<http://google.com/search?btnI&q=site:http://www.guardian.co.uk/politics/person/+Derek+Twigg>
+<http://rdf.freebase.com/ns/m.01g3ss>
+<http://www.bbc.co.uk/things/2029374724#id>
+<http://www.bbc.co.uk/things/247762929#id>
+"Gavin Shuker place used was eg preferences teams government already make pretension."
+"personalize one country customer guaranteeing search another faster."
+<http://www.bbc.co.uk/things/1453721619#id>
+<http://www.bbc.co.uk/things/873667746#id>
+<http://www.wikidata.org/wiki/Q501926>
+<http://www.bbc.co.uk/things/2082382719#id>
+<http://google.com/search?btnI&q=site:http://www.guardian.co.uk/politics/person/+Ed+Vaizey>
+<http://dbpedia.org/resource/Julian_Huppert>
+<http://www.bbc.co.uk/things/53288917#id>
+<http://news.bbc.co.uk/democracylive/hi/representatives/profiles/25287.stm>
+"Fabian Hamilton your entrance because professional which usage ads approach mediums enjoyment."
+<http://www.andrewlansley.co.uk/>
+"browser attract demographic hundreds amassed common assigned so holding affords ends inform substantial petition ever taxation enable came show exist help faster while."
+<http://www.bbc.co.uk/things/1430962106#id>
+<http://www.bbc.co.uk/things/1743308567#id>
+<http://news.bbc.co.uk/democracylive/hi/representatives/profiles/62819.stm>
+<http://www.karlturnermp.org.uk/>
+<http://www.wikidata.org/wiki/Q272642>
+<http://news.bbc.co.uk/democracylive/hi/representatives/profiles/41646.stm>
+<http://www.bbc.co.uk/things/206446888#id>
+"Derek Twigg occasion court number personalize improve started sake site's assembly lower."
+"Naomi Long can competitive practical each competitive primary consistent impact referral parliament."
+<http://www.bbc.co.uk/things/1374449725#id>
+"one-fifth mainly ends saving demographic faster substantial without wealthy took representative into personal."
+<http://dbpedia.org/resource/Gerald_Howarth>
+<http://dbpedia.org/resource/Nick_Herbert>
+<http://www.guardian.co.uk/politics/person/13088/>
+"three collect page main such automatically personal applicable linked raise are isolation originated system although adopt same refused first lower very enforced sport used concerned."
+<http://dbpedia.org/resource/Richard_Graham_(politician)>
+<http://news.bbc.co.uk/democracylive/hi/representatives/profiles/25686.stm>
+<http://rdf.freebase.com/ns/m.0bxztmc>
+"Teresa Pearce mediums referring analyze problems as celibacy pay-per-view soon object within."
+"Edward Davey into many pay-per-view taxation within areas cut legislation pay-per-view cases."
+<http://www.bbc.co.uk/things/2023158305#id>
+<http://www.bbc.co.uk/things/2133320767#id>
+<http://www.peterhain.org/>
+<http://news.bbc.co.uk/democracylive/hi/representatives/profiles/32679.stm>
+"leading within retain laws related crown faster rules kinds reporting patterns exchange centuries competitions for primary applicable software countries most."
+<http://www.jesse4hereford.com/>
+"faster legislation institutions around domestic television sometimes royal settings features both usage olympics preserve negatively until pay-per-view taxation collect identifiable audience time rapid pages venue."
+<http://www.bbc.co.uk/things/1154663880#id>
+<http://news.bbc.co.uk/democracylive/hi/representatives/profiles/25662.stm>
+<http://www.ianmearns.org.uk/>
+<http://google.com/search?btnI&q=site:http://www.guardian.co.uk/politics/person/+Andrew+Smith>
+"Nick Herbert celibacy supported another your if while meant customize since patterns."
+<http://www.guardian.co.uk/politics/person/825/>
+<http://www.bbc.co.uk/things/113408443#id>
+"Tessa Jowell ads attracted secular normally guaranteeing fact rugby themselves rival royal."
+<http://news.bbc.co.uk/democracylive/hi/representatives/profiles/31685.stm>
+"Alan Whitehead times mediums site's billion audience delete particularly holding until supported."
+"Alistair Burt own originally competitive medieval first already democratic they educated taxation."
+<http://www.guardian.co.uk/politics/person/6131/>
+<http://www.bbc.co.uk/things/760778146#id>
+"Daniel Poulter 2007 representation crown candidates carried like craftsmen consistent contribute sessions."
+<http://news.bbc.co.uk/democracylive/hi/representatives/profiles/25676.stm>
+<http://www.bbc.co.uk/things/1934920355#id>
+<http://www.bbc.co.uk/things/1595105936#id>
+<http://dbpedia.org/resource/John_Baron_(politician)>
+<http://www.bbc.co.uk/things/ec2b9d27-3ef5-2649-ab44-7a14cfa1b2a9#id>
+"petition administration enable trends 1988 custom not union fortune christendom 1988."
+<http://www.wikidata.org/wiki/Q727852>
+<http://www.bbc.co.uk/things/1653144040#id>
+<http://dbpedia.org/resource/Keith_Vaz>
+<http://www.bbc.co.uk/things/73005532#id>
+"Shabana Mahmood during begins war in broadcast any institutions mediums sporting primitive."
+"Edward Garnier first pretension web-surfing mediums principle same ads principle refused not."
+<http://rdf.freebase.com/ns/m.062rd2>
+<http://www.bbc.co.uk/things/1301881419#id>
+<http://www.bbc.co.uk/things/g397ec1a9-41f7-416d-97dc-787b2d02470f#id>
+<http://www.karenbradley.co.uk/>
+<http://www.paulburstow.org.uk/>
+<http://rdf.freebase.com/ns/m.027k1l>
+<http://www.catherinemckinnellmp.co.uk/>
+<http://www.gregknight.com/>
+<http://www.bbc.co.uk/things/1353633368#id>
+"originated eventual 2007 becoming exist individual's leading for been improve asked number people."
+<http://www.bbc.co.uk/things/1349460062#id>
+<http://www.bbc.co.uk/things/1548304465#id>
+<http://rdf.freebase.com/ns/m.0bwhf90>
+<http://www.bbc.co.uk/things/232389138#id>
+<http://www.bbc.co.uk/things/545459574#id>
+<http://rdf.freebase.com/ns/m.0bs2335>
+<http://news.bbc.co.uk/democracylive/hi/representatives/profiles/83620.stm>
+<http://www.bbc.co.uk/things/ga2a255c4-8072-4fe2-b469-f63fa97f797c#id>
+<http://www.wikidata.org/wiki/Q479081>
+"cup adoption attendance because website automatically peasants faster servers engine drive power identify impact within cup logged celibacy covers union adopt provides elections guaranteeing."
+<http://www.guardian.co.uk/politics/person/6143/>
+"Paul Flynn within within little with best ads had ads preferences mediums."
+<http://www.bbc.co.uk/things/g4d09f8a8-40a4-4a95-aa91-c0883c5a4e30#id>
+"provider pages eventual activity because so activity not of settings dogma adoption achieve christendom and/or without started territorial."
+"Simon Kirby best money permitted institutions mediums accept be browsing electorate serve."
+"page something place solely 2007 time practical hard inform liability layout adopted democratic pope often privilege using amateur competition africa fact most personal could."
+"Peter Hain carried always enactment drive because affords place like help side."
+<http://dbpedia.org/resource/Albert_Owen>
+<http://www.bbc.co.uk/things/1036612348#id>
+"Robert Buckland rapid affords page result purposes movement make amateur although personally."
+"John Whittingdale permitted server a lies mediums local cases 2006 need when."
+<http://rdf.freebase.com/ns/m.0bx_sm9>
+<http://news.bbc.co.uk/democracylive/hi/representatives/profiles/25703.stm>
+"sometimes educated demographic fundamental practiced ambition hard some computer left rugby and payment lies whole site's internet."
+"Meg Munn incur use need affords ads features mediums ads need amateur."
+"equality feel eligible began combined maintained proof services others people were beginning servers wrestling domestic local conscientious commentators faster engine would sent into."
+<http://www.bbc.co.uk/things/142901501#id>
+<http://www.wikidata.org/wiki/Q750228>
+<http://www.bbc.co.uk/things/b0e4a498-fbda-c74a-81b0-d85e5012dcf1#id>
+<http://news.bbc.co.uk/democracylive/hi/representatives/profiles/41311.stm>
+<http://www.bbc.co.uk/ontologies/bbc/Mobile>
+"Sheffield Wednesday of advantage kinds identify help number web-surfing after search features."
+"Stockport County domain taxation they browsers celibacy development individual already automatically million."
+<http://www.bbc.co.uk/things/1309119810#id>
+<http://www.bbc.co.uk/ontologies/creativework/CreativeWork>
+<http://www.bbc.co.uk/things/1333533563#id>
+<http://www.bbc.co.uk/things/509811576#id>
+<http://news.bbc.co.uk/democracylive/hi/representatives/profiles/31715.stm>
+<http://www.bbc.co.uk/things/245354021#id>
+<http://www.gordonbanks.info/>
+<http://www.bbc.co.uk/things/1461420904#id>
+<http://www.bbc.co.uk/things/1497627698#id>
+<http://www.bbc.co.uk/things/1577578908#id>
+"often power principle trends experience basis taxation covers faster fixtures side whole conscientious lies raise without including most but venue sports whenever provider."
+<http://news.bbc.co.uk/democracylive/hi/representatives/profiles/25639.stm>
+<http://www.bbc.co.uk/things/b9bb453a-a3e2-46b4-9d20-35efa09d72b8#id>
+"method which this flash bargaining representative parliament assembly broadcast candidates easier kinds 2006 record-keeping come installed games."
+<http://www.bbc.co.uk/things/386748273#id>
+<http://www.bbc.co.uk/things/384309946#id>
+<http://www.bbc.co.uk/things/2011109858#id>
+"time only enactments faster already system automatically viewers is day."
+<http://rdf.freebase.com/ns/m.02r3g5z>
+<http://www.bbc.co.uk/things/g4e2de05e-c350-4952-9012-2691f92b155d#id>
+<http://www.juliansmithmp.com/>
+<http://dbpedia.org/resource/Andrew_Gwynne>
+"a higher bargaining demolition modern provider liability christendom attendance successful had educated well audiences known."
+<http://www.bbc.co.uk/things/706595836#id>
+<http://rdf.freebase.com/ns/m.02878v>
+"leading outlet or enforced final orders sport turn whole hard may people amateur towards diagnose linked progress its automatically policy its centuries give."
+"Julian Huppert mediums entrance platform occasion function something faster these give rapid."
+<http://www.bbc.co.uk/things/381601523#id>
+"global patterns broadcasters through fixtures created mentality give world power entered they some sent line centuries."
+<http://www.tonybaldry.co.uk/>
+<http://news.bbc.co.uk/democracylive/hi/representatives/profiles/25305.stm>
+<http://www.bbc.co.uk/things/g9262a66c-25ae-45ba-b7d0-dcbffdefad73#id>
+<http://www.bbc.co.uk/things/1238757249#id>
+<http://www.guardian.co.uk/politics/person/5918/>
+<http://www.bbc.co.uk/things/1735063007#id>
+<http://dbpedia.org/resource/Gregg_McClymont>
+"historically 2007 content origin an turn secular notion personal faster medieval name nobles help individual's privilege."
+"features within demolition search practiced individual's related came protocol rapid mentality outlet with first beginning sometimes enactments content website however when individual's."
+"John Bercow mediums preserve delete africa any times country and/or commentators speaking."
+<http://www.bbc.co.uk/things/720781032#id>
+<http://rdf.freebase.com/ns/m.0283sl>
+"Alec Shelbrooke name attendance very first proof give whenever opportunity compete venue."
+"Nicola Blackwood automatically football applicable software parliaments mediums usage line state could."
+"Adam Holloway mediums service decided out entrance into begins primitive see best."
+<http://www.bbc.co.uk/things/973006709#id>
+<http://www.bbc.co.uk/things/683654720#id>
+<http://www.guardian.co.uk/politics/person/11355/>
+<http://www.bbc.co.uk/things/bef8a4b5-1ad1-4347-b665-edf581ab7350#id>
+<http://www.bbc.co.uk/things/g2aaf911e-2588-4025-91c4-480995c296f2#id>
+<http://news.bbc.co.uk/democracylive/hi/representatives/profiles/25238.stm>
+<http://news.bbc.co.uk/democracylive/hi/representatives/profiles/25497.stm>
+<http://www.mikewood.org.uk/>
+<http://dbpedia.org/resource/Alan_Whitehead>
+"Karl McCartney integrity partisan sporting retain achieve already place lead nobles basic."
+<http://rdf.freebase.com/ns/m.0273w1>
+<http://www.guardian.co.uk/politics/person/11755/>
+"primitive adoption competed finally object confrontation enactment preclude hundreds complete cut represented own medieval vote."
+"Gloria De Piero large times provider settings still may referral took liability individual."
+<http://news.bbc.co.uk/democracylive/hi/representatives/profiles/61609.stm>
+<http://www.bbc.co.uk/things/650215629#id>
+"parliaments many computer name centuries olympic complete faster 1988 million areas opportunity does data diagnose unfair activity impact sometimes."
+<http://news.bbc.co.uk/democracylive/hi/representatives/profiles/36386.stm>
+<http://dbpedia.org/resource/Edward_Garnier>
+<http://www.bbc.co.uk/things/875240683#id>
+"Tessa Jowell games many development political into custom enactments raise their another."
+"plead tables electorate spectators settings development considered hundreds well very representative came same cookies such internet where identifiable weak broadcasters effects custom relate."
+<http://www.bbc.co.uk/things/1328482924#id>
+<http://rdf.freebase.com/ns/m.0bwjwv9>
+<http://google.com/search?btnI&q=site:http://www.guardian.co.uk/politics/person/+Ian+Swales>
+<http://www.bbc.co.uk/things/64c75a53-ee2e-3e4e-bd80-b8fa10584123#id>
+<http://news.bbc.co.uk/democracylive/hi/representatives/profiles/31716.stm>
+<http://www.wikidata.org/wiki/Q263767>
+<http://www.martinvickers.co.uk/>
+<http://www.matthewhancock.co.uk/>
+<http://news.bbc.co.uk/democracylive/hi/representatives/profiles/25790.stm>
+"David Hanson viewing paid fact cricket 700 pretension it final attracted entrance."
+"guaranteeing internal 23 strongest parliaments competition using life partisan early alone attracts man own pages money strongest."
+"origin equality competitions ambition wealthy billion faster another approach principle already side institution preserve teams reject."
+<http://news.bbc.co.uk/democracylive/hi/representatives/profiles/83523.stm>
+<http://www.bbc.co.uk/things/797217132#id>
+<http://www.bbc.co.uk/things/1866748456#id>
+"Philip Dunne permitted television towards through well reinforced pursuit of sports including."
+"used conscientious feel olympic little is electorate preferences areas faster well your church lower war still enactments log some."
+<http://www.bbc.co.uk/things/g11c2588a-8868-4624-a098-576839f1f80f#id>
+<http://www.bbc.co.uk/things/610014571#id>
+<http://www.wikidata.org/wiki/Q269124>
+"line faster over paid isolation preserve display first grassroots origin mentality hard problems features although rapid guaranteeing which line participation."
+"help leading christendom where africa has development always candidates."
+<http://www.bbc.co.uk/things/1549727395#id>
+"Richard Graham secular end identify petition administer and terms reject representation mediums."
+<http://www.karlmccartney.co.uk/>
+"faster pretension usage party adaptability individual's television analyze referring search browsers members demographic viewing early consistent leading cannot countries system."
+"display including piece 2007 many clergy method integrity reinforced mainly pursuit provides type they administer site's policy levels our institution address into million ends."
+<http://www.iandavidsonmp.com/>
+"Heather Wheeler approach town object search administration exist historically pages realm administer."
+<http://www.wikidata.org/wiki/Q265190>
+<http://www.bbc.co.uk/things/370205315#id>
+<http://news.bbc.co.uk/democracylive/hi/representatives/profiles/25489.stm>
+<http://www.bbc.co.uk/things/748368065#id>
+<http://www.bbc.co.uk/things/292355103#id>
+<http://www.wikidata.org/wiki/Q676781>
+<http://www.nicolablackwood.com/>
+"however fact eventual levels sent type entirely legislation still principle professional impact software achieve over usage other representative faster society."
+<http://www.bbc.co.uk/things/524032720#id>
+<http://www.bbc.co.uk/things/ge1832af6-4544-4e12-b602-beac61486792#id>
+<http://www.bbc.co.uk/things/1873447002#id>
+<http://www.bbc.co.uk/things/1747499336#id>
+<http://www.bbc.co.uk/things/1618225220#id>
+<http://google.com/search?btnI&q=site:http://www.guardian.co.uk/politics/person/+Andrew+Stunell>
+"gather cannot attracted related other preferences enforced enforced number server approach a assigned finally primary main use revolves player."
+"Clive Efford number through so linked fortune pretension main movement reject can."
+<http://www.bbc.co.uk/things/183078428#id>
+<http://rdf.freebase.com/ns/m.0bwgn9p>
+"as around following complete competitions into need commentators entered common solely address originated refuse candidates christendom clergy times had individual cut."
+<http://www.bbc.co.uk/things/2034703043#id>
+"considered method main commentators has ticket usage address early where liability faster main whole parliaments elaborate raise privilege has opportunity pursuit originated pay-per-view fixtures."
+<http://www.bbc.co.uk/things/1520163721#id>
+<http://rdf.freebase.com/ns/m.02rfg2g>
+<http://www.bbc.co.uk/ontologies/bbc/HighWeb>
+<http://www.wikidata.org/wiki/Q390756>
+<http://rdf.freebase.com/ns/m.0bwmdtp>
+<http://www.alistair-burt.co.uk/>
+<http://www.bbc.co.uk/things/601510482#id>
+"Gordon Banks retain fundamental one-fifth internal guaranteeing three raise eligible analyze automatically."
+<http://www.bbc.co.uk/things/1478102544#id>
+<http://www.guardian.co.uk/politics/person/5754/>
+<http://www.bbc.co.uk/things/2131644270#id>
+<http://www.bbc.co.uk/things/3e4539d2-bdb9-e548-b04c-1060ad05fe5a#id>
+<http://www.bbc.co.uk/things/g3b2cbce8-aac6-4212-9197-d00583bde6fb#id>
+<http://news.bbc.co.uk/democracylive/hi/representatives/profiles/25778.stm>
+<http://www.bbc.co.uk/things/1416735180#id>
+<http://www.caroline4gosport.co.uk/>
+<http://rdf.freebase.com/ns/m.0bwhsmt>
+<http://dbpedia.org/resource/Robert_Buckland>
+<http://www.tessajowell.net/>
+<http://www.bbc.co.uk/things/649637074#id>
+"Roger Gale function mediums pieces parliament hundreds being kinds include did turn."
+<http://news.bbc.co.uk/democracylive/hi/representatives/profiles/25647.stm>
+"pretension features holding speaking very well place components individual's but seat these log until party grassroots compete official outlet during."
+<http://news.bbc.co.uk/democracylive/hi/representatives/profiles/25618.stm>
+<http://dbpedia.org/resource/Adam_Holloway>
+<http://www.bbc.co.uk/things/1149912952#id>
+<http://www.bbc.co.uk/things/1083146158#id>
+<http://www.bbc.co.uk/things/945134732#id>
+<http://www.bbc.co.uk/things/936084159#id>
+<http://www.bbc.co.uk/things/ge1b03da6-0431-4e6f-b4de-60e44965e07f#id>
+<http://google.com/search?btnI&q=site:http://www.guardian.co.uk/politics/person/+John+Stevenson>
+<http://news.bbc.co.uk/democracylive/hi/representatives/profiles/25325.stm>
+<http://dbpedia.org/resource/Neil_Parish>
+<http://rdf.freebase.com/ns/m.0276qp>
+<http://www.bbc.co.uk/things/1673032553#id>
+<http://dbpedia.org/resource/Teresa_Pearce>
+"Greg Knight sprang name services represented speaking preferences town mentality preferences over."
+<http://www.bbc.co.uk/things/1164214142#id>
+<http://www.tom-watson.co.uk/>
+<http://www.bbc.co.uk/things/1233828867#id>
+<http://www.bbc.co.uk/things/1444455702#id>
+"party faster governments does identify number movement people as participants been grounds log alone compete."
+"with modern serve already adopted realm taxes lead its attracted society becoming a faster unfair complete."
+<http://news.bbc.co.uk/democracylive/hi/representatives/profiles/84517.stm>
+<http://dbpedia.org/resource/James_Arbuthnot>
+<http://www.hywelwilliams.plaidcymru.org/>
+<http://www.bbc.co.uk/things/1927600670#id>
+<http://www.bbc.co.uk/things/1956279858#id>
+<http://www.guardian.co.uk/politics/person/11418/>
+"Alan Reid crown pages 15th identify compete when necessarily users custom areas."
+<http://www.wikidata.org/wiki/Q266905>
+"faster participation function features present historical against audiences holding automatically player entered with enjoyment identify compete side there competition around website components rules to cannot."
+<http://dbpedia.org/resource/Ian_Davidson_(British_politician)>
+<http://dbpedia.org/resource/Sir_Robert_Smith,_3rd_Baronet>
+"ip equality would use accept electorate until movement proof eventual contrary on enactment services democratic logged development often took faster tensions request violent applicable."
+<http://www.bbc.co.uk/things/1806378003#id>
+"Karen Buck confrontation occasion central substantial 700 those without athletes settings include."
+<http://www.bbc.co.uk/things/1934643293#id>
+<http://www.bbc.co.uk/things/324119123#id>
+"Matthew Offord africa mediums applicable certain grounds consistent ioc cookies pages engine."
+<http://www.keithvazmp.com/>
+<http://www.bbc.co.uk/things/g35942a2b-61bc-47da-bbd7-10130f42e9e4#id>
+"John Hemming sporting merely personally patterns although apartheid these kinds advantage mediums."
+<http://www.jessicaleemp.com/>
+"church countries charge sake browsing pages transfers components from drive 12th eventual feel purposes three homogeneous player for charge."
+"including assertion institution whenever software well faster software broadcasters advantage appear through."
+<http://www.bbc.co.uk/things/1863955811#id>
+"carry historical even leading incur that turn majority site's historical rapid."
+<http://www.bbc.co.uk/things/1783424548#id>
+<http://www.bbc.co.uk/things/131490936#id>
+<http://www.bbc.co.uk/things/g9d7fccc9-8a9f-46ac-9500-02f68fd23b67#id>
+"David Mowat customer mediums others ads commentators attracts billion towards applicable crown."
+<http://www.bbc.co.uk/things/g7ed85cf8-a2d3-4609-ba3b-58c2f15e27a7#id>
+<http://www.bbc.co.uk/things/718067168#id>
+<http://www.bbc.co.uk/things/1452796216#id>
+<http://www.bbc.co.uk/things/1594356828#id>
+"Grant Shapps while church mediums within browsers political territorial attracts there come."
+"so state faster referral machinery territorial reject browsing worst demographic weak equality following layout spectators."
+"additionally occasion had substantial should television left faster fortune mainly pope."
+"elections such related covers charge eg us responsible faster unfair legislation equal players lead not we browsing day using."
+<http://rdf.freebase.com/ns/m.0bwgqr6>
+<http://www.bbc.co.uk/things/989562794#id>
+<http://www.bbc.co.uk/things/2069752187#id>
+<http://www.jamesgray.org/>
+<http://www.guardian.co.uk/politics/person/1008/>
+<http://www.bbc.co.uk/things/g1ea08851-a70f-4f61-be57-c7b9e1e4e927#id>
+<http://www.bbc.co.uk/things/1668570906#id>
+<http://www.geoffreycox.co.uk/>
+<http://www.bbc.co.uk/things/481978956#id>
+<http://news.bbc.co.uk/democracylive/hi/representatives/profiles/25563.stm>
+"Jonathan Reynolds contrary teams town electorate mediums amateur wealthy layout unfair democratic."
+<http://news.bbc.co.uk/democracylive/hi/representatives/profiles/62730.stm>
+<http://www.wikidata.org/wiki/Q291649>
+"servers vote states turn interesting both place petition at installed basic professional faster layout practiced still sporting software facts web-surfing does and/or."
+<http://www.bbc.co.uk/things/1883993417#id>
+<http://www.bbc.co.uk/things/961791099#id>
+"Sharon Hodgson entrance view equality little asked interesting sums representative these worldwide."
+<http://www.bbc.co.uk/things/265074220#id>
+<http://www.bbc.co.uk/things/b5732135-be6e-e74b-ab47-fd360ecbc7c0#id>
+<http://www.bbc.co.uk/things/536304198#id>
+"paid over competitions rights king necessarily there already clergy have without visit venue they peasants referring administer."
+<http://www.bbc.co.uk/things/g6d555e7d-148a-4ec4-a86c-72bee09c65ab#id>
+"Dan Jarvis an internal fixtures successful payment mediums first towards government adopt."
+<http://www.bbc.co.uk/things/1758455564#id>
+"Annette Brooke policy since viewers integrity beyond boxing referral record-keeping whole often."
+<http://news.bbc.co.uk/democracylive/hi/representatives/profiles/25183.stm>
+<http://www.bbc.co.uk/things/426455404#id>
+<http://www.wikidata.org/wiki/Q290646>
+<http://www.bbc.co.uk/things/dc0bf7e4-b512-4f45-9a00-1439fa0b50be#id>
+"Tony Lloyd 12th ceased software however from three created beginning 1988 click."
+<http://www.wikidata.org/wiki/Q263882>
+"same enforced have amounts browsers interesting demographic settings site head spectators faster primitive."
+"Nicola Blackwood impact institution services mediums homogeneous apartheid modern society south modern."
+"Pete Wishart service phrase give you members representative 2006 servers relate these."
+<http://news.bbc.co.uk/democracylive/hi/representatives/profiles/25417.stm>
+"Helen Grant broadcast prolonged pretty until mediums site domain cup carry serve."
+<http://news.bbc.co.uk/democracylive/hi/representatives/profiles/25802.stm>
+"hard improve 12th party kinds integrity while such christendom effects help fact guaranteeing were own computer diagnose peasants faster rival unfair known church be carry."
+<http://www.bbc.co.uk/things/g5bc5f748-bc1c-4437-bc69-f11bc8156d0a#id>
+<http://www.jonathanevans.co.uk/>
+<http://www.bbc.co.uk/things/47264133#id>
+"phrase others orders competitive electorate well ends least amounts against olympic personalize faster competed assigned activity purely."
+<http://www.bbc.co.uk/things/199976736#id>
+<http://www.bbc.co.uk/things/1640180244#id>
+"sums for reinforced software exist adopted referring but assertion originated."
+<http://www.bbc.co.uk/things/103874175#id>
+"Jesse Norman weak asked competitive one-fifth you eg fact left opportunity contested."
+<http://www.bbc.co.uk/things/582778371#id>

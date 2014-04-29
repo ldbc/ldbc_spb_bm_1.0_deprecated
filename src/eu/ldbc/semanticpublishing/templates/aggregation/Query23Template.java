@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection.QueryType;
-import eu.ldbc.semanticpublishing.generators.querygenerator.QueryParametersGenerator;
+import eu.ldbc.semanticpublishing.substitutionparameters.SubstitutionParametersGenerator;
 import eu.ldbc.semanticpublishing.properties.Definitions;
 import eu.ldbc.semanticpublishing.util.RandomUtil;
 
@@ -81,23 +81,24 @@ public class Query23Template extends Query21Template {
 	}	
 	
 	@Override
-	public void generateSubstitutionParameters(BufferedWriter bw, int amount) throws IOException {
+	public String generateSubstitutionParameters(BufferedWriter bw, int amount) throws IOException {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < amount; i++) {
 			super.preInitialize();
 			sb.setLength(0);
 			sb.append(projection());
-			sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
 			sb.append(filter1());
-			sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
 			sb.append(filter2());
-			sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
 			sb.append(groupBy());
-			sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
 			sb.append(orderBy());
 			sb.append("\n");
 			bw.write(sb.toString());	
 		}
+		return null;
 	}	
 	
 	@Override

@@ -6,6 +6,7 @@ import java.io.File;
  * A utility class for performing various operations on strings. 
  */
 public class StringUtil {
+	
 	/**
 	 * Removes last folder separator if found. e.g. : /a1/b1/ -> /a1/b1
 	 * 

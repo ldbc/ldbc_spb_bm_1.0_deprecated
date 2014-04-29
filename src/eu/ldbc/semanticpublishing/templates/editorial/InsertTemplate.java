@@ -8,18 +8,19 @@ import java.util.HashMap;
 import java.util.List;
 
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection.QueryType;
-import eu.ldbc.semanticpublishing.generators.querygenerator.QueryParametersGenerator;
 import eu.ldbc.semanticpublishing.properties.Definitions;
 import eu.ldbc.semanticpublishing.refdataset.DataManager;
 import eu.ldbc.semanticpublishing.refdataset.model.Entity;
+import eu.ldbc.semanticpublishing.substitutionparameters.SubstitutionParametersGenerator;
 import eu.ldbc.semanticpublishing.templates.MustacheTemplate;
 import eu.ldbc.semanticpublishing.util.RandomUtil;
+import eu.ldbc.semanticpublishing.util.RdfUtils;
 
 /**
  * A class extending the MustacheTemplateCompiler, used to generate a query string
  * corresponding to file Configuration.QUERIES_PATH/editorial/insert.txt
  */
-public class InsertTemplate extends MustacheTemplate implements QueryParametersGenerator {
+public class InsertTemplate extends MustacheTemplate implements SubstitutionParametersGenerator {
 	//must match with corresponding file name of the mustache template file
 	private static final String templateFileName = "insert.txt";
 	
@@ -40,12 +41,18 @@ public class InsertTemplate extends MustacheTemplate implements QueryParametersG
 	}	
 	
 	public InsertTemplate(String contextURI, RandomUtil ru, HashMap<String, String> queryTemplates, Definitions definitions) {
-		super(queryTemplates, null);
+		this(contextURI, ru, queryTemplates, definitions, true, null);
+	}
+	
+	public InsertTemplate(String contextURI, RandomUtil ru, HashMap<String, String> queryTemplates, Definitions definitions, boolean initializeCWEntity, String[] substitutionParameters) {
+		super(queryTemplates, substitutionParameters);
 		this.contextURI = contextURI;
 		this.ru = ru;
 		this.seedYear = definitions.getInt(Definitions.YEAR_SEED);
 		preInitialize();
-		initializeCreativeWorkEntity(contextURI);
+		if (initializeCWEntity) {
+			initializeCreativeWorkEntity(contextURI);
+		}
 	}
 	
 	private void preInitialize() {
@@ -66,7 +73,7 @@ public class InsertTemplate extends MustacheTemplate implements QueryParametersG
 			if (!updateCwUri.isEmpty()) {
 				cwURInew = updateCwUri;
 			} else {
-				cwURInew = ru.numberURI("things", DataManager.creativeWorksNexId.incrementAndGet(), true, true);				
+				cwURInew = ru.numberURI("things", DataManager.creativeWorksNextId.incrementAndGet(), true, true);				
 			}
 			
 			this.contextURI = cwURInew.replace("/things/", "/context/");
@@ -107,6 +114,10 @@ public class InsertTemplate extends MustacheTemplate implements QueryParametersG
 	 * A method for replacing mustache template : {{{cwGraphUri}}}
 	 */		
 	public String cwGraphUri() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}
+		
 		return this.contextURI;
 	}
 	
@@ -114,6 +125,18 @@ public class InsertTemplate extends MustacheTemplate implements QueryParametersG
 	 * A method for replacing mustache template : {{{cwUri}}}
 	 */		
 	public String cwUri() {
+		if (substitutionParameters != null) {
+			//assuming that cwUri is positioned in the first two items of the parameters list
+			if (parameterIndex > 2) {
+				//we are keeping the context uri for current Insert template
+				return this.contextURI.replace("/context/", "/things/");
+			} else {
+				//update contextURI value
+				this.contextURI = substitutionParameters[parameterIndex].replace("/things/", "/context/");
+				return substitutionParameters[parameterIndex++];
+			}
+		}
+		
 		return this.contextURI.replace("/context/", "/things/");
 	}
 
@@ -121,6 +144,10 @@ public class InsertTemplate extends MustacheTemplate implements QueryParametersG
 	 * A method for replacing mustache template : {{{cwType}}}
 	 */		
 	public String cwType() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}
+		
 		return this.cwTypeString;
 	}
 	
@@ -128,6 +155,10 @@ public class InsertTemplate extends MustacheTemplate implements QueryParametersG
 	 * A method for replacing mustache template : {{{cwTitle}}}
 	 */		
 	public String cwTitle() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}
+		
 		return ru.sentenceFromDictionaryWords(this.cwEntity.getLabel(), 10, true, true);
 	}
 	
@@ -135,6 +166,10 @@ public class InsertTemplate extends MustacheTemplate implements QueryParametersG
 	 * A method for replacing mustache template : {{{cwShortTitle}}}
 	 */		
 	public String cwShortTitle() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}
+		
 		return ru.sentenceFromDictionaryWords("", 10, true, true);
 	}
 	
@@ -142,6 +177,10 @@ public class InsertTemplate extends MustacheTemplate implements QueryParametersG
 	 * A method for replacing mustache template : {{{cwCategory}}}
 	 */		
 	public String cwCategory() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}
+		
 		return ru.stringURI("category", cwEntity.getCategory(), true, false);
 	}
 	
@@ -149,14 +188,23 @@ public class InsertTemplate extends MustacheTemplate implements QueryParametersG
 	 * A method for replacing mustache template : {{{cwDescription}}}
 	 */		
 	public String cwDescription() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}
+		
 		return ru.sentenceFromDictionaryWords("", ru.nextInt(8, 26), true, true);
 	}
 	
 	/**
 	 * A method for replacing mustache template list : {{{#cwAboutsList}}} {{{/cwAboutsList}}}
 	 */	
-	public List<Object> cwAboutsList() {
+	public List<Object> cwAboutsList() {		
 		  List<Object> abouts = new ArrayList<Object>();
+		  
+		  if (substitutionParameters != null) {
+			  abouts.add(new AboutUri(substitutionParameters[parameterIndex++]));
+			  return abouts;
+		  }
 
 		  //using aboutsCount + 1, because Definitions.aboutsAllocations.getAllocation() returning 0 is still a valid allocation
 		  for (int i = 0; i < aboutsCount + 1; i++) {
@@ -186,6 +234,11 @@ public class InsertTemplate extends MustacheTemplate implements QueryParametersG
 	 */		
 	public List<Object> cwMentionsList() {
 		List<Object> mentions = new ArrayList<Object>();
+		
+		if (substitutionParameters != null) {
+			mentions.add(new MentionsUri(substitutionParameters[parameterIndex++]));
+			return mentions;
+		}
 		
 		 //using mentionsCount + 1, because Definitions.mentionsAllocations.getAllocation() returning 0 is still a valid allocation		
 		for (int i = 0; i < mentionsCount + 1; i++) {
@@ -219,6 +272,10 @@ public class InsertTemplate extends MustacheTemplate implements QueryParametersG
 	 * A method for replacing mustache template : {{{cwAudienceType}}}
 	 */		
 	public String cwAudienceType() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}
+		
 		switch (cwType) {		
 		case BLOG_POST :
 			return "cwork:InternationalAudience";
@@ -235,6 +292,10 @@ public class InsertTemplate extends MustacheTemplate implements QueryParametersG
 	 * A method for replacing mustache template : {{{cwLiveCoverage}}}
 	 */		
 	public String cwLiveCoverage() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}
+		
 		switch (cwType) {		
 		case BLOG_POST :
 			return ru.createBoolean(false);
@@ -252,6 +313,11 @@ public class InsertTemplate extends MustacheTemplate implements QueryParametersG
 	 */		
 	public List<Object> cwPrimaryFormatList() {
 		List<Object> format = new ArrayList<Object>();
+		
+		if (substitutionParameters != null) {
+			format.add(new PrimaryFormat(substitutionParameters[parameterIndex++]));
+			return format;
+		}		
 		
 		switch (cwType) {		
 		case BLOG_POST :
@@ -286,6 +352,10 @@ public class InsertTemplate extends MustacheTemplate implements QueryParametersG
 	 * A method for replacing mustache template : {{{cwDateCreated}}}
 	 */	
 	public String cwDateCreated() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}
+		
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.YEAR, seedYear);
 		return ru.dateTimeString(calendar.getTime());
@@ -295,6 +365,10 @@ public class InsertTemplate extends MustacheTemplate implements QueryParametersG
 	 * A method for replacing mustache template : {{{cwDateModified}}}
 	 */		
 	public String cwDateModified() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}
+		
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.YEAR, seedYear);
 		calendar.add(Calendar.MONTH, 1 * ru.nextInt(12));
@@ -307,6 +381,10 @@ public class InsertTemplate extends MustacheTemplate implements QueryParametersG
 	 * A method for replacing mustache template : {{{cwThumbnailUri}}}
 	 */	
 	public String cwThumbnailUri() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}
+		
 		return ru.randomURI("thumbnail", true, false);
 	}
 	
@@ -315,6 +393,11 @@ public class InsertTemplate extends MustacheTemplate implements QueryParametersG
 	 */		
 	public List<Object> cwPrimaryContentList() {
 		List<Object> primaryContent = new ArrayList<Object>();
+		
+		if (substitutionParameters != null) {
+			primaryContent.add(new PrimaryContentUri(substitutionParameters[parameterIndex++], substitutionParameters[parameterIndex++]));
+			return primaryContent;
+		}		
 		
 		for (int i = 0; i < ru.nextInt(1, 4); i++) {
 			primaryContent.add(new PrimaryContentUri(ru.randomURI("things", true, true), ru.nextBoolean() ? "bbc:HighWeb" : "bbc:Mobile"));
@@ -336,96 +419,92 @@ public class InsertTemplate extends MustacheTemplate implements QueryParametersG
 	}
 	
 	@Override
-	public void generateSubstitutionParameters(BufferedWriter bw, int amount) throws IOException {
+	public String generateSubstitutionParameters(BufferedWriter bw, int amount) throws IOException {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < amount; i++) {
 			preInitialize();
 			initializeCreativeWorkEntity("");
 			sb.setLength(0);
 			sb.append(cwGraphUri());
-			sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
 			sb.append(cwUri());
-			sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
-			sb.append(cwType());
-			sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
+			sb.append(RdfUtils.expandNamepsacePrefix(cwType()));
+			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
 			sb.append(cwTitle());
-			sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
 			sb.append(cwShortTitle());
-			sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
 			sb.append(cwCategory());
-			sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
 			sb.append(cwDescription());
-			sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
 			//abouts list
 			List<Object> aboutsList = cwAboutsList();
 			if (aboutsList.size() > 0) {
-				sb.append(QueryParametersGenerator.LIST_DELIMITER);
-				for (int j = 0; j < aboutsList.size(); j++) {
+				//executing one iteration on purpose, future TODO
+				for (int j = 0; j < 1; j++) {
 					sb.append(((AboutUri)aboutsList.get(j)).cwAboutUri);
-					if (j != aboutsList.size() - 1) {
-						sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
-					}
 				}
-				sb.append(QueryParametersGenerator.LIST_DELIMITER);
-				sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+				sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
+			} else {
+				sb.append(" ");
+				sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
 			}
 			//mentions list
 			List<Object> mentionsList = cwMentionsList();
 			if (mentionsList.size() > 0) {
-				sb.append(QueryParametersGenerator.LIST_DELIMITER);
-				for (int j = 0; j < mentionsList.size(); j++) {
+				//executing one iteration on purpose, future TODO
+				for (int j = 0; j < 1; j++) {
 					sb.append(((MentionsUri)mentionsList.get(j)).cwMentionsUri);
-					if (j != mentionsList.size() - 1) {
-						sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
-					}
 				}
-				sb.append(QueryParametersGenerator.LIST_DELIMITER);
-				sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+				sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
+			} else {
+				sb.append(" ");
+				sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
 			}
-			sb.append(cwAudienceType());
-			sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+			sb.append(RdfUtils.expandNamepsacePrefix(cwAudienceType()));
+			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
 			sb.append(cwLiveCoverage());
-			sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
 			//primary format list
 			List<Object> primaryFormatList = cwPrimaryFormatList();
 			if (primaryFormatList.size() > 0) {
-				sb.append(QueryParametersGenerator.LIST_DELIMITER);
-				for (int j = 0; j < primaryFormatList.size(); j++) {
-					sb.append(((PrimaryFormat)primaryFormatList.get(j)).cwPrimaryFormat);
-					if (j != primaryFormatList.size() - 1) {
-						sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
-					}
+				//executing one iteration on purpose, future TODO
+				for (int j = 0; j < 1; j++) {
+					sb.append(RdfUtils.expandNamepsacePrefix(((PrimaryFormat)primaryFormatList.get(j)).cwPrimaryFormat));
 				}				
-				sb.append(QueryParametersGenerator.LIST_DELIMITER);
-				sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+				sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
+			} else {
+				sb.append(" ");
+				sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
 			}
 			sb.append(cwDateCreated());
-			sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
 			sb.append(cwDateModified());
-			sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
 			sb.append(cwThumbnailUri());
-			sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
 			//primary content list
 			List<Object> primaryContentList = cwPrimaryContentList();
 			if (primaryContentList.size() > 0) {
-				sb.append(QueryParametersGenerator.LIST_DELIMITER);
-				for (int j = 0; j < primaryContentList.size(); j++) {
-					sb.append(cwUri());
-					sb.append(QueryParametersGenerator.PARAMS_DELIMITER);	
-					sb.append(((PrimaryContentUri)primaryContentList.get(j)).cwPrimaryContentUri);
-					sb.append(QueryParametersGenerator.PARAMS_DELIMITER);	
-					sb.append(((PrimaryContentUri)primaryContentList.get(j)).cwPrimaryContentUri);
-					sb.append(QueryParametersGenerator.PARAMS_DELIMITER);	
-					sb.append(((PrimaryContentUri)primaryContentList.get(j)).cwWebDocumentType);
-					if (j != primaryContentList.size() - 1) {
-						sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
-					}
+				//executing one iteration on purpose, future TODO
+				for (int j = 0; j < 1; j++) {
+					sb.append(ru.randomURI("things", true, true));
+					sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
+					sb.append(ru.nextBoolean() ? RdfUtils.expandNamepsacePrefix("bbc:HighWeb") : RdfUtils.expandNamepsacePrefix("bbc:Mobile"));
 				}
-				sb.append(QueryParametersGenerator.LIST_DELIMITER);				
-			}
+				sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
+			} else {
+				sb.append(" ");
+				sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
+			}			
 			sb.append("\n");
-			bw.write(sb.toString());
+			if (bw != null) {
+				bw.write(sb.toString());
+			}
 		}
+		return sb.toString();
 	}
 	
 	@Override

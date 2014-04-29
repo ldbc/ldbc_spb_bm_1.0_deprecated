@@ -13,7 +13,7 @@ import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection.QueryType;
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection;
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryExecuteManager;
 import eu.ldbc.semanticpublishing.properties.Definitions;
-import eu.ldbc.semanticpublishing.refdataset.SubstitutionQueryParametersManager;
+import eu.ldbc.semanticpublishing.substitutionparameters.SubstitutionQueryParametersManager;
 import eu.ldbc.semanticpublishing.refdataset.model.Entity;
 import eu.ldbc.semanticpublishing.resultanalyzers.Query17Analyzer;
 import eu.ldbc.semanticpublishing.resultanalyzers.Query18Analyzer;
@@ -75,114 +75,114 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 			String[] querySubstParameters;
 			switch (aggregateQueryIndex) {
 				case 0 :
-					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(SubstitutionQueryParametersManager.QueryType.AGGREGATE, aggregateQueryIndex).get(queryId);
 					aggregateQuery = new Query1Template(ru, queryTemplates, definitions, querySubstParameters);
 					break;
 				case 1 :
-					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(SubstitutionQueryParametersManager.QueryType.AGGREGATE, aggregateQueryIndex).get(queryId);
 					aggregateQuery = new Query2Template(ru, queryTemplates, definitions, querySubstParameters);
 					break;
 				case 2 : 
-					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(SubstitutionQueryParametersManager.QueryType.AGGREGATE, aggregateQueryIndex).get(queryId);
 					aggregateQuery = new Query3Template(ru, queryTemplates, definitions, querySubstParameters);
 					break;
 				case 3 :
-					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(SubstitutionQueryParametersManager.QueryType.AGGREGATE, aggregateQueryIndex).get(queryId);
 					aggregateQuery = new Query4Template(ru, queryTemplates, definitions, querySubstParameters);
 					break;
 				case 4 :
-					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(SubstitutionQueryParametersManager.QueryType.AGGREGATE, aggregateQueryIndex).get(queryId);
 					aggregateQuery = new Query5Template(ru, queryTemplates, definitions, querySubstParameters);
 					break;
 				case 5 : 
-					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(SubstitutionQueryParametersManager.QueryType.AGGREGATE, aggregateQueryIndex).get(queryId);
 					aggregateQuery = new Query6Template(ru, queryTemplates, definitions, querySubstParameters);
 					break;
 				case 6 :
-					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(SubstitutionQueryParametersManager.QueryType.AGGREGATE, aggregateQueryIndex).get(queryId);
 					aggregateQuery = new Query7Template(ru, queryTemplates, definitions, querySubstParameters);
 					break;
 				case 7 : 
-					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(SubstitutionQueryParametersManager.QueryType.AGGREGATE, aggregateQueryIndex).get(queryId);
 					aggregateQuery = new Query8Template(ru, queryTemplates, definitions, querySubstParameters);
 					break;
 				case 8 :
-					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(SubstitutionQueryParametersManager.QueryType.AGGREGATE, aggregateQueryIndex).get(queryId);
 					aggregateQuery = new Query9Template(ru, queryTemplates, definitions, querySubstParameters);
 					break;
 				case 9 :
-					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(SubstitutionQueryParametersManager.QueryType.AGGREGATE, aggregateQueryIndex).get(queryId);
 					aggregateQuery = new Query10Template(ru, queryTemplates, definitions, querySubstParameters);
 					break;
 				case 10 :
-					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(SubstitutionQueryParametersManager.QueryType.AGGREGATE, aggregateQueryIndex).get(queryId);
 					aggregateQuery = new Query11Template(ru, queryTemplates, definitions, querySubstParameters);
 					break;
 				case 11 : 
-					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(SubstitutionQueryParametersManager.QueryType.AGGREGATE, aggregateQueryIndex).get(queryId);
 					aggregateQuery = new Query12Template(ru, queryTemplates, definitions, querySubstParameters);
 					break;
 				case 12 : 
-					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(SubstitutionQueryParametersManager.QueryType.AGGREGATE, aggregateQueryIndex).get(queryId);
 					aggregateQuery = new Query13Template(ru, queryTemplates, definitions, querySubstParameters);
 					break;
 				case 13 : 
-					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(SubstitutionQueryParametersManager.QueryType.AGGREGATE, aggregateQueryIndex).get(queryId);
 					aggregateQuery = new Query14Template(ru, queryTemplates, definitions, querySubstParameters);
 					break;
 				case 14 : 
-					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(SubstitutionQueryParametersManager.QueryType.AGGREGATE, aggregateQueryIndex).get(queryId);
 					aggregateQuery = new Query15Template(ru, queryTemplates, definitions, querySubstParameters);
 					break;
 				case 15 : 
-					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(SubstitutionQueryParametersManager.QueryType.AGGREGATE, aggregateQueryIndex).get(queryId);
 					aggregateQuery = new Query16Template(ru, queryTemplates, definitions, querySubstParameters);
 					break;
 				case 16 : 
 					//Drill-Down query with constraints on Geo-locations
 					drillDownQuery = true;
-					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(SubstitutionQueryParametersManager.QueryType.AGGREGATE, aggregateQueryIndex).get(queryId);
 					aggregateQuery = new Query17Template(ru, queryTemplates, definitions, querySubstParameters);
 					break;
 				case 17 : 
 					//Drill-Down query with constraints on Date intervals
 					drillDownQuery = true;
-					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(SubstitutionQueryParametersManager.QueryType.AGGREGATE, aggregateQueryIndex).get(queryId);
 					aggregateQuery = new Query18Template(ru, queryTemplates, definitions, querySubstParameters);
 					break;
 				case 18 : 
-					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(SubstitutionQueryParametersManager.QueryType.AGGREGATE, aggregateQueryIndex).get(queryId);
 					aggregateQuery = new Query19Template(ru, queryTemplates, definitions, querySubstParameters);
 					break;
 				case 19 : 
 					//FTS Query
-					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(SubstitutionQueryParametersManager.QueryType.AGGREGATE, aggregateQueryIndex).get(queryId);
 					aggregateQuery = new Query20Template(ru, queryTemplates, definitions, querySubstParameters);
 					break;
 				case 20 : 					
 					//Faceted Search Query
 					facetedSearchQuery = true;
-					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(SubstitutionQueryParametersManager.QueryType.AGGREGATE, aggregateQueryIndex).get(queryId);
 					aggregateQuery = new Query21Template(ru, queryTemplates, definitions, querySubstParameters);
 					break;
 				case 21 : 					
 					//Faceted Search Query
 					facetedSearchQuery = true;
-					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(SubstitutionQueryParametersManager.QueryType.AGGREGATE, aggregateQueryIndex).get(queryId);
 					aggregateQuery = new Query22Template(ru, queryTemplates, definitions, querySubstParameters);
 					break;
 				case 22 :
 					//Faceted Search Query
 					facetedSearchQuery = true;
-					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(SubstitutionQueryParametersManager.QueryType.AGGREGATE, aggregateQueryIndex).get(queryId);
 					aggregateQuery = new Query23Template(ru, queryTemplates, definitions, querySubstParameters);
 					break;
 				case 23 :
-					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(SubstitutionQueryParametersManager.QueryType.AGGREGATE, aggregateQueryIndex).get(queryId);
 					aggregateQuery = new Query24Template(ru, queryTemplates, definitions, querySubstParameters);
 					break;
 				case 24 :
-					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(aggregateQueryIndex).get(queryId);
+					querySubstParameters = substitutionQueryParametersMngr.getSubstitutionParametersFor(SubstitutionQueryParametersManager.QueryType.AGGREGATE, aggregateQueryIndex).get(queryId);
 					aggregateQuery = new Query25Template(ru, queryTemplates, definitions, querySubstParameters);
 					break;
 			}

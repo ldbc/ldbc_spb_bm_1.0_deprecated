@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection.QueryType;
-import eu.ldbc.semanticpublishing.generators.querygenerator.QueryParametersGenerator;
+import eu.ldbc.semanticpublishing.substitutionparameters.SubstitutionParametersGenerator;
 import eu.ldbc.semanticpublishing.properties.Definitions;
 import eu.ldbc.semanticpublishing.util.RandomUtil;
 
@@ -13,7 +13,7 @@ import eu.ldbc.semanticpublishing.util.RandomUtil;
  * A class extending the MustacheTemplate, used to generate a query string
  * corresponding to file Configuration.QUERIES_PATH/aggregation/query10.txt
  */
-public class Query10Template extends DefaultSelectTemplate implements QueryParametersGenerator {
+public class Query10Template extends DefaultSelectTemplate implements SubstitutionParametersGenerator {
 	//must match with corresponding file name of the mustache template file
 	private static final String templateFileName = "query10.txt";
 	
@@ -24,8 +24,9 @@ public class Query10Template extends DefaultSelectTemplate implements QueryParam
 	}
 	
 	@Override
-	public void generateSubstitutionParameters(BufferedWriter bw, int amount) throws IOException {
+	public String generateSubstitutionParameters(BufferedWriter bw, int amount) throws IOException {
 		//no parameters
+		return null;
 	}
 	
 	@Override

@@ -192,8 +192,10 @@ public class RandomUtil {
 		int hour = nextInt(0, 23);
 		int minute = nextInt(0, 59);
 		int second = nextInt(0, 59);
+		int millisecond = nextInt(0, 999);
 
 		calendar.set(year, month, day, hour, minute, second);
+		calendar.set(Calendar.MILLISECOND, millisecond);
 		
 		return calendar.getTime();
 	}

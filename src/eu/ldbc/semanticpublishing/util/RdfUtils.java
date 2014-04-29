@@ -26,6 +26,10 @@ public class RdfUtils {
 	public static final String CONTENT_TYPE_SESAME_NQUADS = "text/x-nquads";
 	public static final String CONTENT_TYPE_TRIG = "application/x-trig";
 	public static final String CONTENT_TYPE_TURTLE = "application/x-turtle";
+	
+	
+	private static String[] NAMESPACES = {"cwork:", "<http://www.bbc.co.uk/ontologies/creativework/>",
+										  "bbc:"  , "<http://www.bbc.co.uk/ontologies/bbc/>"};
 
 	public static void postStatements(String endpoint, String contentType, InputStream input) throws IOException {
 		
@@ -89,4 +93,31 @@ public class RdfUtils {
 			inputStream.close();
 		}
 	}
+	
+	/**
+	 * Expands name-space prefix if found in the input string to a URI
+	 * 
+	 * @param str - the string that will be expanded
+	 * @return - full URI, or input string
+	 */
+	public static String expandNamepsacePrefix(String str) {
+		for (int i = 0; i < NAMESPACES.length; i++) {
+			if (i % 2 != 0) {
+				continue;
+			}
+			String prefix = NAMESPACES[i];
+			String URI = "";
+			if (NAMESPACES[i+1].endsWith(">")) {
+				URI = NAMESPACES[i+1].substring(0, NAMESPACES[i+1].length() - 1);
+			}
+
+			if (str.contains(prefix)) {
+				StringBuilder sb = new StringBuilder();
+				sb.append(str.replace(prefix, URI));
+				sb.append(">");
+				return sb.toString();
+			}
+		}
+		return str;
+	}	
 }

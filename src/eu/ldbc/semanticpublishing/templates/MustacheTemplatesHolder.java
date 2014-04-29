@@ -18,11 +18,13 @@ public class MustacheTemplatesHolder {
 	public static final String AGGREGATION = "aggregation";
 	public static final String EDITORIAL = "editorial";
 	public static final String SYSTEM = "system";
+	public static final String VALIDATION = "validation";
 
 	//declaring the HashMap final makes it immutable for concurrent reading
 	private final HashMap<String, String> aggregationQueryTemplates = new HashMap<String, String>();
 	private final HashMap<String, String> editorialQueryTemplates = new HashMap<String, String>();
 	private final HashMap<String, String> systemQueryTemplates = new HashMap<String, String>();
+	private final HashMap<String, String> validationQueryTemplates = new HashMap<String, String>();
 
 	private String queryPath;
 	
@@ -31,6 +33,7 @@ public class MustacheTemplatesHolder {
 		initializeQueries(AGGREGATION);
 		initializeQueries(EDITORIAL);
 		initializeQueries(SYSTEM);
+		initializeQueries(VALIDATION);
 	}
 		
 	/**
@@ -49,7 +52,7 @@ public class MustacheTemplatesHolder {
 		List<String> queryFiles = new ArrayList<String>();
 		FileUtils.collectFilesList(pathSb.toString(), queryFiles, "txt", false);
 		
-		for (String filePath : queryFiles) {
+		for (String filePath : queryFiles) {	
 			StringBuilder sb = new StringBuilder();
 			String[] queryString = FileUtils.readTextFile(filePath);
 			
@@ -69,6 +72,8 @@ public class MustacheTemplatesHolder {
 			return editorialQueryTemplates;
 		} else if (type.equals(SYSTEM)) {
 			return systemQueryTemplates;
+		} else if (type.equals(VALIDATION)) {
+			return validationQueryTemplates;
 		} else {
 			return null;
 		}

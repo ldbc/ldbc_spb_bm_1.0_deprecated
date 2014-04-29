@@ -51,6 +51,9 @@ public class Configuration {
 	public static final String CREATIVE_WORKS_INFO = "creativeWorksInfo";
 	public static final String GENERATE_QUERY_SUBSTITUTION_PARAMETERS = "generateQuerySubstitutionParameters";
 	public static final String QUERY_SUBSTITUTION_PARAMETERS = "querySubstitutionParameters";
+	public static final String VALIDATE_QUERY_RESULTS = "validateQueryResults";
+	public static final String VALIDATION_PATH = "validationPath";
+	public static final String VALIDATION_ITERATIONS = "validationIterations";
 	
 	/**
 	 * Initialise and set default values for parameters that make sense.
@@ -88,6 +91,9 @@ public class Configuration {
 		properties.setProperty(CREATIVE_WORKS_INFO, "");
 		properties.setProperty(GENERATE_QUERY_SUBSTITUTION_PARAMETERS, "true");
 		properties.setProperty(QUERY_SUBSTITUTION_PARAMETERS, "1000");
+		properties.setProperty(VALIDATE_QUERY_RESULTS, "false");
+		properties.setProperty(VALIDATION_PATH, "./data/validation");
+		properties.setProperty(VALIDATION_ITERATIONS, "1");
 	}
 	
 	/**

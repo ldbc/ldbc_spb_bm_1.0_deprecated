@@ -69,7 +69,7 @@ public class EditorialAgent extends AbstractAsynchronousAgent {
 					
 					break;
 				case 1 :
-					long cwNextId = ru.nextInt((int)DataManager.creativeWorksNexId.get());
+					long cwNextId = ru.nextInt((int)DataManager.creativeWorksNextId.get());
 					String uri = ru.numberURI("context", cwNextId, true, true);
 								
 					MustacheTemplate updateQuery = new UpdateTemplate(uri, ru, queryTemplates, definitions);

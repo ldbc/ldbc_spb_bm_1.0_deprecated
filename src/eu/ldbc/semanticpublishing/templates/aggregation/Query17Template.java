@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection.QueryType;
-import eu.ldbc.semanticpublishing.generators.querygenerator.QueryParametersGenerator;
+import eu.ldbc.semanticpublishing.substitutionparameters.SubstitutionParametersGenerator;
 import eu.ldbc.semanticpublishing.properties.Definitions;
 import eu.ldbc.semanticpublishing.templates.MustacheTemplate;
 import eu.ldbc.semanticpublishing.util.RandomUtil;
@@ -15,7 +15,7 @@ import eu.ldbc.semanticpublishing.util.RandomUtil;
  * corresponding to file Configuration.QUERIES_PATH/aggregation/query17.txt
  * A geo-locations drill-down query template
  */
-public class Query17Template extends MustacheTemplate implements QueryParametersGenerator {
+public class Query17Template extends MustacheTemplate implements SubstitutionParametersGenerator {
 	//must match with corresponding file name of the mustache template file
 	private static final String templateFileName = "query17.txt";
 	//south boundary
@@ -95,19 +95,20 @@ public class Query17Template extends MustacheTemplate implements QueryParameters
 	}
 	
 	@Override
-	public void generateSubstitutionParameters(BufferedWriter bw, int amount) throws IOException {
+	public String generateSubstitutionParameters(BufferedWriter bw, int amount) throws IOException {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < amount; i++) {
 			preInitialize();
 			sb.setLength(0);
 			sb.append(refLatitude());
-			sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
 			sb.append(refLongtitude());
-			sb.append(QueryParametersGenerator.PARAMS_DELIMITER);
+			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
 			sb.append(refDeviation());
 			sb.append("\n");
 			bw.write(sb.toString());
 		}		
+		return null;
 	}
 	
 	@Override

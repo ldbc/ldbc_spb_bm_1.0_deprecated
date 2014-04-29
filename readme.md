@@ -93,15 +93,16 @@ All items should be saved in same location with the benchmark jar file.
   * ***loadOntologies*** - populate the RDF database with required ontologies (from reference knowledge). It can be done manually by uploading all .ttl files located at : /data/ontologies
   * ***adjustRefDatasetsSizes*** - optional phase, if reference dataset files exist with the extension '.adjustablettl', then for each, a new .ttl file is created with adjusted size depending on the selected size of data to be generated (parameter 'datasetSize' in test.properties file).
   * ***loadReferenceDatasets*** - populate the RDF database with required reference data (from reference knowledge). It can be done manually by uploading all .ttl files located at : /data/datasets
-  * ***generateCreativeWorks*** - generate the data used for benchmarking. Data is saved to files of defined size (*generatedTriplesPerFile*) and total number of triples (*datasetSize*)
+  * ***generateCreativeWorks*** - generate the data used for benchmarking. Data is saved to files of defined size (*generatedTriplesPerFile*) and total number of triples (*datasetSize*). *Requires phases : loadOntologies, loadDatasets.*
   * ***loadCreativeWorks*** - load generated data from previous phase into RDF database. Optional phase, verified from N-Quads serialization format
-  * ***generateQuerySubstitutionParameters*** - Controls generation of query substitution parameters which later can be used during the warmup and benchmark phases. For each query a substitution parameters file is created and saved into 'creativeWorksPath' location. If no files are found at that location, queries executed during warmup and benchmark phases will use randomly generated parameters. Prior to generation of substitution parameters all of the phases above should have been completed.
-  * ***warmUp*** - runs the aggregation agents for *warmupPeriodSeconds* seconds, results are not collected
-  * ***runBenchmark*** - runs the benchmark for *benchmarkRunPeriodSeconds* seconds, results are collected. Editorial and aggregation agents are run simultaneously.
+  * ***generateQuerySubstitutionParameters*** - Controls generation of query substitution parameters which later can be used during the warmup and benchmark phases. For each query a substitution parameters file is created and saved into 'creativeWorksPath' location. If no files are found at that location, queries executed during warmup and benchmark phases will use randomly generated parameters. *Requires phases : loadOntologies, loadDatasets, generateCreativeWorks, loadCreativeWorks.*
+  * ***validateQueryResults*** - validate correctness of results for editorial and aggregate operations against a validation dataset. *Requires phases : loadOntologies, loadDatasets.*
+  * ***warmUp*** - runs the aggregation agents for *warmupPeriodSeconds* seconds, results are not collected. *Requires phases : loadOntologies, loadDatasets, generateCreativeWorks (optional), loadCreativeWorks (optional).*
+  * ***runBenchmark*** - runs the benchmark for *benchmarkRunPeriodSeconds* seconds, results are collected. Editorial and aggregation agents are run simultaneously. *Requires phases : loadOntologies, loadDatasets, generateCreativeWorks (optional), loadCreativeWorks (optional).*
  
 * Conformance Validation Phase 
     To be run independently on a new repository (using OWL2-RL rule-set). Required phase before running : *loadOntologies*. No data generation and loading is required.
-  * ***checkConformance*** - runs tests for conformance to the **OWL2-RL** rules. 
+  * ***checkConformance*** - runs tests for conformance to the **OWL2-RL** rules. *Requires phase : loadOntologies.*
 
 ###Run
 
