@@ -31,23 +31,7 @@ public class Validator {
 				if (parameterValue.contains("/context/")) {
 					continue;
 				}
-/*				
-				if (!strict) {
-					if (parameterValue.startsWith("<")) {
-						parameterValue = parameterValue.substring(1);
-					}
-					if (parameterValue.endsWith(">")) {
-						parameterValue = parameterValue.substring(0, parameterValue.length()-1);
-					}				
-					if (parameterValue.contains("^^")) {
-						parameterValue = parameterValue.substring(0, parameterValue.indexOf("^^"));
-					}
-					
-					parameterValue = parameterValue.replace("\"", "");				
-				}				
 				
-				parameterValue = customURLEncode(parameterValue);
-*/
 				parameterValue = transformString(parameterValue, strict);
 				
 				if (!result.contains(parameterValue)) {

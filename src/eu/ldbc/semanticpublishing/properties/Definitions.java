@@ -36,6 +36,7 @@ public class Definitions {
 	public static final String GEO_MAX_LAT = "maxLat";
 	public static final String GEO_MIN_LONG = "minLong";
 	public static final String GEO_MAX_LONG = "maxLong";
+	public static final String MILESTONE_QUERY_POSITION = "mileStoneQueryPosition";
 	
 	//About tags in Creative Works
 	public static AllocationsUtil aboutsAllocations;

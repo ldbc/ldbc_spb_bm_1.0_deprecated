@@ -12,8 +12,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
@@ -24,6 +22,7 @@ import eu.ldbc.semanticpublishing.agents.AggregationAgent;
 import eu.ldbc.semanticpublishing.agents.EditorialAgent;
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection.QueryType;
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryExecuteManager;
+import eu.ldbc.semanticpublishing.enterprise.ReplicationAndBackupHelper;
 import eu.ldbc.semanticpublishing.generators.data.DataGenerator;
 import eu.ldbc.semanticpublishing.properties.Configuration;
 import eu.ldbc.semanticpublishing.properties.Definitions;
@@ -40,6 +39,7 @@ import eu.ldbc.semanticpublishing.util.FileUtils;
 import eu.ldbc.semanticpublishing.util.LoggingUtil;
 import eu.ldbc.semanticpublishing.util.RandomUtil;
 import eu.ldbc.semanticpublishing.util.RdfUtils;
+import eu.ldbc.semanticpublishing.util.ShellUtil;
 import eu.ldbc.semanticpublishing.util.StringUtil;
 import eu.ldbc.semanticpublishing.util.ThreadUtil;
 import eu.ldbc.semanticpublishing.validation.AggregateOperationsValidator;
@@ -56,6 +56,7 @@ public class TestDriver {
 	private int benchmarkRunPeriodSeconds;
 	private SparqlQueryExecuteManager queryExecuteManager;
 	private final AtomicBoolean inBenchmarkState = new AtomicBoolean(false);
+	private final AtomicBoolean keepReporterAlive = new AtomicBoolean(false);
 	
 	private final Configuration configuration = new Configuration();
 	private final Definitions definitions = new Definitions();
@@ -222,7 +223,7 @@ public class TestDriver {
 		}
 		
 		if (configuration.getBoolean(Configuration.VERBOSE) && showDetails) {
-			System.out.println(messagePrefix + "\t(reference data entities size : " + entitiesList.size() + ", max Creative Work id : " + count + ", geonames entities size : " + geonamesIds.size());
+			System.out.println(messagePrefix + "\t(reference data entities size : " + entitiesList.size() + ", max Creative Work id : " + count + ", geonames entities size : " + geonamesIds.size() + ")");
 		}
 	}
 	
@@ -482,13 +483,15 @@ public class TestDriver {
 			if (DataManager.regularEntitiesList.size() == 0) {
 				populateRefDataEntitiesLists(true, true, false, "");
 				if (DataManager.creativeWorksNextId.get() == 0) {
-					System.err.println("Warmup : Warning : no Creative Works were found stored in the database, initialise it with ontologies and reference datasets first! Exiting.");
+					System.err.println("Warning : no Creative Works were found stored in the database, initialise it with ontologies and reference datasets first! Exiting.");
 					System.exit(-1);
 				}
 			}
 			
-			System.out.println("Warming up...");
-			LOGGER.info("Warming up...");
+			String message = "Warming up...";
+			
+			System.out.println(message);
+			LOGGER.info(message);
 			
 			aggregationAgentsStarted = true;
 
@@ -500,23 +503,37 @@ public class TestDriver {
 		}
 	}
 	
-	private void benchmark(boolean enable) throws IOException {
+	private void benchmark(boolean enable, long benchmarkByQueryRuns, double mileStonePosition) throws IOException {
 		if (enable) {
 			//assuming that if regularEntitiesList is empty, no entity lists were populated
 			if (DataManager.regularEntitiesList.size() == 0 || DataManager.correlatedEntitiesList.size() == 0) {
 				populateRefDataEntitiesLists(true, true, false, "");
 				if (DataManager.creativeWorksNextId.get() == 0) {
-					System.err.println("Warmup : Warning : no Creative Works were found stored in the database, initialise it with ontologies and reference datasets first! Exiting.");
+					System.err.println("Warning : no Creative Works were found stored in the database, initialise it with ontologies and reference datasets first! Exiting.");
 					System.exit(-1);
 				}
 			}
 			
-			if (DataManager.correlatedEntitiesList.size() == 0) {
-				System.out.println("Warning : Correlations could not be initalized, continuing with random distribution of substitution parameters. See dataset.info file or generate dataset.");
+			if (configuration.getBoolean(Configuration.RUN_BENCHMARK_ONLINE_REPlICATION_AND_BACKUP)) {
+				System.out.println("Warning : runBenchmark and runBenchmarkWithOnlineReplication phases are both enabled, disable one first!");
+				System.exit(-1);
+			}			
+			
+			if (benchmarkByQueryRuns > 0 && aggregationAgentsCount <= 0) {
+				System.out.println(String.format("Warning : aggregation agents amount : %d is not acceptable for execution of the benchmark in that mode, exiting...", aggregationAgentsCount));
+				System.exit(-1);
 			}
 			
-			System.out.println("Starting the benchmark...");
-			LOGGER.info("Starting the benchmark...");
+			String message;
+			
+			if (benchmarkByQueryRuns > 0) {
+				message = String.format("Starting the benchmark... (will run until %d aggregate executions have been completed)", benchmarkByQueryRuns);
+			} else {				
+				message = "Starting the benchmark...";
+			}
+			
+			System.out.println(message);
+			LOGGER.info(message);
 
 			inBenchmarkState.set(true);
 			
@@ -534,27 +551,204 @@ public class TestDriver {
 				agent.start();
 			}
 
-			reporterAgentScheduledService.scheduleAtFixedRate(new Reporter(inBenchmarkState, 
-																				configuration.getInt(Configuration.EDITORIAL_AGENTS_COUNT),																				
-																				configuration.getInt(Configuration.AGGREGATION_AGENTS_COUNT), 
-																				configuration.getLong(Configuration.BENCHMARK_RUN_PERIOD_SECONDS),
-																				configuration.getBoolean(Configuration.VERBOSE) ), 
-															  1000, 
-															  1000, 
-															  TimeUnit.MILLISECONDS);
+			Thread reporterThread = new Reporter(Statistics.totalAggregateQueryStatistics.getRunsCountAtomicLong(), 
+									   		     inBenchmarkState, 
+									   		     keepReporterAlive,
+												 configuration.getInt(Configuration.EDITORIAL_AGENTS_COUNT),																				
+												 configuration.getInt(Configuration.AGGREGATION_AGENTS_COUNT), 
+												 configuration.getLong(Configuration.BENCHMARK_RUN_PERIOD_SECONDS),
+												 benchmarkByQueryRuns, 
+												 configuration.getBoolean(Configuration.VERBOSE));
+			reporterThread.start();
 			
-			ThreadUtil.sleepSeconds(benchmarkRunPeriodSeconds);
-			
-			System.out.println("Stopping the benchmark...");
-			LOGGER.info("Stopping the benchmark...");			
+			if (benchmarkByQueryRuns > 0) {
+				while (Statistics.totalAggregateQueryStatistics.getRunsCount() < benchmarkByQueryRuns) {
+					ThreadUtil.sleepMilliseconds(50);					
+				}
+			} else {
+				ThreadUtil.sleepSeconds(benchmarkRunPeriodSeconds);
+			}
 			
 			inBenchmarkState.set(false);
-			reporterAgentScheduledService.shutdownNow();
+			
+			ThreadUtil.join(reporterThread);
+			
+			message = "Stopping the benchmark...";
+			System.out.println(message);
+			LOGGER.info(message);			
 		}
 	}
 	
-	private ScheduledThreadPoolExecutor reporterAgentScheduledService = new ScheduledThreadPoolExecutor(1);
+	/**
+	 * @param enable 				 - enable the phase
+	 * @param benchmarkByQueryRuns   - if set to zero, then time interval set by parameter 'benchmarkRunPeriodSeconds' will be used for completing the phase.
+	 * 								   if greater than zero, then its value the amount of aggregate queries that will be executed for completing the phase.
+	 * @param mileStonePosition - defines after the position of execution of a 'mileStone' query ( the query that will verify that certain milestone has been reached). 
+	 * 								   This parameter is considered only if benchmarkByQueryRuns > 0. 
+	 * 								   e.g. if mileStoneQueryPosition = 0.2 in terms of percents, then after 20% of executed queries a mileStone query is started.
+	 * @throws IOException
+	 * @throws InterruptedException 
+	 */
+	private void benchmarkOnlineReplicationAndBackup(boolean enable, long benchmarkByQueryRuns, double milestonePosition) throws IOException, InterruptedException {
+		if (enable) {
+			//assuming that if regularEntitiesList is empty, no entity lists were populated
+			if (DataManager.regularEntitiesList.size() == 0 || DataManager.correlatedEntitiesList.size() == 0) {
+				populateRefDataEntitiesLists(true, true, false, "");
+				if (DataManager.creativeWorksNextId.get() == 0) {
+					System.err.println("Warning : no Creative Works were found stored in the database, initialise it with ontologies and reference datasets first! Exiting.");
+					System.exit(-1);
+				}
+			}
 
+			if (configuration.getBoolean(Configuration.RUN_BENCHMARK)) {
+				System.out.println("Warning : runBenchmark and runBenchmarkWithOnlineReplication phases are both enabled, disable one first!");
+				System.exit(-1);
+			}			
+			
+			if (benchmarkByQueryRuns > 0 && aggregationAgentsCount <= 0) {
+				System.out.println(String.format("Warning : aggregation agents amount : %d is not acceptable for execution of the benchmark in that mode, exiting...", aggregationAgentsCount));
+				System.exit(-1);
+			}
+			
+			String message;
+			
+			if (benchmarkByQueryRuns > 0) {
+				message = String.format("Starting the benchmark... (will run until %d aggregate executions have been completed)", benchmarkByQueryRuns);
+				System.out.println(message);
+				LOGGER.info(message);				
+			} else {				
+				message = "Warning : The benchmark driver is not configured properly, set a positive value to property 'benchmarkByQueryRuns'. Exiting.";
+				System.out.println(message);
+				LOGGER.info(message);								
+				System.exit(-1);				
+			}
+			
+			inBenchmarkState.set(true);
+			keepReporterAlive.set(true);
+			
+			if(!aggregationAgentsStarted) {
+				aggregationAgentsStarted = true;
+				for(AbstractAsynchronousAgent agent : aggregationAgents ) {
+					if( ! agent.isAlive()) {
+						agent.start();
+					}
+				}
+			}
+			
+			editorialAgentsStarted = true;
+			for(AbstractAsynchronousAgent agent : editorialAgents ) {
+				agent.start();
+			}
+			
+			Thread reporterThread = new Reporter(Statistics.totalAggregateQueryStatistics.getRunsCountAtomicLong(), 
+									   		     inBenchmarkState,
+									   		     keepReporterAlive, 
+												 configuration.getInt(Configuration.EDITORIAL_AGENTS_COUNT),																				
+												 configuration.getInt(Configuration.AGGREGATION_AGENTS_COUNT), 
+												 configuration.getLong(Configuration.BENCHMARK_RUN_PERIOD_SECONDS),
+												 benchmarkByQueryRuns, 
+												 configuration.getBoolean(Configuration.VERBOSE));
+			reporterThread.start();
+			
+			String[] milestoneSubstitutionParameters = null;
+			ReplicationAndBackupHelper replicationHelper = new ReplicationAndBackupHelper(queryExecuteManager, randomGenerator, configuration, definitions, mustacheTemplatesHolder);
+			boolean milestoneQueryExecuted = false;
+			
+			try {
+				while (Statistics.totalAggregateQueryStatistics.getRunsCount() < benchmarkByQueryRuns) {
+					ThreadUtil.sleepMilliseconds(50);
+					
+					if (!milestoneQueryExecuted && (Statistics.totalAggregateQueryStatistics.getRunsCount() >= benchmarkByQueryRuns * milestonePosition)) {					
+						//Milestone point reached, mark it by executing a milestone INSERT query
+						message = "Setting a milestone before starting incremental backup...";
+						System.out.println(message);
+						LOGGER.info(message);							
+						milestoneSubstitutionParameters = replicationHelper.executeMilestoneQuery(1);
+						milestoneQueryExecuted = true;
+						
+						//Start incremental backup
+						message = "Starting incremental backup (incremental_backup_start)...";
+						System.out.println(message);
+						LOGGER.info(message);							
+						ShellUtil.execute(StringUtil.normalizePath(configuration.getString(Configuration.ENTERPRISE_FEATURES_PATH)) + File.separator + "scripts", ReplicationAndBackupHelper.INCREMENTAL_BACKUP_START + (FileUtils.isWindowsOS() ? ".bat" : ".sh"), true);
+					}
+				}
+			} catch (IOException ioe) {
+				inBenchmarkState.set(false);
+				message = "Warning : Stopping the benchmark : IOExcetion : " + ioe.getMessage();
+				System.out.println(message);
+				throw new IOException(ioe);
+			}
+			
+			//stop all agents, but keep measuring until database has been restarted and milestone point has been confirmed
+			inBenchmarkState.set(false);
+						
+			message = "Shutting down the database (system_shutdown)...";
+			System.out.println(message);
+			LOGGER.info(message);
+			ShellUtil.execute(StringUtil.normalizePath(configuration.getString(Configuration.ENTERPRISE_FEATURES_PATH)) + File.separator + "scripts", ReplicationAndBackupHelper.SYSTEM_SHUTDOWN + (FileUtils.isWindowsOS() ? ".bat" : ".sh"), true);
+			
+			//update query timeout value to allow longer timeouts for milestone validation queries. In cases when startup of the database requires extra time to recover.
+			replicationHelper.updateQueryExecutionTimeout(48*60*60*1000);
+			
+			message = "Starting up the database (system_startup)...";
+			System.out.println(message);
+			LOGGER.info(message);
+			ShellUtil.execute(StringUtil.normalizePath(configuration.getString(Configuration.ENTERPRISE_FEATURES_PATH)) + File.separator + "scripts", ReplicationAndBackupHelper.SYSTEM_START + (FileUtils.isWindowsOS() ? ".bat" : ".sh"), true);
+
+			message = "Verifying that milestone point exists";
+			System.out.println(message);
+			LOGGER.info(message);
+			
+			if (replicationHelper.validateMilestoneQuery(milestoneSubstitutionParameters)) {
+				message = "\tOK : milestone point found!";				
+			} else {
+				message = "\tError : milestone doesn't exist";
+			}
+			System.out.println(message);
+			LOGGER.info(message);
+
+			keepReporterAlive.set(false);
+			
+			message = "Stopping the benchmark...";
+			System.out.println(message);
+			LOGGER.info(message);
+			
+			ThreadUtil.join(reporterThread);
+			
+			message = "Shutting down the database (system_shutdown)...";
+			System.out.println(message);
+			LOGGER.info(message);
+			ShellUtil.execute(StringUtil.normalizePath(configuration.getString(Configuration.ENTERPRISE_FEATURES_PATH)) + File.separator + "scripts", ReplicationAndBackupHelper.SYSTEM_SHUTDOWN + (FileUtils.isWindowsOS() ? ".bat" : ".sh"), true);
+						
+			message = "Starting up the database (system_startup)...";
+			System.out.println(message);
+			LOGGER.info(message);
+			ShellUtil.execute(StringUtil.normalizePath(configuration.getString(Configuration.ENTERPRISE_FEATURES_PATH)) + File.separator + "scripts", ReplicationAndBackupHelper.SYSTEM_START + (FileUtils.isWindowsOS() ? ".bat" : ".sh"), true);
+			
+			message = "Restoring state from full backup (before the warmup and benchmarking phases) (full_backup_restore)...";
+			System.out.println(message);
+			LOGGER.info(message);
+			ShellUtil.execute(StringUtil.normalizePath(configuration.getString(Configuration.ENTERPRISE_FEATURES_PATH)) + File.separator + "scripts", ReplicationAndBackupHelper.FULL_BACKUP_RESTORE + (FileUtils.isWindowsOS() ? ".bat" : ".sh"), true);
+
+			message = "Starting up the database (system_startup)...";
+			System.out.println(message);
+			LOGGER.info(message);
+			ShellUtil.execute(StringUtil.normalizePath(configuration.getString(Configuration.ENTERPRISE_FEATURES_PATH)) + File.separator + "scripts", ReplicationAndBackupHelper.SYSTEM_START + (FileUtils.isWindowsOS() ? ".bat" : ".sh"), true);
+			
+			message = "Verifying that current state of the database doesn't contain the milestone point";
+			System.out.println(message);
+			LOGGER.info(message);
+			
+			if (replicationHelper.validateMilestoneQuery(milestoneSubstitutionParameters)) {
+				message = "\tError : milestone point found! It shouldn't exist after restoring from full backup taken before the benchmark run.";				
+			} else {
+				message = "\tOK : milestone point doesn't exist!";
+			}
+			System.out.println(message);
+			LOGGER.info(message);				
+		}
+	}
 	
 	private void stopAynchronousAgents() {
 		runFlag.set(false);
@@ -673,7 +867,8 @@ public class TestDriver {
 		validateQueryResults(configuration.getBoolean(Configuration.VALIDATE_QUERY_RESULTS));
 		setupAsynchronousAgents();
 		warmUp(configuration.getBoolean(Configuration.WARM_UP));
-		benchmark(configuration.getBoolean(Configuration.RUN_BENCHMARK));
+		benchmark(configuration.getBoolean(Configuration.RUN_BENCHMARK), configuration.getLong(Configuration.BENCHMARK_BY_QUERY_RUNS), definitions.getDouble(Definitions.MILESTONE_QUERY_POSITION));
+		benchmarkOnlineReplicationAndBackup(configuration.getBoolean(Configuration.RUN_BENCHMARK_ONLINE_REPlICATION_AND_BACKUP), configuration.getLong(Configuration.BENCHMARK_BY_QUERY_RUNS), definitions.getDouble(Definitions.MILESTONE_QUERY_POSITION));
 		stopAynchronousAgents();
 		checkConformance(configuration.getBoolean(Configuration.CHECK_CONFORMANCE));
 		clearDatabase(configuration.getBoolean(Configuration.CLEAR_DATABASE));

@@ -63,4 +63,8 @@ public class QueryStatistics {
 	public long getNewQueryId() {
 		return queryId.getAndIncrement();
 	}
+	
+	public AtomicLong getRunsCountAtomicLong() {
+		return runsCount;
+	}
 }

@@ -117,4 +117,9 @@ public class SparqlQueryExecuteManager {
 	public int getTimeoutMilliseconds() {
 		return this.queryTimeoutMilliseconds;
 	}
+	
+	public void setTimeoutsMilliseconds(int milliseconds) {
+		this.queryTimeoutMilliseconds = milliseconds;
+		this.systemQueryTimeoutMilliseconds = milliseconds;
+	}
 }

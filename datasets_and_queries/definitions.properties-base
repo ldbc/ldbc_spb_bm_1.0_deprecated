@@ -81,3 +81,6 @@ minLong = -2.15
 
 #Defines maximum longtitude
 maxLong = 0.25
+
+#Defines the position in terms of percents at which a milestone query is executed (see Online and Replication Benchmark feature)
+mileStoneQueryPosition = 0.5

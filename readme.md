@@ -86,6 +86,8 @@ All items should be saved in same location with the benchmark jar file.
   * ***creativeWorkNextId*** - set the next ID for the data generator of Creative Works. When running the benchmark driver in separate processes, to guarantee that generated creative works will not overlap their IDs. e.g. for generating 50M dataset, expected number of Creative Works is ~2.5M and next ID should start at that value
   * ***creativeWorksInfo*** - file name, that will be saved in creativeWorksPath and will contain system info about the generated dataset, e.g. interesting entities, etc.
   * ***querySubstitutionParameters*** - number substitution parameters that will be generated for each query
+  * ***benchmarkByQueryRuns*** - sets the amount of aggregate queries which the benchmark phase will execute. If value is greater than zero then parameter 'benchmarkRunPeriodSeconds' is ignored. e.g. if set to 100, benchmark will measure the time to execute 100 aggregate operations.*
+  
   
 * Benchmark Phases (test.properties)
     One, some or all phases can be enabled and will run in the sequence listed below. Running first three phases is mandatory with optionally enabling fourth one (*loadCreativeWorks*) - for the case when generated data will not be loaded manually into the database.
@@ -99,6 +101,7 @@ All items should be saved in same location with the benchmark jar file.
   * ***validateQueryResults*** - validate correctness of results for editorial and aggregate operations against a validation dataset. *Requires phases : loadOntologies, loadDatasets.*
   * ***warmUp*** - runs the aggregation agents for *warmupPeriodSeconds* seconds, results are not collected. *Requires phases : loadOntologies, loadDatasets, generateCreativeWorks (optional), loadCreativeWorks (optional).*
   * ***runBenchmark*** - runs the benchmark for *benchmarkRunPeriodSeconds* seconds, results are collected. Editorial and aggregation agents are run simultaneously. *Requires phases : loadOntologies, loadDatasets, generateCreativeWorks (optional), loadCreativeWorks (optional).*
+  * ***runBenchmarkOnlineReplicationAndBackup*** - benchmark is measuring performance under currently ongoing backup process. Verifies that certain conditions are met such as milestone points at which backup has been started. Requires additional implementation of provided shell script files (/data/enterprise/scripts) for using vendor's specific command for backup. *Requires phases : loadOntologies, loadDatasets, generateCreativeWorks (optional), loadCreativeWorks (optional). Also making a full backup prior to running the benchmark for later restore point.*
  
 * Conformance Validation Phase 
     To be run independently on a new repository (using OWL2-RL rule-set). Required phase before running : *loadOntologies*. No data generation and loading is required.

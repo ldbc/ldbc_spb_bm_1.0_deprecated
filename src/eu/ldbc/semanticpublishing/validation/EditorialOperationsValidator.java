@@ -42,7 +42,7 @@ public class EditorialOperationsValidator extends Validator {
 	private static final String STRING_RDF_TYPE = "<http://www.w3.org/2001/XMLSchema#string>";
 	private static final String DATETIME_RDF_TYPE = "<http://www.w3.org/2001/XMLSchema#dateTime>";
 	
-	private enum EditorialOperation {INSERT, UPDATE, DELETE};
+	public static enum EditorialOperation {INSERT, UPDATE, DELETE};
 	
 	public EditorialOperationsValidator(SparqlQueryExecuteManager queryExecuteManager, RandomUtil ru, HashMap<String, String> editorialQueryTemplates, HashMap<String, String> validationQueryTemplates, Configuration configuration, Definitions definitions) {
 		this.queryExecuteManager = queryExecuteManager;
@@ -107,7 +107,7 @@ public class EditorialOperationsValidator extends Validator {
 		System.out.println("\t\t" + deleteErrors + " errors");
 	}
 	
-	private int validateAction(EditorialOperation operationType, int iteration, String[] validationParameters) throws IOException {
+	public int validateAction(EditorialOperation operationType, int iteration, String[] validationParameters) throws IOException {
 		int errors = 0;
 		String queryName = "";
 		String queryString = "";

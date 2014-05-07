@@ -54,6 +54,9 @@ public class Configuration {
 	public static final String VALIDATE_QUERY_RESULTS = "validateQueryResults";
 	public static final String VALIDATION_PATH = "validationPath";
 	public static final String VALIDATION_ITERATIONS = "validationIterations";
+	public static final String BENCHMARK_BY_QUERY_RUNS = "benchmarkByQueryRuns";
+	public static final String RUN_BENCHMARK_ONLINE_REPlICATION_AND_BACKUP = "runBenchmarkOnlineReplicationAndBackup";
+	public static final String ENTERPRISE_FEATURES_PATH = "enterpriseFeaturesPath";
 	
 	/**
 	 * Initialise and set default values for parameters that make sense.
@@ -94,6 +97,9 @@ public class Configuration {
 		properties.setProperty(VALIDATE_QUERY_RESULTS, "false");
 		properties.setProperty(VALIDATION_PATH, "./data/validation");
 		properties.setProperty(VALIDATION_ITERATIONS, "1");
+		properties.setProperty(BENCHMARK_BY_QUERY_RUNS, "0");
+		properties.setProperty(RUN_BENCHMARK_ONLINE_REPlICATION_AND_BACKUP, "false");
+		properties.setProperty(ENTERPRISE_FEATURES_PATH, "./data/enterprise");
 	}
 	
 	/**
@@ -189,7 +195,7 @@ public class Configuration {
 			throw new IllegalStateException( "Illegal value for long integer configuration parameter: " + key);
 		}
 	}
-
+	
 	private final Properties properties = new Properties();
 	
 	public static void main(String[] args) throws IOException  {

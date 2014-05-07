@@ -47,27 +47,27 @@ Benchmark Phases :
 
   * The Semantic Publishing Benchmark can be configured to run through these phases ordered by the sequence they should be run : 
 
-    - loadOntologies        		          : load ontologies (from the 'data/ontologies' folder) into database
-    - adjustRefDatasetsSizes    	        : optional phase, if reference dataset files exist with the extension '.adjustablettl', then for each, a new .ttl file
-                                            is created with adjusted size depending on the selected size of data to be generated (parameter 'datasetSize' in test.properties file).
-    - loadDatasets          		          : load the reference datasets (from the 'data/datasets' folder) into database
-    - generateCreativeWorks 		          : using uploaded data from previous two phases, generates Creative Works and saves them to files.
-                                            Generated files need to be loaded into database manually (or automatically if file format is n-quads)
-                                              Note: Requires phases : loadOntologies, loadDatasets.
-    - loadCreativeWorks	  		            : load generated creative works into database (It is advisable to use serialization format : N-Quads)
-    - generateQuerySubstitutionParameters : Controls generation of query substitution parameters which later can be used during the warmup and benchmark phases. For each query a
-                                            substitution parameters file is created and saved into 'creativeWorksPath' location. 
-                                              Note : If no files are found at that location, queries executed during warmup and benchmark phases will use randomly generated parameters.
-                                              Note2: Requires phases : loadOntologies, loadDatasets, generateCreativeWorks, loadCreativeWorks.
-    - validateQueryResults                : validate correctness of results for editorial and aggregate operations against a validation dataset.
-                                              Note : Requires phases : loadOntologies, loadDatasets.
-    - warmUp                		          : a series of Aggregation queries are executed for a fixed amount of time.
-    - benchmark             		          : all aggregation and editorial agents are started and kept running for a period of 'benchmarkRunPeriodSeconds'.
-    - checkConformance                    : executes predefined queries (from folder 'data/sparql/conformance'. Checking for OWL2-RL : prp-irp, prp-asyp, prp-pdw, prp-adp, cax-dw, cax-adc,
-                                            cls-maxc1, prp-key, prp-spo2, prp-inv1)  
-                                              Note : Requires phase : loadOntologies.
-    - cleanup               		          : optional, the benchmark can be set to clear all data from database
-                                              Note : all data will be erased from repository
+    - loadOntologies        		          		: load ontologies (from the 'data/ontologies' folder) into database
+    - adjustRefDatasetsSizes    	        		: optional phase, if reference dataset files exist with the extension '.adjustablettl', then for each, a new .ttl file is created with adjusted size depending on the selected size of data to be generated (parameter 'datasetSize' in test.properties file).
+    - loadDatasets          		          		: load the reference datasets (from the 'data/datasets' folder) into database
+    - generateCreativeWorks 		          		: using uploaded data from previous two phases, generates Creative Works and saves them to files. Generated files need to be loaded into database manually (or automatically if file format is n-quads)
+                                              			Note: Requires phases : loadOntologies, loadDatasets.
+    - loadCreativeWorks	  		            		: load generated creative works into database (It is advisable to use serialization format : N-Quads)
+    - generateQuerySubstitutionParameters 			: Controls generation of query substitution parameters which later can be used during the warmup and benchmark phases. For each query a substitution parameters file is created and saved into 'creativeWorksPath' location. 
+                                              			Note : If no files are found at that location, queries executed during warmup and benchmark phases will use randomly generated parameters.
+                                              			Note2: Requires phases : loadOntologies, loadDatasets, generateCreativeWorks, loadCreativeWorks.
+    - validateQueryResults                			: validate correctness of results for editorial and aggregate operations against a validation dataset.
+                                              			Note : Requires phases : loadOntologies, loadDatasets.
+    - warmUp                		          		: a series of Aggregation queries are executed for a fixed amount of time.
+    - benchmark             		          		: all aggregation and editorial agents are started and kept running for a period of 'benchmarkRunPeriodSeconds'.
+    - benchmarkOnlineReplicationAndBackup 			: benchmark is measuring performance under currently ongoing backup process. Verifies that certain conditions are met such as milestone points at which backup has been started. 
+                                            			Note : Requires phases : loadOntologies, loadDatasets, generateCreativeWorks, loadCreativeWorks, warmUp (optional). Phases that should be disabled : benchmark.
+                                            			Note2: Requires all necessary enterprise script files (data/enterprise/scripts) to have DB Engie's commands added (Commands for : starting, shutting down, backing up, etc).
+                                            			Note3: Required to set the full path for property 'enterpriseFeaturesPath' in test.properties file and all scripts need to have an execution permission enabled.  
+    - checkConformance                    			: executes predefined queries (from folder 'data/sparql/conformance'. Checking for OWL2-RL : prp-irp, prp-asyp, prp-pdw, prp-adp, cax-dw, cax-adc, cls-maxc1, prp-key, prp-spo2, prp-inv1)  
+                                              			Note : Requires phase : loadOntologies.
+    - cleanup               		          		: optional, the benchmark can be set to clear all data from database
+                                              			Note : all data will be erased from repository
   
     Each of those phases can be configured to run independently or in a sequence by setting appropriate property value in file : test.properties.
  
@@ -113,6 +113,7 @@ How to run the benchmark :
                                          e.g. for generating 50M dataset, expected number of Creative Works is ~2.5M and next ID should start at that value)
     - creativeWorksInfo                 (file name, that will be saved in creativeWorksPath and will contain system info about the generated dataset, e.g. interesting entities, etc.)
     - querySubstitutionParameters       (number substitution parameters that will be generated for each query)
+    - benchmarkByQueryRuns				(sets the amount of aggregate queries which the benchmark phase will execute. If value is greater than zero then parameter 'benchmarkRunPeriodSeconds' is ignored. e.g. if set to 100, benchmark will measure the time to execute 100 aggregate operations.)
                                          
                                          Note : For optimal results the sum of editorial and aggregation agents should be set to be equal to the number of CPU cores.
 	
@@ -124,6 +125,7 @@ How to run the benchmark :
     - loadCreativeWorks                 (load generated files with Creative Works into repository, optional, tested for N-Quads)
     - warmUp                            (runs the aggregation queries for a configured period of time)
     - runBenchmark                      (runs the benchmark - all aggregation and editorial agents run simultaneously)
+    - runBenchmarkOnlineReplicationAndBackup (benchmark is measuring performance under currently ongoing backup process. Verifies that certain conditions are met such as milestone points at which backup has been started. Requires additional implementation of provided shell script files (/data/enterprise/scripts) for using vendor's specific command for backup.)     
     - checkConformance                  (executes a set of queries stored in 'data/sparql/conformance' for testing the inference capabilities of the database engine.
                                         OWL2-RL : prp-irp, prp-asyp, prp-pdw, prp-adp, cax-dw, cax-adc, cls-maxc1, prp-key, prp-spo2, prp-inv1.
                                         Note : execute -loadOntologies phase before running conformance check
@@ -156,6 +158,7 @@ How to run the benchmark :
 	- maxLat							(Defines maximum latitude, a geo-spatial property.)
 	- minLong							(Defines minimum longtitude, ,a geo-spatial property.)
 	- maxLong							(Defines maximum longtitude, a geo-spatial property.)    
+  - mileStoneQueryPosition (Defines the position in terms of percents at which a milestone query is executed (related to Online and Replication Benchmark feature))
     
       Sample definitions.properties file can be found in the distribution jar file.
 

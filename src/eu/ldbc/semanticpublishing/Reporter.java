@@ -1,6 +1,7 @@
 package eu.ldbc.semanticpublishing;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,18 +12,24 @@ import eu.ldbc.semanticpublishing.statistics.Statistics;
  * This class is used to produce a result summary for the benchmark. The thread is scheduled to start at a fixed
  * rate of one second. Results are printed to console and log file.
  */
-public class Reporter implements Runnable {
+public class Reporter extends Thread {
+	private final AtomicLong totalQueryExecutions;
 	private final AtomicBoolean benchmarkState;
+	private final AtomicBoolean keepAlive;
 	private boolean verbose;
 	private long seconds;
+	private long benchmarkByQueryRuns;
 	private int aggregationAgentsCount;
 	private int editorialAgentsCount;
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(Reporter.class.getName());
 	
-	public Reporter(AtomicBoolean benchmarkState, int editorialAgentsCount, int aggregationAgentsCount, long runPeriodSeconds, boolean verbose) {
+	public Reporter(AtomicLong totalQueryExecutions, AtomicBoolean benchmarkState, AtomicBoolean keepAlive, int editorialAgentsCount, int aggregationAgentsCount, long runPeriodSeconds, long benchmarkByQueryRuns, boolean verbose) {
+		this.totalQueryExecutions = totalQueryExecutions;
 		this.benchmarkState = benchmarkState;
+		this.keepAlive = keepAlive;
 		this.seconds = 0;
+		this.benchmarkByQueryRuns = benchmarkByQueryRuns;
 		this.verbose = verbose;
 		this.aggregationAgentsCount = aggregationAgentsCount;
 		this.editorialAgentsCount = editorialAgentsCount;
@@ -35,17 +42,21 @@ public class Reporter implements Runnable {
 	 */
 	@Override
 	public void run() {
-		if (benchmarkState.get()) {
-			seconds++;
-			displayResultsSummary();
-		} 
+		try {
+			while (benchmarkState.get() || keepAlive.get()) {
+				seconds++;
+				Thread.sleep(1000);
+				displayResultsSummary((benchmarkByQueryRuns == 0));
+			}
+		} catch (InterruptedException ie) {
+		}
 	}
 	
 	/**
 	 * Displays to console and writes to log file a result summary of the benchmark.
 	 * Editorial and Aggregation operations per second.
 	 */
-	private void displayResultsSummary() {
+	private void displayResultsSummary(boolean secondsOrExecutions) {
 		StringBuilder sb = new StringBuilder();
 		
 		long insertOpsCount = Statistics.insertCreativeWorksQueryStatistics.getRunsCount();
@@ -59,7 +70,11 @@ public class Reporter implements Runnable {
 		long failedTotalAggregateOpsCount = Statistics.totalAggregateQueryStatistics.getFailuresCount();
 		
 		sb.append("\n");
-		sb.append("\nSeconds run : " + seconds);
+		if (secondsOrExecutions) {
+			sb.append("\nSeconds run : " + seconds);
+		} else {
+			sb.append("\nQuery executions : " + totalQueryExecutions.get());
+		}
 		sb.append("\n");
 		sb.append("\tEditorial:\n");
 		sb.append(String.format("\t\t%s agents\n\n", editorialAgentsCount));

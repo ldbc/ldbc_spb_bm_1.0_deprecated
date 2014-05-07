@@ -96,6 +96,11 @@
 		</copy>
 		<unzip src="./datasets_and_queries/validation/data/${validation.data.archive.name}.zip" dest="./data-temp/validation/"/>
   	
+		<mkdir dir="./data-temp/enterprise/scripts"/>
+		<copy todir="./data-temp/enterprise/scripts">
+			<fileset dir="datasets_and_queries/enterprise/scripts"/>
+		</copy>  	
+  	
 		<copy file="datasets_and_queries/WordsDictionary.txt" todir="./data-temp"/>
 
   		<delete dir="./data-temp/sparql/aggregation"/>
@@ -319,6 +324,13 @@
     </condition>
     <echo>Benchmark Release Version : ${version.number.major}.${version.number.minor}.${revision.number}</echo>
   </target>
+	
+	<target name="deploy">
+		<copy todir="${dir.deploy}">
+			<fileset dir="${dir.dist}" includes="*.jar"/>
+			<fileset dir="${dir.dist}" includes="*.zip"/>
+		</copy>
+	</target>
 	
 	<target name="show-usage">
     <echo>
