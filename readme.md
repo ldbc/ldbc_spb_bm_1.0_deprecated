@@ -86,7 +86,7 @@ All items should be saved in same location with the benchmark jar file.
   * ***creativeWorkNextId*** - set the next ID for the data generator of Creative Works. When running the benchmark driver in separate processes, to guarantee that generated creative works will not overlap their IDs. e.g. for generating 50M dataset, expected number of Creative Works is ~2.5M and next ID should start at that value
   * ***creativeWorksInfo*** - file name, that will be saved in creativeWorksPath and will contain system info about the generated dataset, e.g. interesting entities, etc.
   * ***querySubstitutionParameters*** - number substitution parameters that will be generated for each query
-  * ***benchmarkByQueryRuns*** - sets the amount of aggregate queries which the benchmark phase will execute. If value is greater than zero then parameter 'benchmarkRunPeriodSeconds' is ignored. e.g. if set to 100, benchmark will measure the time to execute 100 aggregate operations.*
+  * ***benchmarkByQueryRuns*** - sets the amount of aggregate queries which the benchmark phase will execute. If value is greater than zero then parameter 'benchmarkRunPeriodSeconds' is ignored. e.g. if set to 100, benchmark will measure the time to execute 100 aggregate operations
   
   
 * Benchmark Phases (test.properties)
