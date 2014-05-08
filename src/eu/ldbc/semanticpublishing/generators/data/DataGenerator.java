@@ -148,7 +148,7 @@ public class DataGenerator {
 		
 		//Generate random Creative Works to fill-in with rest of the generated data with randomly distributed tags of creative works, i.e. generate "noise"
 		if (configuration.getBoolean(Configuration.USE_RANDOM_DATA_GENERATORS) == false) {
-			System.out.println("* Skipping execution of GeneralWorkers in data generation, see test.properties parameter: useGeneralDataGenerators");
+			System.out.println("* Skipping execution of GeneralWorkers in data generation, see test.properties parameter: useRandomDataGenerators");
 		}
 		if (produceRandom && (triplesGeneratedSoFar.get() < targetedTriplesSize) && configuration.getBoolean(Configuration.USE_RANDOM_DATA_GENERATORS)) {
 			for (int i = 0; i < generatorThreads; i++) {				
