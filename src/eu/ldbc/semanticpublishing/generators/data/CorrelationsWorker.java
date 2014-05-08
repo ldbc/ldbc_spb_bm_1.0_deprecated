@@ -22,7 +22,7 @@ import eu.ldbc.semanticpublishing.util.SesameUtils;
  * Currently implemented are correlations between two popular entities and a third entity.
  *
  */
-public class CorrelationsWorker extends GeneralWorker {
+public class CorrelationsWorker extends RandomWorker {
 
 	//first entity to participate in the correlation
 	private Entity entityA;

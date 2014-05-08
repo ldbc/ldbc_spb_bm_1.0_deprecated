@@ -47,7 +47,7 @@ public class Configuration {
 	public static final String DEFINITIONS_PATH = "definitionsPath";
 	public static final String GENERATOR_RANDOM_SEED = "generatorRandomSeed";
 	public static final String CREATIVE_WORK_NEXT_ID = "creativeWorkNextId";
-	public static final String USE_GENERAL_DATA_GENERATORS = "useGeneralDataGenerators";
+	public static final String USE_RANDOM_DATA_GENERATORS = "useRandomDataGenerators";
 	public static final String CREATIVE_WORKS_INFO = "creativeWorksInfo";
 	public static final String GENERATE_QUERY_SUBSTITUTION_PARAMETERS = "generateQuerySubstitutionParameters";
 	public static final String QUERY_SUBSTITUTION_PARAMETERS = "querySubstitutionParameters";
@@ -90,7 +90,7 @@ public class Configuration {
 		properties.setProperty(DEFINITIONS_PATH, "./definitions.properties");
 		properties.setProperty(GENERATOR_RANDOM_SEED, "0");
 		properties.setProperty(CREATIVE_WORK_NEXT_ID, "0");
-		properties.setProperty(USE_GENERAL_DATA_GENERATORS, "true");
+		properties.setProperty(USE_RANDOM_DATA_GENERATORS, "true");
 		properties.setProperty(CREATIVE_WORKS_INFO, "");
 		properties.setProperty(GENERATE_QUERY_SUBSTITUTION_PARAMETERS, "true");
 		properties.setProperty(QUERY_SUBSTITUTION_PARAMETERS, "1000");

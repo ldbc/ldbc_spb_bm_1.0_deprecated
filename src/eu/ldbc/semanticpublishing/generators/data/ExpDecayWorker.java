@@ -24,7 +24,7 @@ import eu.ldbc.semanticpublishing.util.SesameUtils;
  * their about tags certain entity (URI)
  *
  */
-public class ExpDecayWorker extends GeneralWorker {
+public class ExpDecayWorker extends RandomWorker {
 	private ExponentialDecayNumberGeneratorUtil expGenerator;
 	private Date startDate;
 	private Entity entity;

@@ -18,7 +18,7 @@ import eu.ldbc.semanticpublishing.util.SesameUtils;
  * A class for generating Creative Works using components for serializing from the Sesame. 
  *
  */
-public class GeneralWorker extends AbstractAsynchronousWorker {
+public class RandomWorker extends AbstractAsynchronousWorker {
 	
 	protected long targetTriples;
 	protected long triplesPerFile;
@@ -31,7 +31,7 @@ public class GeneralWorker extends AbstractAsynchronousWorker {
 	protected Object lock;
 	protected boolean silent;
 	
-	public GeneralWorker(RandomUtil ru, Object lock, AtomicLong filesCount, long totalTriples, long triplesPerFile, AtomicLong triplesGeneratedSoFar, String destinationPath, String serializationFormat, boolean silent) {
+	public RandomWorker(RandomUtil ru, Object lock, AtomicLong filesCount, long totalTriples, long triplesPerFile, AtomicLong triplesGeneratedSoFar, String destinationPath, String serializationFormat, boolean silent) {
 		this.ru = ru;
 		this.lock = lock;
 		this.targetTriples = totalTriples;
@@ -95,7 +95,7 @@ public class GeneralWorker extends AbstractAsynchronousWorker {
 				
 				flushClose(fos);
 				if (!silent) {
-					System.out.println(Thread.currentThread().getName() + " GWorker :: Saving file #" + currentFilesCount + " with " + cwsInFileCount + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
+					System.out.println(Thread.currentThread().getName() + " RWorker :: Saving file #" + currentFilesCount + " with " + cwsInFileCount + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
 				}
 
 				cwsInFileCount = 0;
