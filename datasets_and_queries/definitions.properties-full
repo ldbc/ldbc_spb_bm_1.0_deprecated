@@ -41,10 +41,12 @@ exponentialDecayRate=0.1
 exponentialDecayThresholdPercent=0.05
 
 #Defines the maximum number of 'major' events that could happen in one year. Each major event will be tagged by a number of Creative Works which will decay exponentially in time.
+#(using current settings, ~1M triples per major event are generated)
 majorEventsPerYear=5
 
 #Defines the maximum number of 'minor' events that could happen in one year. Each minor event will be tagged by a number of Creative Works which will decay exponentially in time.
 #Value of exponentialDecayUpperLimitOfCWs for minor events will be ten times smaller for them.
+#(using current settings, ~100K triples per minor event are generated)
 minorEventsPerYear=100
 
 #Defines a seed year that will be used for generating the Creative Works.
@@ -55,7 +57,8 @@ seedYear=2010
 dataGenerationPeriodYears=1
 
 #Defines the number of correlations between entities that will be generated in the dataset
-# e.g. correlationsAmount=200 will produce 200 correlations between popular entities 
+# e.g. correlationsAmount=200 will produce 200 correlations between popular entities. 
+#(using current settings, ~260K triples per correlation are generated)
 correlationsAmount=50
 
 #Defines maximum amount of Creative Works that will be generated for a particular correlation in a single day
