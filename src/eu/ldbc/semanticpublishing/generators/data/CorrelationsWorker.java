@@ -99,7 +99,7 @@ public class CorrelationsWorker extends RandomWorker {
 					for (int i = 0; i < correlationsMagnitudeForIteration; i++) {
 						if (currentTriplesCount >= triplesPerFile) {						
 							flushClose(fos);
-							if (!silent) {
+							if (!silent && cwsInFileCount > 0) {
 								System.out.println(Thread.currentThread().getName() + " " + this.getClass().getSimpleName() + " :: Saving file #" + currentFilesCount + " with " + String.format("%,d", cwsInFileCount) + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
 							}
 		
@@ -169,7 +169,7 @@ public class CorrelationsWorker extends RandomWorker {
 				throw new IOException("A problem occurred while generating RDF data: " + e.getMessage());
 			} finally {
 				flushClose(fos);
-				if (!silent) {
+				if (!silent && cwsInFileCount > 0) {
 					System.out.println(Thread.currentThread().getName() + " " + this.getClass().getSimpleName() + " :: Saving file #" + currentFilesCount + " with " + String.format("%,d", cwsInFileCount) + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
 				}
 			}

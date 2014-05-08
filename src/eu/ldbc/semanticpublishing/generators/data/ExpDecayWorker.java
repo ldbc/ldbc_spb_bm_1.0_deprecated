@@ -71,7 +71,7 @@ public class ExpDecayWorker extends RandomWorker {
 					for (int i = 0; i < creativeWorksForCurrentIteration; i++) {
 						if (currentTriplesCount >= triplesPerFile) {
 							flushClose(fos);
-							if (!silent) {
+							if (!silent && cwsInFileCount > 0) {
 								System.out.println(Thread.currentThread().getName() + " " + this.getClass().getSimpleName() + " :: Saving file #" + currentFilesCount + " with " + String.format("%,d", cwsInFileCount) + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
 							}
 								
@@ -118,7 +118,7 @@ public class ExpDecayWorker extends RandomWorker {
 				//reached the end of iteration, close file stream in finally section
 			} finally {
 				flushClose(fos);
-				if (!silent) {
+				if (!silent && cwsInFileCount > 0) {
 					System.out.println(Thread.currentThread().getName() + " " + this.getClass().getSimpleName() + " :: Saving file #" + currentFilesCount + " with " + String.format("%,d", cwsInFileCount) + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
 				}
 			}

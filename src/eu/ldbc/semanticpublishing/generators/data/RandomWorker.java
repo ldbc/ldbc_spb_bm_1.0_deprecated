@@ -94,7 +94,7 @@ public class RandomWorker extends AbstractAsynchronousWorker {
 				}
 				
 				flushClose(fos);
-				if (!silent) {
+				if (!silent && cwsInFileCount > 0) {
 					System.out.println(Thread.currentThread().getName() + " " + this.getClass().getSimpleName() + " :: Saving file #" + currentFilesCount + " with " + String.format("%,d", cwsInFileCount) + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
 				}
 
