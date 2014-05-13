@@ -160,6 +160,17 @@ public class Definitions {
 		initializeAllocation(AGGREGATION_OPERATIONS_ALLOCATION, random);
 	}
 	
+	public static void reconfigureAllocations(Random random) {
+		aboutsAllocations.setRandom(random);
+		mentionsAllocations.setRandom(random);
+		entityPopularity.setRandom(random);
+		usePopularEntities.setRandom(random);
+		creativeWorkTypesAllocation.setRandom(random);
+		aboutAndMentionsAllocation.setRandom(random);
+		editorialOperationsAllocation.setRandom(random);
+		aggregationOperationsAllocation.setRandom(random);
+	}
+	
 	/**
 	 * Initialize allocations depending on allocationProperty name
 	 */

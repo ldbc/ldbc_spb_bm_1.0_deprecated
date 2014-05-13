@@ -9,7 +9,7 @@ public class AllocationsUtil {
 	// Don't need to store allocations, but might be useful for debugging
 	private final double[] limits;
 
-	private final Random randomGenerator;
+	private Random random;
 
 	/**
 	 * Construct an allocator. For example, to randomly allocate 10% of objects
@@ -21,8 +21,8 @@ public class AllocationsUtil {
 	 *            1.0 and the sum of all values must be exactly 1.0
 	 */
 	public AllocationsUtil(double[] allocations, Random random) {
-		limits = new double[allocations.length];
-		randomGenerator = random;
+		this.limits = new double[allocations.length];
+		this.random = random;
 		calculateLimitsFromAllocations(allocations);
 	}
 
@@ -48,12 +48,16 @@ public class AllocationsUtil {
 	 * @return The allocation band
 	 */
 	public int getAllocation() {
-		double d = randomGenerator.nextDouble();
+		double d = random.nextDouble();
 		for (int i = 0; i < limits.length; i++) {
 			if (d < limits[i]) {
 				return i;
 			}
 		}
 		return limits.length;
+	}
+	
+	public void setRandom(Random random) {
+		this.random = random;
 	}
 }

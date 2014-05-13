@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -14,7 +15,6 @@ import org.openrdf.rio.Rio;
 
 import eu.ldbc.semanticpublishing.generators.data.sesamemodelbuilders.CreativeWorkBuilder;
 import eu.ldbc.semanticpublishing.refdataset.model.Entity;
-import eu.ldbc.semanticpublishing.util.ExponentialDecayNumberGeneratorUtil;
 import eu.ldbc.semanticpublishing.util.RandomUtil;
 import eu.ldbc.semanticpublishing.util.SesameUtils;
 
@@ -25,22 +25,23 @@ import eu.ldbc.semanticpublishing.util.SesameUtils;
  *
  */
 public class ExpDecayWorker extends RandomWorker {
-	private ExponentialDecayNumberGeneratorUtil expGenerator;
+	private List<Long> exponentialDecayIerations;
 	private Date startDate;
 	private Entity entity;
+	private long firstCwId;
 	
-	public ExpDecayWorker(ExponentialDecayNumberGeneratorUtil expGenerator, Date startDate, Entity entity, 
+	public ExpDecayWorker(List<Long> exponentialDecayIerations, long firstCwId, Date startDate, Entity entity, 
 						  RandomUtil ru, Object lock, AtomicLong globalFilesCount, long triplesPerFile, long totalTriples, 
 						  AtomicLong triplesGeneratedSoFar, String destinationPath, String serializationFormat, boolean silent) {
 		super(ru, lock, globalFilesCount, totalTriples, triplesPerFile, triplesGeneratedSoFar, destinationPath, serializationFormat, silent);
-		this.expGenerator = expGenerator;
+		this.exponentialDecayIerations = exponentialDecayIerations;
 		this.startDate = startDate;
 		this.entity = entity;
+		this.firstCwId = firstCwId;
 	}
 	
 	@Override
 	public void execute() throws Exception {
-
 		FileOutputStream fos = null;
 		RDFFormat rdfFormat = SesameUtils.parseRdfFormat(serializationFormat);
 
@@ -59,68 +60,58 @@ public class ExpDecayWorker extends RandomWorker {
 		long creativeWorksForCurrentIteration = 0;
 		long iterationStep = 0;
 		
-		synchronized (lock) {
-			try {
-	//			synchronized(lock) {
-					creativeWorksForCurrentIteration = expGenerator.generateNext();
-					iterationStep = expGenerator.getIterationStep();
-	//			}			
-				fos = new FileOutputStream(fileName);
-	
-				while (expGenerator.hasNext()) {
-					for (int i = 0; i < creativeWorksForCurrentIteration; i++) {
-						if (currentTriplesCount >= triplesPerFile) {
-							flushClose(fos);
-							if (!silent && cwsInFileCount > 0) {
-								System.out.println(Thread.currentThread().getName() + " " + this.getClass().getSimpleName() + " :: Saving file #" + currentFilesCount + " with " + String.format("%,d", cwsInFileCount) + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
-							}
-								
-							cwsInFileCount = 0;
-							currentTriplesCount = 0;				
-	
-							currentFilesCount = filesCount.incrementAndGet();
-							fileName = String.format(FILENAME_FORMAT + rdfFormat.getDefaultFileExtension(), destinationPath, File.separator, currentFilesCount);						
+		try {
+			fos = new FileOutputStream(fileName);
+
+			for (int i = 0; i < exponentialDecayIerations.size(); i++) {
+				creativeWorksForCurrentIteration = exponentialDecayIerations.get(i);
+				iterationStep = i + 1;
+				for (int j = 0; j < creativeWorksForCurrentIteration; j++) {
+					if (currentTriplesCount >= triplesPerFile) {
+						flushClose(fos);
+						if (!silent && cwsInFileCount > 0) {
+							System.out.println(Thread.currentThread().getName() + " " + this.getClass().getSimpleName() + " :: Saving file #" + currentFilesCount + " with " + String.format("%,d", cwsInFileCount) + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
+						}
 							
-							fos = new FileOutputStream(fileName);
-						}
+						cwsInFileCount = 0;
+						currentTriplesCount = 0;				
+
+						currentFilesCount = filesCount.incrementAndGet();
+						fileName = String.format(FILENAME_FORMAT + rdfFormat.getDefaultFileExtension(), destinationPath, File.separator, currentFilesCount);						
 						
-						if (triplesGeneratedSoFar.get() > targetTriples) {
-							return;
-						}
-						
-						Model sesameModel;
-						
-						//using a synchronized block, to guarantee the exactly equal generated data no matter the number of threads
-	//					synchronized(lock) {		
-							CreativeWorkBuilder creativeWorkBuilder = new CreativeWorkBuilder("", ru);
-							creativeWorkBuilder.setDateIncrement(startDate, (int)iterationStep);
-							creativeWorkBuilder.setAboutPresetUri(entity.getURI());
-							creativeWorkBuilder.setUsePresetData(true);
-							sesameModel = creativeWorkBuilder.buildSesameModel();						
-	//					}
-						
-						Rio.write(sesameModel, fos, rdfFormat);
-						
-						cwsInFileCount++;
-						currentTriplesCount += sesameModel.size();					
-	
-						triplesGeneratedSoFar.addAndGet(sesameModel.size());					
+						fos = new FileOutputStream(fileName);
 					}
-	
-	//				synchronized(lock) {
-						creativeWorksForCurrentIteration = expGenerator.generateNext();
-						iterationStep = expGenerator.getIterationStep();
-	//				}
+					
+					if (triplesGeneratedSoFar.get() > targetTriples) {
+						return;
+					}
+					
+					Model sesameModel;
+					
+					synchronized (lock) {	
+						CreativeWorkBuilder creativeWorkBuilder = new CreativeWorkBuilder(firstCwId++, ru);
+						creativeWorkBuilder.setDateIncrement(startDate, (int)iterationStep);
+						creativeWorkBuilder.setAboutPresetUri(entity.getURI());
+						creativeWorkBuilder.setUsePresetData(true);
+						sesameModel = creativeWorkBuilder.buildSesameModel();												
+					}
+					
+					Rio.write(sesameModel, fos, rdfFormat);
+					
+					cwsInFileCount++;
+					currentTriplesCount += sesameModel.size();					
+
+					triplesGeneratedSoFar.addAndGet(sesameModel.size());					
 				}
-			} catch (RDFHandlerException e) {
-				throw new IOException("A problem occurred while generating RDF data: " + e.getMessage());
-			} catch (NoSuchElementException nse) {
-				//reached the end of iteration, close file stream in finally section
-			} finally {
-				flushClose(fos);
-				if (!silent && cwsInFileCount > 0) {
-					System.out.println(Thread.currentThread().getName() + " " + this.getClass().getSimpleName() + " :: Saving file #" + currentFilesCount + " with " + String.format("%,d", cwsInFileCount) + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
-				}
+			}
+		} catch (RDFHandlerException e) {
+			throw new IOException("A problem occurred while generating RDF data: " + e.getMessage());
+		} catch (NoSuchElementException nse) {
+			//reached the end of iteration, close file stream in finally section
+		} finally {
+			flushClose(fos);
+			if (!silent && cwsInFileCount > 0) {
+				System.out.println(Thread.currentThread().getName() + " " + this.getClass().getSimpleName() + " :: Saving file #" + currentFilesCount + " with " + String.format("%,d", cwsInFileCount) + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
 			}
 		}
 	}

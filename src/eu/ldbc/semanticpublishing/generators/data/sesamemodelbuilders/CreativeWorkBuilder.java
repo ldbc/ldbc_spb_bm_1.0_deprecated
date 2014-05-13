@@ -41,9 +41,19 @@ public class CreativeWorkBuilder implements SesameBuilder {
 	public CreativeWorkBuilder(String contextURI, RandomUtil ru) {
 		this.contextURI = contextURI;
 		this.ru = ru;
+		Definitions.reconfigureAllocations(ru.getRandom());
 		this.aboutsCount = Definitions.aboutsAllocations.getAllocation();
 		this.mentionsCount = Definitions.mentionsAllocations.getAllocation();
-		initializeCreativeWorkEntity(contextURI);
+		initializeCreativeWorkEntity(contextURI.replace("/context/", "/things/"));
+	}
+	
+	public CreativeWorkBuilder(long cwID, RandomUtil ru) {
+		this.contextURI = ru.numberURI("things", cwID, true, true).replace("/things/", "/context/");
+		this.ru = ru;
+		Definitions.reconfigureAllocations(ru.getRandom());
+		this.aboutsCount = Definitions.aboutsAllocations.getAllocation();
+		this.mentionsCount = Definitions.mentionsAllocations.getAllocation();
+		initializeCreativeWorkEntity(contextURI.replace("/context/", "/things/"));
 	}
 	
 	/**

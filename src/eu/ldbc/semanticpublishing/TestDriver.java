@@ -104,13 +104,13 @@ public class TestDriver {
 		return queryExecuteManager;
 	}
 	
-	private RandomUtil initializeRandomUtil(String ontologiesPath, long seed, int yearSeed, int generatedDataPeriodYears) {
+	private RandomUtil initializeRandomUtil(String ontologiesPath, long seed, int yearSeed, int generorPeriodYears) {
 		//File WordsDictionary.txt is one level up
 		String ontPath = StringUtil.normalizePath(ontologiesPath);
 		String oneLevelUp = ontPath.substring(0, ontPath.lastIndexOf(File.separator) + 1);
 		String filePath = oneLevelUp + "WordsDictionary.txt";
 		
-		return new RandomUtil(filePath, seed, yearSeed, generatedDataPeriodYears);
+		return new RandomUtil(filePath, seed, yearSeed, generorPeriodYears);
 	}
 
 	private void loadOntologies(boolean enable) throws IOException {
@@ -863,7 +863,7 @@ public class TestDriver {
 		generateCreativeWorks(configuration.getBoolean(Configuration.GENERATE_CREATIVE_WORKS));
 		loadCreativeWorks(configuration.getBoolean(Configuration.LOAD_CREATIVE_WORKS));
 		generateQuerySubstitutionParameters(configuration.getBoolean(Configuration.GENERATE_QUERY_SUBSTITUTION_PARAMETERS));
-		initializeQuerySubstitutionParameters(true);
+		initializeQuerySubstitutionParameters(configuration.getBoolean(Configuration.WARM_UP) || configuration.getBoolean(Configuration.RUN_BENCHMARK) || configuration.getBoolean(Configuration.RUN_BENCHMARK_ONLINE_REPlICATION_AND_BACKUP));
 		validateQueryResults(configuration.getBoolean(Configuration.VALIDATE_QUERY_RESULTS));
 		setupAsynchronousAgents();
 		warmUp(configuration.getBoolean(Configuration.WARM_UP));

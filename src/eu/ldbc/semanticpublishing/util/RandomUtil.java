@@ -3,34 +3,27 @@ package eu.ldbc.semanticpublishing.util;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 
 /**
  * A utility class, for producing random values, strings, sentences, uris, etc. 
  */
 public class RandomUtil {
-	public static final long DEFAULT_SEED_VALUE = 0;
-	private static Random randomGenerator = new Random(DEFAULT_SEED_VALUE);
 	private static final String baseURI = "http://www.bbc.co.uk/";
 	private static final char[] symbols = new char[62];
-	private static final ArrayList<String> wordsList = new ArrayList<String>();
+	
+	private Random randomGenerator;
+	private List<String> wordsList = new ArrayList<String>();
 	private String wordsFilePath;
+	private long seed = 0;
 	private int seedYear = 2000;
 	private int dataGenerationPeriodYears = 1;
 
-	public RandomUtil(String wordsFile, long seed, int seedYear, int dataGenerationPeriodYears) {
-		buildWordsArray(wordsFile);
-		this.wordsFilePath = wordsFile;
-		randomGenerator.setSeed(seed);
-		this.seedYear = seedYear;
-		this.dataGenerationPeriodYears = dataGenerationPeriodYears;
-	}	
-	
 	static {
 		// numbers 0..9
 		for (int index = 0; index < 10; ++index) {
@@ -45,9 +38,42 @@ public class RandomUtil {
 			symbols[index] = (char) ('A' + index - 10 - 26);
 		}
 	}
+	
+	public RandomUtil(String wordsFilePath, long seed, int seedYear, int dataGenerationPeriodYears) {
+		this.randomGenerator = new Random(seed);
+		this.wordsFilePath = wordsFilePath;
+		this.seed = seed;
+		this.seedYear = seedYear;
+		this.dataGenerationPeriodYears = dataGenerationPeriodYears;
+		buildWordsArray(this.wordsFilePath);	
+	}
+	
+	//Using this constructor in the factory method. WordsList has already been initialized, no need to parse the words file again.
+	private RandomUtil(long seed, int seedYear, int dataGenerationPeriodYears) {
+		this.randomGenerator = new Random(seed);
+		this.seed = seed;
+		this.randomGenerator.setSeed(seed);
+		this.seedYear = seedYear;
+		this.dataGenerationPeriodYears = dataGenerationPeriodYears;
+	}
+	
+	public RandomUtil randomUtilFactory(long newSeed) {
+		RandomUtil newRandomUtil = new RandomUtil(newSeed, seedYear, dataGenerationPeriodYears);
+		//re-using already initialized words list
+		newRandomUtil.setWordsList(this.wordsList);
+		return newRandomUtil;
+	}
 
 	public String getWordsFilePath() {
 		return this.wordsFilePath;
+	}
+	
+	public List<String> getWordsList() {
+		return wordsList;
+	}
+	
+	public void setWordsList(List<String> wordsList) {
+		this.wordsList = wordsList;
 	}
 	
 	public void setRandomSeed(long seed) {
@@ -56,6 +82,10 @@ public class RandomUtil {
 	
 	public int getSeedYear() {
 		return this.seedYear;
+	}
+	
+	public long getSeed() {
+		return this.seed;
 	}
 	
 	public void setSeedYear(int seedYear) {
@@ -297,7 +327,7 @@ public class RandomUtil {
 
 		for (int i = 0; i < randomLen; i++) {
 			// add a random character
-			sb.append(symbols[RandomUtil.randomGenerator.nextInt(RandomUtil.symbols.length)]);
+			sb.append(symbols[randomGenerator.nextInt(RandomUtil.symbols.length)]);
 		}
 
 		if (surroundWithQuotes) {
@@ -318,7 +348,7 @@ public class RandomUtil {
 			sb.append("\"");
 		}
 
-		sb.append(wordsList.get(RandomUtil.randomGenerator.nextInt(wordsList.size())));
+		sb.append(wordsList.get(randomGenerator.nextInt(wordsList.size())));
 
 		if (surroundWithQuotes) {
 			sb.append("\"");

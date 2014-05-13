@@ -1,5 +1,7 @@
 package eu.ldbc.semanticpublishing.util;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
@@ -54,4 +56,47 @@ public class ExponentialDecayNumberGeneratorUtil {
 	public boolean thresholdReached() {
 		return calculateThreshold() <= decayThresholdPercent;
 	}
+	
+	public List<Long> produceIterationStepsList() {
+		List<Long> iterationStepsList = new ArrayList<Long>();
+		
+		long currentIterationSize = generateNext();
+		
+		try {
+			while (hasNext()) {
+				iterationStepsList.add(currentIterationSize);
+				currentIterationSize = generateNext();
+			}
+		} catch (NoSuchElementException nse) {
+			//expecting generateNext() to throw it
+		} 
+		
+		return iterationStepsList;
+	}
+	
+	public long calculateTotal() {
+		int step = 0;
+		long result = 0;
+		long next = 0;
+
+		next = (long) (decayLimit * Math.exp(-decayRate*step));
+		result += next;						
+		step++;		
+		
+		double c = (double)next / (double)decayLimit;
+		
+		while (c > decayThresholdPercent) {			
+			
+			next = (long) (decayLimit * Math.exp(-decayRate*step));
+			c = (double)next / (double)decayLimit;
+			
+			if (c <= decayThresholdPercent) {
+				return result;
+			}
+			result += next;
+			step++;
+		}
+		
+		return result;
+	}	
 }
