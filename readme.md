@@ -73,6 +73,7 @@ All items should be saved in same location with the benchmark jar file.
   * ***endpointURL*** - URL of SPARQL endpoint provided by the RDF database, e.g. http://localhost:8080/openrdf-sesame/repositories/ldbc
   * ***endpointUpdateURL*** - URL of SPARQL endpoint for update operations, e.g. http://localhost:8080/openrdf-sesame/repositories/ldbc1/statements
   * ***datasetSize*** - size of generated data (triples). Data-generator uses this parameter
+  * ***allowSizeAdjustmentsOnDataModels*** - allows the data generator to adjust the amount of correlations, clusterings and randomly generated models (Creative Works) in relation to the 'datasetSize', thus keeping a ratio of 1/3 for each in generated data. Default value is true
   * ***generatedTriplesPerFile*** - number of triples per generated file. Used to split the data generation into a number of files
   * ***queryTimeoutSeconds*** - query timeout in seconds
   * ***systemQueryTimeoutSeconds*** -	system queries timeout, default value 1h

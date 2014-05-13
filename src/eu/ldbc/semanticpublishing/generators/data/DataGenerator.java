@@ -36,6 +36,13 @@ public class DataGenerator {
 	private static final long AWAIT_PERIOD_HOURS = 6; 
 	private Object syncLock;
 	
+	//defines quotient for major events for 1M triples - number of major events per million triples
+	private static final double EXP_DECAY_MAJOR_EVENTS_QT = 0.1;
+	//defines quotient for minor events for 1M triples - number of minor events per million triples
+	private static final double EXP_DECAY_MINOR_EVENTS_QT = 2;
+	//defines quotient for correlations for 1M triples - number of correlations per million triples
+	private static final double CORRELATIONS_QT = 1;
+	
 	public DataGenerator(RandomUtil ru, Configuration configuration, Definitions definitions, int generatorThreads, long totalTriples, long triplesPerFile, String destinationPath, String serializationFormat) {
 		this.ru = ru;
 		this.configuration = configuration;
@@ -63,6 +70,11 @@ public class DataGenerator {
 			System.out.println("\t" + creativeWorksInDatabase + " Creative Works currently exist.");
 		}
 
+		//Adjust the amount of correlations and clusterings, in relation to the targeted triples size, keeping ratio of 1/3 for each of the motellings in generated data
+		if (configuration.getBoolean(Configuration.ALLOW_SIZE_ADJUSTMENTS_ON_DATA_MODELS)) {
+			adjustDataAllocations(targetedTriplesSize, definitions);
+		}
+		
 		//create destination directory
 		FileUtils.makeDirectories(this.destinationPath);
 		
@@ -125,10 +137,10 @@ public class DataGenerator {
 			}			
 		}
 		
-		if (definitions.getInt(Definitions.MINOR_EVENT_PER_YEAR) > 0) {
+		if (definitions.getInt(Definitions.MINOR_EVENTS_PER_YEAR) > 0) {
 			expDecayingMinorEntitiesList = new ArrayList<Entity>();
 			
-			for (int i = 0; i < definitions.getInt(Definitions.MINOR_EVENT_PER_YEAR); i++) {
+			for (int i = 0; i < definitions.getInt(Definitions.MINOR_EVENTS_PER_YEAR); i++) {
 				Entity e = DataManager.regularEntitiesList.get(ru.nextInt(DataManager.regularEntitiesList.size()));
 				expDecayingMinorEntitiesList.add(e);
 			}			
@@ -152,8 +164,8 @@ public class DataGenerator {
 		}
 
 		//Generate MINOR EVENTS with exponential decay
-		if (produceClusterings && definitions.getInt(Definitions.MINOR_EVENT_PER_YEAR) > 0) {			
-			for (int i = 0; i < definitions.getInt(Definitions.MINOR_EVENT_PER_YEAR); i++) {
+		if (produceClusterings && definitions.getInt(Definitions.MINOR_EVENTS_PER_YEAR) > 0) {			
+			for (int i = 0; i < definitions.getInt(Definitions.MINOR_EVENTS_PER_YEAR); i++) {
 				edgu =  new ExponentialDecayNumberGeneratorUtil(/*ru.nextInt(1000,*/ exponentialDecayUpperLimitOfCws / 10, 
 							  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_RATE), 
 							  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_THRESHOLD_PERCENT));
@@ -209,5 +221,22 @@ public class DataGenerator {
 		}
 		
 		return arrayList;
+	}
+	
+	/**
+	 * The method would dynamically 'adjust' the amount of generated data with Clusterings, Correlations and Random Workers depending on the 
+	 * targeted triples size. Currently ratio of the three types of modeled data (clusterings, correlations, random) is intended to be 33% : 33% : 33%
+	 * 
+	 * @param targetTriples - targeted triples size to be generated
+	 * @param definitions - definitions properties
+	 */
+	private void adjustDataAllocations(long targetTriples, Definitions definitions) {
+		long majorEvents = (int)(EXP_DECAY_MAJOR_EVENTS_QT * (targetedTriplesSize / 1000000)) > 0 ? (int)(EXP_DECAY_MAJOR_EVENTS_QT * (targetedTriplesSize / 1000000)) : 0;
+		long minorEvents = (int)(EXP_DECAY_MINOR_EVENTS_QT * (targetedTriplesSize / 1000000)) > 0 ? (int)(EXP_DECAY_MINOR_EVENTS_QT * (targetedTriplesSize / 1000000)) : 0;
+		long correlations = (int)(CORRELATIONS_QT * (targetedTriplesSize / 1000000)) > 0 ? (int)(CORRELATIONS_QT * (targetedTriplesSize / 1000000)) : 0;
+		
+		definitions.setLong(Definitions.MAJOR_EVENTS_PER_YEAR, majorEvents);
+		definitions.setLong(Definitions.MINOR_EVENTS_PER_YEAR, minorEvents);
+		definitions.setLong(Definitions.CORRELATIONS_AMOUNT, correlations);
 	}
 }

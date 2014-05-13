@@ -25,7 +25,7 @@ public class Definitions {
 	public static final String EXPONENTIAL_DECAY_RATE = "exponentialDecayRate";
 	public static final String EXPONENTIAL_DECAY_THRESHOLD_PERCENT = "exponentialDecayThresholdPercent";
 	public static final String MAJOR_EVENTS_PER_YEAR = "majorEventsPerYear";
-	public static final String MINOR_EVENT_PER_YEAR = "minorEventsPerYear";
+	public static final String MINOR_EVENTS_PER_YEAR = "minorEventsPerYear";
 	public static final String YEAR_SEED = "seedYear";
 	public static final String DATA_GENERATOR_PERIOD_YEARS = "dataGenerationPeriodYears";
 	public static final String CORRELATIONS_AMOUNT = "correlationsAmount";
@@ -144,6 +144,10 @@ public class Definitions {
 			throw new IllegalStateException( "Illegal value for long integer configuration parameter: " + key);
 		}
 	}	
+	
+	public void setLong(String key, long value) {
+		definitionsProperties.setProperty(key, Long.toString(value));
+	}
 	
 	public void initializeAllocations(Random random) {
 		if (verbose) {
