@@ -883,4 +883,3 @@ public class TestDriver {
 		testDriver.executePhases();
 	}
 }
-//1. Search for file : configuration.getString("creativeWorksPath") + File.separator + configuration.getString("creativeWorksDetails")
