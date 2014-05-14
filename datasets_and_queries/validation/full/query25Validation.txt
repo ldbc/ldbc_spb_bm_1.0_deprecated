@@ -4,11 +4,11 @@
 [Results]
 <http://rdf.freebase.com/ns/m.0c3wbr1>
 <http://www.jonathandjanogly.com/>
-<http://www.bbc.co.uk/things/g025fc9f5-0bda-4031-bd8b-632caab16907#id>
+<http://www.johnspellar.labour.co.uk/>
 <http://www.wikidata.org/wiki/Q694695>
 <http://www.bbc.co.uk/things/g3a463d80-91b6-40ba-b41e-ce801f6d1785#id>
-<http://www.bbc.co.uk/things/ec2b9d27-3ef5-2649-ab44-7a14cfa1b2a9#id>
-<http://rdf.freebase.com/ns/m.0276jp>
-<http://www.wikidata.org/wiki/Q332540>
-<http://news.bbc.co.uk/democracylive/hi/representatives/profiles/25496.stm>
+<http://news.bbc.co.uk/democracylive/hi/representatives/profiles/25478.stm>
+<http://www.ianaustin.co.uk/>
+<http://www.guardian.co.uk/politics/person/12795/>
+<http://www.bbc.co.uk/things/g5e77cf25-0d90-4f60-8de3-d904d48d40f4#id>
 <http://rdf.freebase.com/ns/m.062thr>
