@@ -374,7 +374,7 @@ public class TestDriver {
 	
 	public void validateQueryResults(boolean enable) throws Exception {
 		if (enable) {
-			System.out.println("Validating query operations...");
+			System.out.println("Validating operations...");
 			
 			if (DataManager.regularEntitiesList.size() == 0 || DataManager.correlatedEntitiesList.size() == 0) {
 				populateRefDataEntitiesLists(false, true, true, "\t");
