@@ -79,12 +79,12 @@ public class AggregateOperationsValidator extends Validator {
 			
 			queryResult = queryExecuteManager.executeQuery(connection, queryName, queryString, queryType, false, true);			
 
-			BRIEF_LOGGER.info(String.format("Query [%s] executed, iteration %d", queryName, i));
-			LOGGER.info("\n*** Query [" + queryName + "], iteration " + i + "\n" + queryString + "\n---------------------------------------------\n*** Result for query [" + queryName + "]" + " : \n" + "Length : " + queryResult.length() + "\n" + queryResult + "\n\n");
+			BRIEF_LOGGER.info(String.format("Query [%s] executed, iteration %d", queryName, (i + 1)));
+			LOGGER.info("\n*** Query [" + queryName + "], iteration " + (i + 1) + "\n" + queryString + "\n---------------------------------------------\n*** Result for query [" + queryName + "]" + " : \n" + "Length : " + queryResult.length() + "\n" + queryResult + "\n\n");
 	
 			System.out.println(String.format("\tQuery %-1d : ", (i + 1)));
 			int errorsForQuery = validateAggregate(queryResult, "AGGREGATE", (i + 1), validationValues.getValidationResultsList(), false);
-			System.out.print(String.format("\t\t%d errors\n", errorsForQuery));
+			System.out.print(String.format("\t\t%d errors found in %d validation results\n", errorsForQuery, validationValues.getValidationResultsList().size()));
 		}
 	}
 	
