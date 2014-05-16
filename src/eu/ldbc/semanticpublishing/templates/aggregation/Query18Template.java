@@ -30,24 +30,25 @@ public class Query18Template extends MustacheTemplate implements SubstitutionPar
 	private int deviation;
 	private int iteration;
 	private int seedYear;
+	private Calendar calendar;
 
 	public Query18Template(RandomUtil ru, HashMap<String, String> queryTemplates, Definitions definitions, String[] substitutionParameters) {
 		super(queryTemplates, substitutionParameters);
 		this.ru = ru;
 		this.seedYear = definitions.getInt(Definitions.YEAR_SEED);
+		this.calendar = Calendar.getInstance();
 		preInitialize();
 	}
 	
 	protected void preInitialize() {
-		Calendar calendar = Calendar.getInstance();
 		//Initializing year with a value that is certain to be used. see RandomUtil.YEARS_OFFSET
 		year = this.seedYear;
-		month = ru.nextInt(1, 12);
-		calendar.set(year, month - 1, 1);		
-		day = ru.nextInt(1, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+		month = ru.nextInt(1, 12 + 1);
+		calendar.set(year, month - 1, 1);
 		maxDayOfMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
-		hour = ru.nextInt(0, 23);
-		minute = ru.nextInt(0, 59);
+		day = ru.nextInt(1, maxDayOfMonth + 1);
+		hour = ru.nextInt(0, 23 + 1);
+		minute = ru.nextInt(0, 59 + 1);
 		deviation = 0;
 		iteration = 0;
 		parameterIndex = 0;
@@ -122,7 +123,9 @@ public class Query18Template extends MustacheTemplate implements SubstitutionPar
 			//first iteration starts with a filter constraint for the whole month
 			if (iteration > 0) {
 				//5th++ iterations will start with a new randomly selected month
-				month = ru.nextInt(1, 12);
+				month = ru.nextInt(1, 12 + 1);
+				calendar.set(year, month - 1, 1);
+				maxDayOfMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
 			}
 			return generateFilterDateString("dateModif", year, month, -1, -1, -1, -1, -1, -1);
 		} else if (iteration % 4 == 1) {

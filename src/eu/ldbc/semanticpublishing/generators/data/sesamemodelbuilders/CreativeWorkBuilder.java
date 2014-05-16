@@ -110,11 +110,11 @@ public class CreativeWorkBuilder implements SesameBuilder {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(startDate);
 		calendar.add(Calendar.DATE, daySteps);
-		calendar.add(Calendar.HOUR, ru.nextInt(24));
-		calendar.add(Calendar.MINUTE, ru.nextInt(60));
-		calendar.add(Calendar.SECOND, ru.nextInt(60));
+		calendar.add(Calendar.HOUR, ru.nextInt(23 + 1));
+		calendar.add(Calendar.MINUTE, ru.nextInt(59 + 1));
+		calendar.add(Calendar.SECOND, ru.nextInt(59 + 1));
 		//milliseconds are fixed, some strange problem when re-running the generator - produces different values
-		calendar.set(Calendar.MILLISECOND, ru.nextInt(1000));
+		calendar.set(Calendar.MILLISECOND, ru.nextInt(999 + 1));
 		
 		this.presetDate = calendar.getTime();
 	}
@@ -178,7 +178,7 @@ public class CreativeWorkBuilder implements SesameBuilder {
 		
 		//Set Description
 		predicate = sesameValueFactory.createURI(cworkNamespace + "description");
-		object = sesameValueFactory.createLiteral(ru.sentenceFromDictionaryWords("", ru.nextInt(8, 26), false, false));
+		object = sesameValueFactory.createLiteral(ru.sentenceFromDictionaryWords("", ru.nextInt(8, 26 + 1), false, false));
 		
 		model.add(subject, predicate, object, context);
 		
@@ -340,13 +340,13 @@ public class CreativeWorkBuilder implements SesameBuilder {
 			
 			//Set Modification Date
 			calendar.setTime(presetDate);
-			calendar.add(Calendar.MONTH, 1 * ru.nextInt(12));
-			calendar.add(Calendar.DATE, 1 * ru.nextInt(31));
-			calendar.add(Calendar.HOUR, 1 * ru.nextInt(24));
-			calendar.add(Calendar.MINUTE, 1 * ru.nextInt(60));
-			calendar.add(Calendar.SECOND, 1 * ru.nextInt(60));
+			calendar.add(Calendar.MONTH, 1 * ru.nextInt(12 + 1));
+			calendar.add(Calendar.DATE, 1 * ru.nextInt(31 + 1));
+			calendar.add(Calendar.HOUR, 1 * ru.nextInt(23 + 1));
+			calendar.add(Calendar.MINUTE, 1 * ru.nextInt(59 + 1));
+			calendar.add(Calendar.SECOND, 1 * ru.nextInt(59 + 1));
 			//milliseconds are fixed, some strange problem when re-running the generator - produces different values
-			calendar.set(Calendar.MILLISECOND, ru.nextInt(1000));
+			calendar.set(Calendar.MILLISECOND, ru.nextInt(999 + 1));
 			
 			predicate = sesameValueFactory.createURI(cworkNamespace + "dateModified");
 			object = sesameValueFactory.createLiteral(calendar.getTime());
@@ -361,13 +361,13 @@ public class CreativeWorkBuilder implements SesameBuilder {
 			
 			//Set Modification Date
 			calendar.setTime(creationDate);
-			calendar.add(Calendar.MONTH, 1 * ru.nextInt(12));
-			calendar.add(Calendar.DATE, 1 * ru.nextInt(31));
-			calendar.add(Calendar.HOUR, 1 * ru.nextInt(24));
-			calendar.add(Calendar.MINUTE, 1 * ru.nextInt(60));
-			calendar.add(Calendar.SECOND, 1 * ru.nextInt(60));
+			calendar.add(Calendar.MONTH, 1 * ru.nextInt(12 + 1));
+			calendar.add(Calendar.DATE, 1 * ru.nextInt(31 + 1));
+			calendar.add(Calendar.HOUR, 1 * ru.nextInt(23 + 1));
+			calendar.add(Calendar.MINUTE, 1 * ru.nextInt(59 + 1));
+			calendar.add(Calendar.SECOND, 1 * ru.nextInt(59 + 1));
 			//milliseconds are fixed, some strange problem when re-running the generator - produces different values
-			calendar.set(Calendar.MILLISECOND, ru.nextInt(1000));
+			calendar.set(Calendar.MILLISECOND, ru.nextInt(999 + 1));
 			
 			predicate = sesameValueFactory.createURI(cworkNamespace + "dateModified");
 			object = sesameValueFactory.createLiteral(calendar.getTime());
@@ -388,7 +388,7 @@ public class CreativeWorkBuilder implements SesameBuilder {
 		model.add(subject, predicate, object, context);
 		
 		//Set PrimaryContentOf
-		int random = ru.nextInt(1, 4);
+		int random = ru.nextInt(1, 4 + 1);
 		for (int i = 0; i < random; i++) {
 			predicate = sesameValueFactory.createURI(bbcNamespace + "primaryContentOf");
 			String primaryContentUri = ru.randomURI("things", false, true);

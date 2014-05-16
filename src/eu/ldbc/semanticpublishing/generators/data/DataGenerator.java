@@ -109,7 +109,7 @@ public class DataGenerator {
 				//initialize a list of correlations magnitudes for each day
 				List<Integer> correlationsMagnitudesList = new ArrayList<Integer>();
 				for (int j = 0; j < totalCorrelationPeriodDays; j++) {
-					int nextRandom = spawnedRu.nextInt((int)(correlationsMagnitude * 0.75), correlationsMagnitude);
+					int nextRandom = spawnedRu.nextInt((int)(correlationsMagnitude * 0.75), correlationsMagnitude + 1);
 					generatedCWsByWorker += nextRandom;
 					correlationsMagnitudesList.add(nextRandom);
 				}

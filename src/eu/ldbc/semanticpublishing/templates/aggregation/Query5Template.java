@@ -79,7 +79,7 @@ public class Query5Template extends MustacheTemplate implements SubstitutionPara
 		}
 		
 		if (entityTypeIndex == 0) {
-			return categoryTypes[ru.nextInt(0, 9)];
+			return categoryTypes[ru.nextInt(0, 8 + 1)];
 		} else {
 			return categoryTypes[ru.nextInt(9, categoryTypes.length)];	
 		}

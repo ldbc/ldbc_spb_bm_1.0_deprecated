@@ -192,7 +192,7 @@ public class InsertTemplate extends MustacheTemplate implements SubstitutionPara
 			return substitutionParameters[parameterIndex++];
 		}
 		
-		return ru.sentenceFromDictionaryWords("", ru.nextInt(8, 26), true, true);
+		return ru.sentenceFromDictionaryWords("", ru.nextInt(8, 26 + 1), true, true);
 	}
 	
 	/**
@@ -371,9 +371,9 @@ public class InsertTemplate extends MustacheTemplate implements SubstitutionPara
 		
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.YEAR, seedYear);
-		calendar.add(Calendar.MONTH, 1 * ru.nextInt(12));
-		calendar.add(Calendar.DATE, 1 * ru.nextInt(31));
-		calendar.add(Calendar.HOUR, 1 * ru.nextInt(24));
+		calendar.add(Calendar.MONTH, 1 * ru.nextInt(12 + 1));
+		calendar.add(Calendar.DATE, 1 * ru.nextInt(31 + 1));
+		calendar.add(Calendar.HOUR, 1 * ru.nextInt(23 + 1));
 		return ru.dateTimeString(calendar.getTime());
 	}
 	
@@ -399,7 +399,7 @@ public class InsertTemplate extends MustacheTemplate implements SubstitutionPara
 			return primaryContent;
 		}		
 		
-		for (int i = 0; i < ru.nextInt(1, 4); i++) {
+		for (int i = 0; i < ru.nextInt(1, 4 + 1); i++) {
 			primaryContent.add(new PrimaryContentUri(ru.randomURI("things", true, true), ru.nextBoolean() ? "bbc:HighWeb" : "bbc:Mobile"));
 		}
 		

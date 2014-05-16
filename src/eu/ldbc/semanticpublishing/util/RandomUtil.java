@@ -100,6 +100,11 @@ public class RandomUtil {
 		return randomGenerator;
 	}
 	
+	/**
+	 * @param min - inclusive
+	 * @param max - exclusive
+	 * @return
+	 */
 	public int nextInt(int min, int max) {
 		if (min >= max) {
 			System.out.println("Warning : RandomUtil : wrong parameter value of : min (" + min + ") >= value of max (" + max + ")! Inconsistent behaviour expected!");
@@ -156,26 +161,26 @@ public class RandomUtil {
 	public String randomDateTimeString() {
 		int year = seedYear;
 		if ((dataGenerationPeriodYears - 1) > 0) {
-			year += nextInt(dataGenerationPeriodYears - 1);
+			year += nextInt(dataGenerationPeriodYears);
 		}
 
-		int month = nextInt(0, 11);
+		int month = nextInt(1, 12 + 1);
 
 		int day;
 		if (month == 2) {
-			day = nextInt(1, 28);
+			day = nextInt(1, 28 + 1);
 		} else if (month == 4 || month == 6 || month == 9 || month == 11) {
-			day = nextInt(1, 30);
+			day = nextInt(1, 30 + 1);
 		} else { // if (month == 1 || month == 3 || month == 5 || month == 7 ||
 					// month == 8 || month == 10|| month == 12) {
-			day = nextInt(1, 31);
+			day = nextInt(1, 31 + 1);
 		}
 
-		int hour = nextInt(0, 23);
-		int minute = nextInt(0, 59);
-		int second = nextInt(0, 59);
+		int hour = nextInt(0, 23 + 1);
+		int minute = nextInt(0, 59 + 1);
+		int second = nextInt(0, 59 + 1);
 
-		return formatDateTime(year, month + 1, day, hour, minute, second);
+		return formatDateTime(year, month, day, hour, minute, second);
 	}
 	
 	/**
@@ -204,27 +209,27 @@ public class RandomUtil {
 		
 		int year = seedYear;
 		if ((dataGenerationPeriodYears - 1) > 0) {
-			year += nextInt(dataGenerationPeriodYears - 1);
+			year += nextInt(dataGenerationPeriodYears);
 		}
 
-		int month = nextInt(0, 11);
+		int month = nextInt(1, 12 + 1);
 
 		int day;
 		if (month == 2) {
-			day = nextInt(1, 28);
+			day = nextInt(1, 28 + 1);
 		} else if (month == 4 || month == 6 || month == 9 || month == 11) {
-			day = nextInt(1, 30);
+			day = nextInt(1, 30 + 1);
 		} else { // if (month == 1 || month == 3 || month == 5 || month == 7 ||
 					// month == 8 || month == 10|| month == 12) {
-			day = nextInt(1, 31);
+			day = nextInt(1, 31 + 1);
 		}
 
-		int hour = nextInt(0, 23);
-		int minute = nextInt(0, 59);
-		int second = nextInt(0, 59);
-		int millisecond = nextInt(0, 999);
+		int hour = nextInt(0, 23 + 1);
+		int minute = nextInt(0, 59 + 1);
+		int second = nextInt(0, 59 + 1);
+		int millisecond = nextInt(0, 999 + 1);
 
-		calendar.set(year, month, day, hour, minute, second);
+		calendar.set(year, month - 1, day, hour, minute, second);
 		calendar.set(Calendar.MILLISECOND, millisecond);
 		
 		return calendar.getTime();
@@ -238,12 +243,12 @@ public class RandomUtil {
 		
 		int year = seedYear;
 		if ((dataGenerationPeriodYears - 1) > 0) {
-			year += nextInt(dataGenerationPeriodYears - 1);
+			year += nextInt(dataGenerationPeriodYears);
 		}
 		
-		calendar.set(year, 0, 1, nextInt(23), nextInt(59), nextInt(59));
+		calendar.set(year, 0, 1, nextInt(23 + 1), nextInt(59 + 1), nextInt(59 + 1));
 		
-		int offset = nextInt(maxDaysAfter);
+		int offset = nextInt(maxDaysAfter + 1);
 		
 		calendar.add(Calendar.DAY_OF_YEAR, offset);
 		
@@ -252,7 +257,8 @@ public class RandomUtil {
 
 	/**
 	 * Produces a random Date object with max limit on the year on month random selection. If input values are less
-	 * than zero, will use the random behavior from randomDateTime() method 
+	 * than zero, will use the random behavior from randomDateTime() method
+	 * Using maxMonth - Jan=1, Dec=12 
 	 */
 	public Date randomDateTime(int maxYear, int maxMonth) {
 		Calendar calendar = Calendar.getInstance();
@@ -270,26 +276,26 @@ public class RandomUtil {
 		int month = 0;
 		
 		if (maxMonth < 0) {
-			month = nextInt(0, 11);
+			month = nextInt(1, 12 + 1);
 		} else {
-			month = nextInt(0, maxMonth);
+			month = nextInt(1, maxMonth + 1);
 		}
 
 		int day;
-		if (month == 1) {
-			day = nextInt(1, 28);
+		if (month == 2) {
+			day = nextInt(1, 28 + 1);
 		} else if (month == 4 || month == 6 || month == 9 || month == 11) {
-			day = nextInt(1, 30);
+			day = nextInt(1, 30 + 1);
 		} else { // if (month == 1 || month == 3 || month == 5 || month == 7 ||
 					// month == 8 || month == 10|| month == 12) {
-			day = nextInt(1, 31);
+			day = nextInt(1, 31 + 1);
 		}
 
-		int hour = nextInt(0, 23);
-		int minute = nextInt(0, 59);
-		int second = nextInt(0, 59);
+		int hour = nextInt(0, 23 + 1);
+		int minute = nextInt(0, 59 + 1);
+		int second = nextInt(0, 59 + 1);
 
-		calendar.set(year, month, day, hour, minute, second);
+		calendar.set(year, month - 1, day, hour, minute, second);
 		
 		return calendar.getTime();
 	}	

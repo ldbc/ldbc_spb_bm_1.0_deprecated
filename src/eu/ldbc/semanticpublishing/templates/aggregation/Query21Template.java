@@ -2,6 +2,7 @@ package eu.ldbc.semanticpublishing.templates.aggregation;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.HashMap;
 
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection.QueryType;
@@ -53,6 +54,8 @@ public class Query21Template extends MustacheTemplate implements SubstitutionPar
 	protected int month;
 	protected int day;
 	
+	protected Calendar calendar;
+	
 	protected String regexExpression1;
 	protected String regexExpression2;
 	protected String category;
@@ -60,6 +63,7 @@ public class Query21Template extends MustacheTemplate implements SubstitutionPar
 	public Query21Template(RandomUtil ru, HashMap<String, String> queryTemplates, Definitions definitions, String[] substitutionParameters) {
 		super(queryTemplates, substitutionParameters);
 		this.ru = ru;		
+		this.calendar = Calendar.getInstance();
 		preInitialize();
 	}
 	
@@ -87,7 +91,8 @@ public class Query21Template extends MustacheTemplate implements SubstitutionPar
 				if (tokens.length == 3) {
 					this.year = Integer.parseInt(tokens[0]);
 					this.month = Integer.parseInt(tokens[1]);
-					this.day = ru.nextInt(1, 30); //TODO: use the actual number of days in month
+					calendar.set(year, month - 1, 1);
+					this.day = ru.nextInt(1, calendar.getActualMaximum(Calendar.DAY_OF_MONTH) + 1);
 				}
 			}
 		} catch (NumberFormatException nfe) {

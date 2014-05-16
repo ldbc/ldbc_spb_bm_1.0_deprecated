@@ -87,8 +87,8 @@ public class CorrelationsWorker extends RandomWorker {
 		
 		//pick a random date starting from 1.Jan to the value of totalCorrelationPeriodDays
 		startDate = ru.randomDateTime(365 * dataGenerationPeriodYears - totalCorrelationPeriodDays);
-		thirdEntityCountdown = ru.nextInt((int)(THRID_ENTITY_CORRELATION_DISTANCE * 0.6), THRID_ENTITY_CORRELATION_DISTANCE);
-		thirdEntityOutsideCorrelationCountdown = ru.nextInt((int)(THRID_ENTITY_CORRELATION_DISTANCE * 0.6), THRID_ENTITY_CORRELATION_DISTANCE) / 2;
+		thirdEntityCountdown = ru.nextInt((int)(THRID_ENTITY_CORRELATION_DISTANCE * 0.6), THRID_ENTITY_CORRELATION_DISTANCE + 1);
+		thirdEntityOutsideCorrelationCountdown = ru.nextInt((int)(THRID_ENTITY_CORRELATION_DISTANCE * 0.6), THRID_ENTITY_CORRELATION_DISTANCE + 1) / 2;
 		
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(startDate);
@@ -139,7 +139,7 @@ public class CorrelationsWorker extends RandomWorker {
 								sesameModel = buildCreativeWorkModel(entityA, entityB, entityC, firstCwId++, true, calendar.getTime(), 0);
 								thirdEntityForCurrentDaySet = true;
 								thirdEntityInCorrelationOccurences--;
-								thirdEntityCountdown = ru.nextInt((int)(THRID_ENTITY_CORRELATION_DISTANCE * 0.6), THRID_ENTITY_CORRELATION_DISTANCE);
+								thirdEntityCountdown = ru.nextInt((int)(THRID_ENTITY_CORRELATION_DISTANCE * 0.6), THRID_ENTITY_CORRELATION_DISTANCE + 1);
 							} else {
 								sesameModel = buildCreativeWorkModel(entityA, entityB, null, firstCwId++, true, calendar.getTime(), 0);
 							}

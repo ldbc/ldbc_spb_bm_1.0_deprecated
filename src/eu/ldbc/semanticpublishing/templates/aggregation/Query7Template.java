@@ -35,7 +35,7 @@ public class Query7Template extends MustacheTemplate implements SubstitutionPara
 			return substitutionParameters[parameterIndex++];
 		}
 		
-		return String.format("FILTER(?pcCount > %d) ", ru.nextInt(1, PRIMARY_CONTENT_COUNT_MAX));
+		return String.format("FILTER(?pcCount > %d) ", ru.nextInt(1, PRIMARY_CONTENT_COUNT_MAX + 1));
 	}
 	
 	@Override
