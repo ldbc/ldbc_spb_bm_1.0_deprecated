@@ -184,8 +184,8 @@ public class TestDriver {
 	
 	public void populateRefDataEntitiesLists(boolean showDetails, boolean populateFromDatasetInfoFile, boolean suppressDatasetInfoWarnings, String messagePrefix) throws IOException {
 		
-		if (configuration.getBoolean(Configuration.VERBOSE) && showDetails) {
-			System.out.println(messagePrefix + "Analyzing reference knowledge in data...");
+		if (showDetails) {
+			System.out.println(messagePrefix + "Analyzing reference knowledge in data, it may take a while depending on size of generated dataset...");
 		}
 		
 		//retrieve entity uris frsom database
