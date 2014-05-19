@@ -78,7 +78,7 @@ public class TestDriver {
 		mustacheTemplatesHolder.loadFrom(configuration.getString(Configuration.QUERIES_PATH));
 
 		//will read the dictionary file from jar file as a resource
-		randomGenerator = initializeRandomUtil(configuration.getString(Configuration.ONTOLOGIES_PATH), configuration.getLong(Configuration.GENERATOR_RANDOM_SEED), definitions.getInt(Definitions.YEAR_SEED), definitions.getInt(Definitions.DATA_GENERATOR_PERIOD_YEARS));
+		randomGenerator = initializeRandomUtil(configuration.getString(Configuration.REFERENCE_DATASETS_PATH), configuration.getLong(Configuration.GENERATOR_RANDOM_SEED), definitions.getInt(Definitions.YEAR_SEED), definitions.getInt(Definitions.DATA_GENERATOR_PERIOD_YEARS));
 		
 		//will use initialized randomGenerator above
 		definitions.initializeAllocations(randomGenerator.getRandom());
@@ -104,11 +104,11 @@ public class TestDriver {
 		return queryExecuteManager;
 	}
 	
-	private RandomUtil initializeRandomUtil(String ontologiesPath, long seed, int yearSeed, int generorPeriodYears) {
+	private RandomUtil initializeRandomUtil(String datasetsPath, long seed, int yearSeed, int generorPeriodYears) {
 		//File WordsDictionary.txt is one level up
-		String ontPath = StringUtil.normalizePath(ontologiesPath);
-		String oneLevelUp = ontPath.substring(0, ontPath.lastIndexOf(File.separator) + 1);
-		String filePath = oneLevelUp + "WordsDictionary.txt";
+		String ontPath = StringUtil.normalizePath(datasetsPath);
+		String oneLevelUp = ontPath.substring(0, ontPath.lastIndexOf(File.separator) + 1);		
+		String filePath = oneLevelUp + "dictionaries" + File.separator + "WordsDictionary.txt";		
 		
 		return new RandomUtil(filePath, seed, yearSeed, generorPeriodYears);
 	}

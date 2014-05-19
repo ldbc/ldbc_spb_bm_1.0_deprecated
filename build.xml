@@ -101,7 +101,8 @@
 			<fileset dir="datasets_and_queries/enterprise/scripts"/>
 		</copy>  	
   	
-		<copy file="datasets_and_queries/WordsDictionary.txt" todir="./data-temp"/>
+	  	<mkdir dir="./data-temp/dictionaries"/>
+		<copy file="datasets_and_queries/dictionaries/WordsDictionary.txt" todir="./data-temp/dictionaries"/>
 
   		<delete dir="./data-temp/sparql/aggregation"/>
 		<mkdir dir="./data-temp/sparql/aggregation"/>
