@@ -32,7 +32,7 @@ public class Validator {
 					continue;
 				}
 				
-				parameterValue = transformString(parameterValue, strict);
+				parameterValue = transformString(parameterValue, strict, false);
 				
 				if (!result.contains(parameterValue)) {
 					System.out.println(validateOperation + " validation failed on iteration : " + iteration + ", query result is missing value : " + parameterValue);
@@ -48,18 +48,35 @@ public class Validator {
 		String value;
 		
 		for (String v : validationList) {
-			value = transformString(v, strict);
+			int errorsCount = 0;
+			
+			value = transformString(v, strict, false);
 			
 			if (!result.contains(value)) {
+				errorsCount++;
+			}
+			
+			//give it one more try, in case there are encodings in results which are not URLDecoded
+			if (errorsCount > 0) {
+				value = transformString(v, strict, true);
+
+				if (!result.contains(value)) {
+					errorsCount++;
+				} else {
+					errorsCount--;
+				}
+			}
+			
+			if (errorsCount > 0) {
 				System.out.println("\t\t" + validateOperation + " validation failed on query : " + iteration + ", query result is missing value : " + value);
 				errors++;
-			}			
+			}
 		}
 		
 		return errors;
 	}
 	
-	private String transformString(String str, boolean strict) {
+	private String transformString(String str, boolean strict, boolean forceOptionalEncodings) {
 		String result = str;
 		if (!strict) {
 			if (result.startsWith("<")) {
@@ -75,19 +92,21 @@ public class Validator {
 			result = result.replace("\"", "");
 		}
 		
-		result = customURLEncode(result);
+		result = customURLEncode(result, forceOptionalEncodings);
 		
 		return result;
 	}
 	
-	private String customURLEncode(String str) {
+	private String customURLEncode(String str, boolean forceOptionalEncodings) {
 		String result = str;
 		if (str.contains("&")) {
 			result = str.replace("&", "&amp;");
 		}
-//		if (str.contains("'")) {
-//			result = str.replace("'", "&#39;");
-//		}
+		if (forceOptionalEncodings) {
+			if (str.contains("'")) {
+				result = str.replace("'", "&#39;");
+			}
+		}
 		return result;
 	}
 }

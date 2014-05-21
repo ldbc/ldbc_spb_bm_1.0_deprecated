@@ -188,7 +188,7 @@ public class TestDriver {
 			System.out.println(messagePrefix + "Analyzing reference knowledge in data, it may take a while...");
 		}
 		
-		//retrieve entity uris frsom database
+		//retrieve entity URIs from database
 		ReferenceDataAnalyzer refDataAnalyzer = new ReferenceDataAnalyzer(queryExecuteManager, mustacheTemplatesHolder);
 		ArrayList<Entity> entitiesList = refDataAnalyzer.analyzeEntities();
 		for (Entity e : entitiesList) {
@@ -205,7 +205,7 @@ public class TestDriver {
 		long count = cwk.getResult();		
 		DataManager.creativeWorksNextId.set(count);
 		
-		//retrieve geonames ids from database
+		//retrieve geonames IDs from database
 		GeonamesAnalyzer gna = new GeonamesAnalyzer(queryExecuteManager, mustacheTemplatesHolder);
 		ArrayList<String> geonamesIds = gna.collectGeonamesIds();
 		for (String s : geonamesIds) {
@@ -392,74 +392,6 @@ public class TestDriver {
 		}
 	}
 
-/*
- * Method is commented out, using DataGenerator class instead
-*/
-/*	
-	private void generateCreativeWorksSesame(String serializationFormat, long maxTriplesInFile, long targetTriplesSize, String destinationPath) throws IOException {
-		
-		RDFFormat rdfFormat = SesameUtils.parseRdfFormat(serializationFormat);
-		
-		FileUtils.makeDirectories(destinationPath);
-
-		int filesCount = 0;
-		long creativeWorksInDatabase = DataManager.creativeWorksNexId.get();
-		
-		if (creativeWorksInDatabase > 0) {
-			System.out.println("\t" + creativeWorksInDatabase + " Creative Works currently exist.");
-		}
-
-		//loop until the maximum number of triples to store in the database is reached
-		for (long totalTriplesCount = 0; totalTriplesCount < targetTriplesSize; ) {
-
-			//Adjust the number of triples in last batch to be sent
-			long triplesLeftInFile = maxTriplesInFile;
-			if ((targetTriplesSize - totalTriplesCount) >= maxTriplesInFile) {
-				triplesLeftInFile = maxTriplesInFile;
-			} else {
-				triplesLeftInFile = targetTriplesSize - totalTriplesCount;
-			}
-			
-			String fileName = String.format("%s%sgeneratedCreativeWorks-%04d." + rdfFormat.getDefaultFileExtension(), destinationPath, File.separator, ++filesCount);
-			
-			FileOutputStream fos = null;			
-			
-			try {
-				fos = new FileOutputStream(fileName);
-				RDFWriter rdfWriter = Rio.createWriter(rdfFormat, fos);
-				
-				rdfWriter.startRDF();
-	
-				int cwsInFileCount = 0;
-				int currentQueryTriplesCount = 0;
-				while ( currentQueryTriplesCount < triplesLeftInFile ) {
-					InsertTemplate insertQuery = new InsertTemplate("", randomGenerator, mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.EDITORIAL)); 
-					Model sesameModel = insertQuery.buildSesameModel();
-	
-					for (Statement statement : sesameModel) {
-						rdfWriter.handleStatement(statement);
-					}
-					
-					cwsInFileCount++;
-					currentQueryTriplesCount += sesameModel.size();
-				}
-				totalTriplesCount += currentQueryTriplesCount;
-				
-				rdfWriter.endRDF();
-
-				System.out.println("Saving file #" + filesCount + " with " + cwsInFileCount + " Creative Works, total triples : " + totalTriplesCount + ". Targeted triples size in repository : " + targetTriplesSize);
-			} catch (RDFHandlerException e) {
-				throw new IOException("A problem occurred generating RDF data: " + e.getMessage());
-			}
-			finally {
-				if(fos != null) {
-					fos.close();
-				}
-			}
-		}
-		System.out.println("\tcompleted! Total Creative Works saved : " + (DataManager.creativeWorksNexId.get() - creativeWorksInDatabase) + " in " + filesCount + " files.");
-	}
-*/
 	private final AtomicBoolean runFlag = new AtomicBoolean(true);
 	
 	private void setupAsynchronousAgents() {
