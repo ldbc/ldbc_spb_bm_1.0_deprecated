@@ -34,7 +34,7 @@ PREFIX ldbc:<http://www.ldbc.eu/ontologies/sempub#>
 
 #  Query name : query8
 #  Query Description : 
-#  Retrieve creative works and their properties, which contain a a certain word in their title or description, using a regex expression. 
+#  Retrieve creative works and their properties, which contain a a certain word in their title or description. 
 #  A Full text search query.
 
 #  Choke Points : 
@@ -68,6 +68,6 @@ WHERE {
     ?cWork bbc:primaryContentOf ?pco . 
     ?pco bbc:webDocumentType ?webDocType . 
   } 
-  FILTER (REGEX(?title, {{{regexExpression}}}, "i") || REGEX(?description, {{{regexExpression}}}, "i")) .
+  FILTER (CONTAINS(?title, {{{word}}}) || CONTAINS(?description, {{{word}}})) .
 }
-LIMIT 1000
+LIMIT {{{randomLimit}}}

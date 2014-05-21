@@ -1,5 +1,5 @@
 [SubstitutionParameters]
-"mediums";"faster"
+"mediums";"faster";1000
 
 [Results]
 <http://www.bbc.co.uk/things/125#id>

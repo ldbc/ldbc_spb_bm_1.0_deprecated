@@ -27,9 +27,9 @@ public class Query20Template extends MustacheTemplate implements SubstitutionPar
 	}
 	
 	/**
-	 * A method for replacing mustache template : {{{cwType}}}
+	 * A method for replacing mustache template : {{{word}}}
 	 */
-	public String regexExpression() {
+	public String word() {
 		if (substitutionParameters != null) {
 			return substitutionParameters[parameterIndex++];
 		}
@@ -37,14 +37,27 @@ public class Query20Template extends MustacheTemplate implements SubstitutionPar
 		return ru.randomWordFromDictionary(true, false);
 	}
 	
+	/**
+	 * A method for replacing mustache template : {{{randomLimit}}}
+	 */			
+	public String randomLimit() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}		
+		
+		return "1000";
+	}	
+	
 	@Override
 	public String generateSubstitutionParameters(BufferedWriter bw, int amount) throws IOException {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < amount; i++) {
 			sb.setLength(0);
-			sb.append(regexExpression());
+			sb.append(word());
 			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
-			sb.append(regexExpression());
+			sb.append(word());
+			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
+			sb.append(randomLimit());
 			sb.append("\n");
 			bw.write(sb.toString());
 		}

@@ -28,7 +28,7 @@ public class Query21Template extends MustacheTemplate implements SubstitutionPar
 	protected static final String PROJECTION_STRING_ITERATION_3 = "?year ?month ?primaryFormat ((COUNT(*)) as ?count)";
 	protected static final String PROJECTION_STRING_ITERATION_4 = "?title ?dateCreated ((COUNT(*)) AS ?count)";	
 	
-	protected static final String FILTER_REGEX_STRING = "FILTER (REGEX(?title, \"%s\", \"i\") || REGEX(?description, \"%s\", \"i\")) .";
+	protected static final String FILTER_CONTAINS_STRING = "FILTER (CONTAINS(?title, \"%s\") || CONTAINS(?description, \"%s\")) .";
 	protected static final String FILTER_CATEGORY_STRING = "FILTER (?category = %s) .";
 	protected static final String FILTER_DATE_YMD_STRING = "FILTER (?year = %d && ?month = %d && ?day = %d) .";
 	
@@ -37,6 +37,7 @@ public class Query21Template extends MustacheTemplate implements SubstitutionPar
 	protected static final String GROUP_BY_STRING_ITERATION_3 = "GROUP BY ?year ?month ?primaryFormat";
 	protected static final String GROUP_BY_STRING_ITERATION_4 = "GROUP BY ?dateCreated ?title";
 	
+	protected static final String ORDER_BY_STRING_ITERATION_0 = "ORDER BY ?year ?month";
 	protected static final String ORDER_BY_STRING_ITERATION_1 = "ORDER BY ?year ?month";
 	protected static final String ORDER_BY_STRING_ITERATION_2 = "ORDER BY ?year ?month ?count";
 	protected static final String ORDER_BY_STRING_ITERATION_3 = "ORDER BY ?year ?month ?count";
@@ -56,8 +57,8 @@ public class Query21Template extends MustacheTemplate implements SubstitutionPar
 	
 	protected Calendar calendar;
 	
-	protected String regexExpression1;
-	protected String regexExpression2;
+	protected String containsExpression1;
+	protected String containsExpression2;
 	protected String category;
 	
 	public Query21Template(RandomUtil ru, HashMap<String, String> queryTemplates, Definitions definitions, String[] substitutionParameters) {
@@ -72,8 +73,8 @@ public class Query21Template extends MustacheTemplate implements SubstitutionPar
 		this.year = 0;
 		this.month = 0;
 		this.day = 0;
-		this.regexExpression1 = ru.randomWordFromDictionary(false, false);
-		this.regexExpression2 = ru.randomWordFromDictionary(false, false);
+		this.containsExpression1 = ru.randomWordFromDictionary(false, false);
+		this.containsExpression2 = ru.randomWordFromDictionary(false, false);
 		this.category = String.format(FILTER_CATEGORY_STRING, categoryTypes[ru.nextInt(categoryTypes.length)]);
 		this.parameterIndex = 0;
 	}
@@ -132,7 +133,7 @@ public class Query21Template extends MustacheTemplate implements SubstitutionPar
 			return substitutionParameters[parameterIndex++];
 		}
 		
-		return String.format(FILTER_REGEX_STRING, regexExpression1, regexExpression2);
+		return String.format(FILTER_CONTAINS_STRING, containsExpression1, containsExpression2);
 	}
 
 	/**
@@ -195,7 +196,7 @@ public class Query21Template extends MustacheTemplate implements SubstitutionPar
 		
 		switch (iteration) {
 		case 0 :
-			return " ";
+			return ORDER_BY_STRING_ITERATION_0;
 		case 1 :
 			return ORDER_BY_STRING_ITERATION_1;
 		case 2 :

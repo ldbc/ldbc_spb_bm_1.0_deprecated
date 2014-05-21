@@ -1,5 +1,5 @@
 [SubstitutionParameters]
-<http://dbpedia.org/resource/Michael_Fabricant>;cwork:TextualFormat;cwork:NewsItem;6
+<http://dbpedia.org/resource/Michael_Fabricant>;cwork:TextualFormat;cwork:NewsItem;10000
 
 [Results]
 <http://www.bbc.co.uk/things/32392#id>
@@ -34,7 +34,6 @@
 <http://dbpedia.org/resource/Michael_Fabricant>
 "domain cricket kinds record exchange grounds covers violent enable movement."
 "attract century has settings have cookies enable incur related during."
-"false"^^<http://www.w3.org/2001/XMLSchema#boolean>
 <http://www.bbc.co.uk/thumbnail/1328242227>
 <http://www.bbc.co.uk/ontologies/creativework/NewsItem>
 <http://www.aloksharma.co.uk/>
@@ -57,7 +56,6 @@
 <http://www.bbc.co.uk/things/g355f991c-bd2b-4f59-b0af-f66a610bc1c3#id>
 "state adopted realm historically merely entrance while sprang pay-per-view primitive large eventual logged ip popular enjoyment interesting these centuries 2007 which these rival."
 "2011-10-20T17:16:26.062+03:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>
-<http://www.bbc.co.uk/ontologies/creativework/Thumbnail>
 <http://www.nickbrownmp.com/>
 "2012-06-30T12:55:40.353+03:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>
 "2011-10-08T13:47:52.188+03:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>

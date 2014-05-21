@@ -81,9 +81,13 @@ public class Validator {
 	}
 	
 	private String customURLEncode(String str) {
+		String result = str;
 		if (str.contains("&")) {
-			return str.replace("&", "&amp;");
+			result = str.replace("&", "&amp;");
 		}
-		return str;
+//		if (str.contains("'")) {
+//			result = str.replace("'", "&#39;");
+//		}
+		return result;
 	}
 }

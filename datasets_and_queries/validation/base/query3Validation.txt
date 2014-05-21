@@ -1,5 +1,5 @@
 [SubstitutionParameters]
-<http://www.guardian.co.uk/politics/person/9343/>;cwork:InternationalAudience;9
+<http://www.guardian.co.uk/politics/person/9343/>;cwork:InternationalAudience;10000
 
 [Results]
 <http://www.bbc.co.uk/things/31030#id>
@@ -97,7 +97,6 @@
 <http://www.guardian.co.uk/politics/person/5889/>
 "originated final browsers inform primitive hard lower first basis one notion homogeneous components prolonged hard institutions rapid."
 "thumbnail atlText for CW http://www.bbc.co.uk/context/13450#id"
-"false"^^<http://www.w3.org/2001/XMLSchema#boolean>
 "2012-09-19T06:57:47.146+03:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>
 "holding left approach identifiable when object to terms usage identify."
 <http://www.bbc.co.uk/things/763448757#id>
@@ -115,7 +114,6 @@
 <http://www.danbyles.co.uk/>
 "their flash turn south participation national apartheid practical members began."
 "thumbnail atlText for CW http://www.bbc.co.uk/context/31030#id"
-<http://www.bbc.co.uk/ontologies/creativework/Thumbnail>
 <http://www.bbc.co.uk/things/g58d2e1e3-4e27-44be-9eb6-b52e0c7a575b#id>
 "2011-02-07T19:08:15.805+02:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>
 "Bob Ainsworth allowing address impact ads themselves common country view states left."

@@ -45,10 +45,11 @@ PREFIX ldbc:<http://www.ldbc.eu/ontologies/sempub#>
 #    - Optimizer should be able to split the FILTER conditions into conjunction of conditions and execute the as soon as possible
 #      which will limit the amount of intermediate results
 
-SELECT DISTINCT ?cwork ?geonamesId ?lat ?long   {
+SELECT DISTINCT ?cwork ?geonamesId ?lat ?long ?dateModified {
 
     ?cwork a cwork:CreativeWork . 
     ?cwork cwork:mentions ?geonamesId . 
+    ?cwork cwork:dateModified ?dateModified .
     ?geonamesId geo:lat ?lat . 
     ?geonamesId geo:long ?long . 
     FILTER(CONTAINS(STR(?geonamesId), "geonames")) . 
@@ -63,4 +64,5 @@ SELECT DISTINCT ?cwork ?geonamesId ?lat ?long   {
      (xsd:double(?long) >= (?referenceLong - ?deviation)) && 
      (xsd:double(?long) <= (?referenceLong + ?deviation)) ) . 
 }
-LIMIT 100
+ORDER BY DESC(?dateModified)
+LIMIT {{{randomLimit}}}

@@ -84,7 +84,7 @@ public class AggregateOperationsValidator extends Validator {
 	
 			System.out.println(String.format("\tQuery %-1d : ", (i + 1)));
 			int errorsForQuery = validateAggregate(queryResult, "AGGREGATE", (i + 1), validationValues.getValidationResultsList(), false);
-			System.out.print(String.format("\t\t%d errors found in %d validation results\n", errorsForQuery, validationValues.getValidationResultsList().size()));
+			System.out.print(String.format("\t\t%d errors found in %d expected validation results\n", errorsForQuery, validationValues.getValidationResultsList().size()));
 		}
 	}
 	
