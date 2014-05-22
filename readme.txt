@@ -13,7 +13,7 @@ which execute a series of INSERT/UPDATE/DELETE (for editorial agents) and CONSTR
 Distribution : 
 ------------------------------------------------------------------------------
 
-The benchmark test driver is distributed as a jar file : semantic_publishing_benchmark-*.jar accompanied by a datasets archive file : reference_knowledge_data.zip
+The benchmark test driver is distributed as a jar file : semantic_publishing_benchmark-*.jar accompanied by a datasets archive file : semantic_publishing_benchmark_reference_knowledge_data*.zip
 The datasets file contains ontologies and reference datasets (required by the data-generator). Required set of configuration files : test.properties and definitions.properties (can also be found in the jar file) 
 
 

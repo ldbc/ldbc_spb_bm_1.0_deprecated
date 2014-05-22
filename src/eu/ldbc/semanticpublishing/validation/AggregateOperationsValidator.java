@@ -94,13 +94,19 @@ public class AggregateOperationsValidator extends Validator {
 		String endpoint = configuration.getString(Configuration.ENDPOINT_UPDATE_URL);
 		
 		File[] files = new File(configuration.getString(Configuration.VALIDATION_PATH)).listFiles();
-		
+				
+		int processedNQfiles = 0;
 		Arrays.sort(files);
 		for( File file : files ) {
 			if( file.getName().endsWith(".nq")) {
 				InputStream input = new FileInputStream(file);
 				RdfUtils.postStatements(endpoint, RdfUtils.CONTENT_TYPE_SESAME_NQUADS, input);
+				processedNQfiles++;
 			}
+		}
+		
+		if (processedNQfiles == 0) {
+			System.out.println("\t\tNo validation data files (*.nq) found at : " + configuration.getString(Configuration.VALIDATION_PATH));
 		}
 	}
 }

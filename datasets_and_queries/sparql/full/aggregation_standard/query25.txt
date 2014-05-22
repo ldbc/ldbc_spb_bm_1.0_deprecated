@@ -59,6 +59,6 @@ SELECT ?who ?interactionDays {
     GROUP BY ?who
   }
 }
-ORDER BY DESC(?interactionDays)
+ORDER BY DESC(?interactionDays) ?who
 LIMIT 10
 

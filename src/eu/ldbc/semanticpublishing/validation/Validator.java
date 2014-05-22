@@ -68,7 +68,7 @@ public class Validator {
 			}
 			
 			if (errorsCount > 0) {
-				System.out.println("\t\t" + validateOperation + " validation failed on query : " + iteration + ", query result is missing value : " + value);
+				System.out.println("\t\t" + /*validateOperation +*/ "validation failed on query : " + iteration + ", query result is missing value : " + value);
 				errors++;
 			}
 		}

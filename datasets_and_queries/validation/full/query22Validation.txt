@@ -1,5 +1,5 @@
 [SubstitutionParameters]
-?title ?description ?category ?tag ?audience ?liveCoverage ?primaryFormat ?year ?month;FILTER (CONTAINS(?title, "15th") || CONTAINS(?description, "local")) .;FILTER (?category = <http://www.bbc.co.uk/category/SportsTeams>) .; ; ;ORDER BY ?year ?month
+?title ?description ?category ?tag ?audience ?liveCoverage ?primaryFormat ?year ?month;FILTER (CONTAINS(?title, "15th") || CONTAINS(?description, "local")) .;FILTER (?category = <http://www.bbc.co.uk/category/SportsTeams>) .; ; ;ORDER BY ?tag ?year ?month
 
 [Results]
 Blackpool well 15th local primitive privilege appear usage logged rules policy.
