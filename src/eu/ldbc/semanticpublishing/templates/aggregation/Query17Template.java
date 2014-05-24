@@ -95,6 +95,17 @@ public class Query17Template extends MustacheTemplate implements SubstitutionPar
 	}
 	
 	/**
+	 * A method for replacing mustache template : {{{orderBy}}}
+	 */			
+	public String orderBy() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}		
+		
+		return "";
+	}	
+	
+	/**
 	 * A method for replacing mustache template : {{{randomLimit}}}
 	 */			
 	public String randomLimit() {
@@ -116,6 +127,8 @@ public class Query17Template extends MustacheTemplate implements SubstitutionPar
 			sb.append(refLongtitude());
 			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
 			sb.append(refDeviation());
+			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
+			sb.append(orderBy());			
 			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
 			sb.append(randomLimit());
 			sb.append("\n");

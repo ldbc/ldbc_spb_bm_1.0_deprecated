@@ -142,6 +142,28 @@ public class Query18Template extends MustacheTemplate implements SubstitutionPar
 	}
 
 	/**
+	 * A method for replacing mustache template : {{{orderBy}}}
+	 */			
+	public String orderBy() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}		
+		
+		return "";
+	}	
+	
+	/**
+	 * A method for replacing mustache template : {{{randomLimit}}}
+	 */			
+	public String randomLimit() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}		
+		
+		return "100";
+	}	
+	
+	/**
 	 * Input parameters year and month are compulsory
 	 * @param variableName - name of the variable used to hold the date in the SPARQL query
 	 * @param year - the year used in the constraint
@@ -258,6 +280,10 @@ public class Query18Template extends MustacheTemplate implements SubstitutionPar
 			sb.append(cwType());
 			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
 			sb.append(cwFilterDateModifiedCondition());
+			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
+			sb.append(orderBy());
+			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
+			sb.append(randomLimit());
 			sb.append("\n");
 			bw.write(sb.toString());
 		}

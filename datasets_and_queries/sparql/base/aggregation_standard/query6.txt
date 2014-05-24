@@ -62,5 +62,5 @@ SELECT DISTINCT ?cwork ?geonamesId ?lat ?long ?dateModified {
      (xsd:double(?long) >= (?referenceLong - ?deviation)) && 
      (xsd:double(?long) <= (?referenceLong + ?deviation)) ) . 
 }
-ORDER BY DESC(?dateModified)
+{{{orderBy}}}
 LIMIT {{{randomLimit}}}
