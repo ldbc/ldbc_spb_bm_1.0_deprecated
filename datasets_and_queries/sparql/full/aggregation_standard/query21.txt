@@ -61,4 +61,4 @@ SELECT {{{projection}}} {
 }
 {{{groupBy}}}
 {{{orderBy}}}
-LIMIT 500
+LIMIT {{{randomLimit}}}

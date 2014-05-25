@@ -1,5 +1,5 @@
 [SubstitutionParameters]
-"true"^^<http://www.w3.org/2001/XMLSchema#boolean>;cwork:InternationalAudience
+"true"^^<http://www.w3.org/2001/XMLSchema#boolean>;cwork:InternationalAudience;25
 
 [Results]
 <http://www.w3.org/2002/07/owl#Thing>
@@ -16,5 +16,4 @@
 4124
 1215
 225
-true
 <http://www.bbc.co.uk/ontologies/creativework/InternationalAudience>

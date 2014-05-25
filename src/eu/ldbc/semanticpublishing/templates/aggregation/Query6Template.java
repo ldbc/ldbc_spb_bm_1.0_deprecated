@@ -51,6 +51,17 @@ public class Query6Template extends MustacheTemplate implements SubstitutionPara
 		}
 	}
 	
+	/**
+	 * A method for replacing mustache template : {{{randomLimit}}}
+	 */	
+	public String randomLimit() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}		
+		
+		return "10";
+	}	
+	
 	@Override
 	public String generateSubstitutionParameters(BufferedWriter bw, int amount) throws IOException {
 		StringBuilder sb = new StringBuilder();
@@ -59,6 +70,8 @@ public class Query6Template extends MustacheTemplate implements SubstitutionPara
 			sb.append(cwLiveCoverage());
 			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
 			sb.append(cwAudience());
+			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
+			sb.append(randomLimit());
 			sb.append("\n");
 			bw.write(sb.toString());
 		}

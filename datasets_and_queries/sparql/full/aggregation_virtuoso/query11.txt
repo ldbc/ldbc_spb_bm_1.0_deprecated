@@ -88,4 +88,4 @@ WHERE {
   ?other cwork:dateModified ?dt .
 }
 ORDER BY DESC(?score) DESC(?dt)
-LIMIT 10
+LIMIT {{{randomLimit}}}

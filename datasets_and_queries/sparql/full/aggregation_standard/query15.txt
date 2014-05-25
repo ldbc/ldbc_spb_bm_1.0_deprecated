@@ -55,4 +55,4 @@ WHERE
   }
 }
 ORDER BY ?about
-LIMIT 100
+LIMIT {{{randomLimit}}}

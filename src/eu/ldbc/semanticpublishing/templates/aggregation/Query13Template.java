@@ -43,6 +43,17 @@ public class Query13Template extends MustacheTemplate implements SubstitutionPar
 		return categoryTypes[ru.nextInt(categoryTypes.length)];
 	}
 	
+	/**
+	 * A method for replacing mustache template : {{{orderBy}}}
+	 */		
+	public String orderBy() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}
+		
+		return "ORDER BY ?dateModified";
+	}
+			
 	@Override
 	public String generateSubstitutionParameters(BufferedWriter bw, int amount) throws IOException {
 		StringBuilder sb = new StringBuilder();
@@ -51,6 +62,8 @@ public class Query13Template extends MustacheTemplate implements SubstitutionPar
 			sb.append(cwCategoryType());
 			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
 			sb.append(cwCategoryType());
+			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
+			sb.append(orderBy());
 			sb.append("\n");
 			bw.write(sb.toString());
 		}	

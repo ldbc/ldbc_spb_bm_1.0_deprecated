@@ -54,4 +54,4 @@ SELECT ?cwork ?dateModif ?title ?category ?liveCoverage ?audience {
   {{{cwFilterDateModifiedCondition}}} 
 }
 {{{orderBy}}}
-{{{randomLimit}}}
+LIMIT {{{randomLimit}}}

@@ -48,5 +48,5 @@ WHERE
   ?thing cwork:dateModified ?dateModified . 
   FILTER ((?category = {{{cwCategoryType}}}) || (?category = {{{cwCategoryType}}}))
 }
-ORDER BY ?dateModified
+{{{orderBy}}}
 LIMIT 100

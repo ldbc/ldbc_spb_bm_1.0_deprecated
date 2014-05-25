@@ -49,5 +49,5 @@ WHERE {
   {{{filterCondition}}}
 } 
 GROUP BY ?mentions
-ORDER BY DESC(?count)
+{{{orderBy}}}
 LIMIT 10

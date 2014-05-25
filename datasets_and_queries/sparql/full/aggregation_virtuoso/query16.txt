@@ -58,4 +58,4 @@ WHERE
   }
 }
 ORDER BY ?tag
-LIMIT 100
+LIMIT {{{randomLimit}}}

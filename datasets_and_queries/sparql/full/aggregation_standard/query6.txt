@@ -45,4 +45,4 @@ WHERE {
 } 
 GROUP BY ?aboutType ?coverage ?audience 
 ORDER BY DESC(?count)
-LIMIT 10
+LIMIT {{{randomLimit}}}

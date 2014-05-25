@@ -72,4 +72,4 @@ WHERE {
   }
 }
 ORDER BY DESC(?score) DESC(?dt)
-LIMIT 10
+LIMIT {{{randomLimit}}}

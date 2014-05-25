@@ -43,6 +43,17 @@ public class Query12Template extends MustacheTemplate implements SubstitutionPar
 		return ru.numberURI("things", cwNextId, true, true);
 	}
 	
+	/**
+	 * A method for replacing mustache template : {{{randomLimit}}}
+	 */	
+	public String randomLimit() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}		
+		
+		return "10";
+	}	
+	
 	@Override
 	public String generateSubstitutionParameters(BufferedWriter bw, int amount) throws IOException {
 		StringBuilder sb = new StringBuilder();
@@ -56,6 +67,8 @@ public class Query12Template extends MustacheTemplate implements SubstitutionPar
 			sb.append(cwUri());
 			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
 			sb.append(cwUri());
+			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
+			sb.append(randomLimit());			
 			sb.append("\n");
 			bw.write(sb.toString());
 		}	

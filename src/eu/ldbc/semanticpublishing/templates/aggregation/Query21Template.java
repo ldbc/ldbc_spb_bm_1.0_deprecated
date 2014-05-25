@@ -210,6 +210,17 @@ public class Query21Template extends MustacheTemplate implements SubstitutionPar
 		}
 	}	
 	
+	/**
+	 * A method for replacing mustache template : {{{randomLimit}}}
+	 */	
+	public String randomLimit() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}		
+		
+		return "500";
+	}
+	
 	@Override
 	public String generateSubstitutionParameters(BufferedWriter bw, int amount) throws IOException {
 		StringBuilder sb = new StringBuilder();
@@ -227,6 +238,8 @@ public class Query21Template extends MustacheTemplate implements SubstitutionPar
 			sb.append(groupBy());
 			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
 			sb.append(orderBy());
+			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
+			sb.append(randomLimit());
 			sb.append("\n");
 			bw.write(sb.toString());	
 		}

@@ -62,4 +62,4 @@ WHERE {
   ?creativeWork2 cwork:dateCreated ?dateCreated .
 } 
 ORDER BY DESC(?dateCreated) 
-LIMIT 10
+LIMIT {{{randomLimit}}}

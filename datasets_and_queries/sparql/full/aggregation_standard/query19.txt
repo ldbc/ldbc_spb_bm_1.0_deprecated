@@ -46,4 +46,4 @@ SELECT ?topic ((COUNT(*)) as ?topicsCount) (MAX(?dateModif) AS ?maxDate) {
 }
 GROUP BY ?topic
 ORDER BY DESC(?maxDate) DESC(?topicsCount)
-LIMIT 100
+LIMIT {{{randomLimit}}}

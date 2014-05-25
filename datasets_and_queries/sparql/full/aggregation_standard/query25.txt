@@ -60,5 +60,5 @@ SELECT ?who ?interactionDays {
   }
 }
 ORDER BY DESC(?interactionDays) ?who
-LIMIT 10
+LIMIT {{{randomLimit}}}
 

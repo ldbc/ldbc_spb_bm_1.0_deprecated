@@ -54,6 +54,17 @@ public class Query19Template extends Query18Template {
 		return "cwork:InternationalAudience";		
 	}	
 	
+	/**
+	 * A method for replacing mustache template : {{{randomLimit}}}
+	 */	
+	public String randomLimit() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}		
+		
+		return "100";
+	}
+	
 	@Override
 	public String generateSubstitutionParameters(BufferedWriter bw, int amount) throws IOException {
 		StringBuilder sb = new StringBuilder();
@@ -65,6 +76,8 @@ public class Query19Template extends Query18Template {
 			sb.append(cwAudience());
 			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
 			sb.append(cwFilterDateModifiedCondition());
+			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
+			sb.append(randomLimit());
 			sb.append("\n");
 			bw.write(sb.toString());
 		}

@@ -38,12 +38,25 @@ public class Query7Template extends MustacheTemplate implements SubstitutionPara
 		return String.format("FILTER(?pcCount > %d) ", ru.nextInt(1, PRIMARY_CONTENT_COUNT_MAX + 1));
 	}
 	
+	/**
+	 * A method for replacing mustache template : {{{orderBy}}}
+	 */		
+	public String orderBy() {
+		if (substitutionParameters != null) {
+			return substitutionParameters[parameterIndex++];
+		}
+		
+		return "ORDER BY DESC(?count)";
+	}
+	
 	@Override
 	public String generateSubstitutionParameters(BufferedWriter bw, int amount) throws IOException {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < amount; i++) {
 			sb.setLength(0);
 			sb.append(filterCondition());
+			sb.append(SubstitutionParametersGenerator.PARAMS_DELIMITER);
+			sb.append(orderBy());
 			sb.append("\n");
 			bw.write(sb.toString());
 		}
