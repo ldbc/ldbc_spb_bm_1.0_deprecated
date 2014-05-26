@@ -170,7 +170,7 @@ public class DataManager {
 		} catch (IOException e) {
 			//sink the exception if file doesn't exist
 			if (!suppressWarnings) {
-				System.out.println("\nWarning : Details about generated dataset were not found at location : " + filePath + " - generate data to fix that, continuing with default settings.");
+				System.out.println("\nWarning : Details about generated dataset were not found at location : " + filePath + " - generate new data to fix that, continuing with default settings.");
 			}
 		} finally {
 			try { br.close(); } catch(Exception e) {}

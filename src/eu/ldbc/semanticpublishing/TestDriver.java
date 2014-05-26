@@ -56,7 +56,8 @@ public class TestDriver {
 	private int benchmarkRunPeriodSeconds;
 	private SparqlQueryExecuteManager queryExecuteManager;
 	private final AtomicBoolean inBenchmarkState = new AtomicBoolean(false);
-	private final AtomicBoolean keepReporterAlive = new AtomicBoolean(false);
+	private final AtomicBoolean keepObserverAlive = new AtomicBoolean(false);
+	private final AtomicBoolean benchmarkResultIsValid = new AtomicBoolean(false);
 	
 	private final Configuration configuration = new Configuration();
 	private final Definitions definitions = new Definitions();
@@ -66,7 +67,7 @@ public class TestDriver {
 	private final ValidationValuesManager validationValuesManager = new ValidationValuesManager();
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(TestDriver.class.getName());
-	private final static Logger RLOGGER = LoggerFactory.getLogger(Reporter.class.getName());
+	private final static Logger RLOGGER = LoggerFactory.getLogger(BenchmarkProcessObserver.class.getName());
 	
 	public TestDriver(String[] args) throws IOException {
 		
@@ -483,15 +484,18 @@ public class TestDriver {
 				agent.start();
 			}
 
-			Thread reporterThread = new Reporter(Statistics.totalAggregateQueryStatistics.getRunsCountAtomicLong(), 
-									   		     inBenchmarkState, 
-									   		     keepReporterAlive,
-												 configuration.getInt(Configuration.EDITORIAL_AGENTS_COUNT),																				
-												 configuration.getInt(Configuration.AGGREGATION_AGENTS_COUNT), 
-												 configuration.getLong(Configuration.BENCHMARK_RUN_PERIOD_SECONDS),
-												 benchmarkByQueryRuns, 
-												 configuration.getBoolean(Configuration.VERBOSE));
-			reporterThread.start();
+			Thread observerThread = new BenchmarkProcessObserver(Statistics.totalAggregateQueryStatistics.getRunsCountAtomicLong(), 
+													   		     inBenchmarkState, 
+													   		     keepObserverAlive,
+													   		     benchmarkResultIsValid,
+													   		     configuration.getDouble(Configuration.UPDATE_RATE_THRESHOLD_REACH_TIME_PERCENT),
+													   		     configuration.getDouble(Configuration.UPDATE_RATE_THRESHOLD_OPS),
+																 configuration.getInt(Configuration.EDITORIAL_AGENTS_COUNT),																				
+																 configuration.getInt(Configuration.AGGREGATION_AGENTS_COUNT), 
+																 configuration.getLong(Configuration.BENCHMARK_RUN_PERIOD_SECONDS),
+																 benchmarkByQueryRuns, 
+																 configuration.getBoolean(Configuration.VERBOSE));
+			observerThread.start();
 			
 			if (benchmarkByQueryRuns > 0) {
 				while (Statistics.totalAggregateQueryStatistics.getRunsCount() < benchmarkByQueryRuns) {
@@ -503,7 +507,15 @@ public class TestDriver {
 			
 			inBenchmarkState.set(false);
 			
-			ThreadUtil.join(reporterThread);
+			ThreadUtil.join(observerThread);
+			
+			if (!benchmarkResultIsValid.get()) {
+				message = String.format("Warning : Benchmark results are not valid! Required query rate has not been reached, or has dropped below threshold (%.1f ops) during the benchmark run.", configuration.getDouble(Configuration.UPDATE_RATE_THRESHOLD_OPS));
+			} else {
+				message = "Benchmark result is valid!";
+			}
+			System.out.println(message);
+			LOGGER.info(message);								
 			
 			message = "Stopping the benchmark...";
 			System.out.println(message);
@@ -556,7 +568,7 @@ public class TestDriver {
 			}
 			
 			inBenchmarkState.set(true);
-			keepReporterAlive.set(true);
+			keepObserverAlive.set(true);
 			
 			if(!aggregationAgentsStarted) {
 				aggregationAgentsStarted = true;
@@ -572,15 +584,18 @@ public class TestDriver {
 				agent.start();
 			}
 			
-			Thread reporterThread = new Reporter(Statistics.totalAggregateQueryStatistics.getRunsCountAtomicLong(), 
-									   		     inBenchmarkState,
-									   		     keepReporterAlive, 
-												 configuration.getInt(Configuration.EDITORIAL_AGENTS_COUNT),																				
-												 configuration.getInt(Configuration.AGGREGATION_AGENTS_COUNT), 
-												 configuration.getLong(Configuration.BENCHMARK_RUN_PERIOD_SECONDS),
-												 benchmarkByQueryRuns, 
-												 configuration.getBoolean(Configuration.VERBOSE));
-			reporterThread.start();
+			Thread observerThread = new BenchmarkProcessObserver(Statistics.totalAggregateQueryStatistics.getRunsCountAtomicLong(), 
+													   		     inBenchmarkState,
+													   		     keepObserverAlive, 
+													   		     benchmarkResultIsValid,
+													   		     configuration.getDouble(Configuration.UPDATE_RATE_THRESHOLD_REACH_TIME_PERCENT),
+													   		     0.0,									   		     
+																 configuration.getInt(Configuration.EDITORIAL_AGENTS_COUNT),																				
+																 configuration.getInt(Configuration.AGGREGATION_AGENTS_COUNT), 
+																 configuration.getLong(Configuration.BENCHMARK_RUN_PERIOD_SECONDS),
+																 benchmarkByQueryRuns, 
+																 configuration.getBoolean(Configuration.VERBOSE));
+			observerThread.start();
 			
 			String[] milestoneSubstitutionParameters = null;
 			ReplicationAndBackupHelper replicationHelper = new ReplicationAndBackupHelper(queryExecuteManager, randomGenerator, configuration, definitions, mustacheTemplatesHolder);
@@ -640,15 +655,23 @@ public class TestDriver {
 			System.out.println(message);
 			LOGGER.info(message);
 
-			keepReporterAlive.set(false);
+			keepObserverAlive.set(false);
 			
 			message = "Stopping the benchmark...";
 			System.out.println(message);
 			LOGGER.info(message);
 			
-			ThreadUtil.join(reporterThread);
+			ThreadUtil.join(observerThread);
 			
-			message = "Shutting down the database (system_shutdown)...";
+			if (!benchmarkResultIsValid.get()) {
+				message = String.format("Warning : Benchmark results are not valid! Required query rate has not been reached, or has dropped below threshold (%.1f ops) during the benchmark run.", configuration.getDouble(Configuration.UPDATE_RATE_THRESHOLD_OPS));
+			} else {
+				message = "Benchmark result is valid!";
+			}
+			System.out.println(message);
+			LOGGER.info(message);	
+			
+			message = "Verifying milestone points...\nShutting down the database (system_shutdown)...";
 			System.out.println(message);
 			LOGGER.info(message);
 			ShellUtil.execute(StringUtil.normalizePath(configuration.getString(Configuration.ENTERPRISE_FEATURES_PATH)) + File.separator + "scripts", ReplicationAndBackupHelper.SYSTEM_SHUTDOWN + (FileUtils.isWindowsOS() ? ".bat" : ".sh"), true);

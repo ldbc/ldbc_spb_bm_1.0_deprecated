@@ -70,7 +70,7 @@ public class LoggingUtil {
 		benchmarkResultsFileAppander.setMaxBackupIndex(MAX_LOG_FILE_BACKUP_INDEX);
 		benchmarkResultsFileAppander.activateOptions();
 		
-		Logger.getLogger("eu.ldbc.semanticpublishing.Reporter").addAppender(benchmarkResultsFileAppander);
+		Logger.getLogger("eu.ldbc.semanticpublishing.BenchmarkProcessObserver").addAppender(benchmarkResultsFileAppander);
 		
 		//Console Appender for Sesame
 		ConsoleAppender sesameConsoleAppender = new ConsoleAppender();

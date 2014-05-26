@@ -58,6 +58,8 @@ public class Configuration {
 	public static final String BENCHMARK_BY_QUERY_RUNS = "benchmarkByQueryRuns";
 	public static final String RUN_BENCHMARK_ONLINE_REPlICATION_AND_BACKUP = "runBenchmarkOnlineReplicationAndBackup";
 	public static final String ENTERPRISE_FEATURES_PATH = "enterpriseFeaturesPath";
+	public static final String UPDATE_RATE_THRESHOLD_OPS = "updateRateThresholdOps";
+	public static final String UPDATE_RATE_THRESHOLD_REACH_TIME_PERCENT = "updateRateThresholdReachTimePercent";
 	
 	/**
 	 * Initialise and set default values for parameters that make sense.
@@ -102,6 +104,8 @@ public class Configuration {
 		properties.setProperty(BENCHMARK_BY_QUERY_RUNS, "0");
 		properties.setProperty(RUN_BENCHMARK_ONLINE_REPlICATION_AND_BACKUP, "false");
 		properties.setProperty(ENTERPRISE_FEATURES_PATH, "./data/enterprise");
+		properties.setProperty(UPDATE_RATE_THRESHOLD_OPS, "0.0");
+		properties.setProperty(UPDATE_RATE_THRESHOLD_REACH_TIME_PERCENT, "0.1");
 	}
 	
 	/**
@@ -197,6 +201,22 @@ public class Configuration {
 			throw new IllegalStateException( "Illegal value for long integer configuration parameter: " + key);
 		}
 	}
+	
+	/**
+	 * Read a configuration parameter's value as a double
+	 * @param key
+	 * @return
+	 */
+	public double getDouble(String key) {
+		String value = getString(key);
+		
+		try {
+			return Double.parseDouble(value);
+		}
+		catch( NumberFormatException e ) {
+			throw new IllegalStateException( "Illegal value for double configuration parameter: " + key);
+		}
+	}	
 	
 	private final Properties properties = new Properties();
 	

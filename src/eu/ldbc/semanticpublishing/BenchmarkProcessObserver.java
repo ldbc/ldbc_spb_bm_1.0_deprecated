@@ -12,27 +12,39 @@ import eu.ldbc.semanticpublishing.statistics.Statistics;
  * This class is used to produce a result summary for the benchmark. The thread is scheduled to start at a fixed
  * rate of one second. Results are printed to console and log file.
  */
-public class Reporter extends Thread {
+public class BenchmarkProcessObserver extends Thread {
 	private final AtomicLong totalQueryExecutions;
 	private final AtomicBoolean benchmarkState;
 	private final AtomicBoolean keepAlive;
+	private final AtomicBoolean benchmarkResultIsValid;
+	private double requiredUpdateRateThresholdOps;
+	private double updateRateReachTime;
 	private boolean verbose;
 	private long seconds;
+	private long runPeriodSeconds;
 	private long benchmarkByQueryRuns;
+	private int requiredUpdateRatePassesCount;
 	private int aggregationAgentsCount;
 	private int editorialAgentsCount;
+	private int initializedCount;
 	
-	private final static Logger LOGGER = LoggerFactory.getLogger(Reporter.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(BenchmarkProcessObserver.class.getName());
 	
-	public Reporter(AtomicLong totalQueryExecutions, AtomicBoolean benchmarkState, AtomicBoolean keepAlive, int editorialAgentsCount, int aggregationAgentsCount, long runPeriodSeconds, long benchmarkByQueryRuns, boolean verbose) {
+	public BenchmarkProcessObserver(AtomicLong totalQueryExecutions, AtomicBoolean benchmarkState, AtomicBoolean keepAlive, AtomicBoolean benchmarkResultIsValid, double updateQueryRateFirstReachTimePercent, double requiredUpdateQueriesRateThresholdOps, int editorialAgentsCount, int aggregationAgentsCount, long runPeriodSeconds, long benchmarkByQueryRuns, boolean verbose) {
 		this.totalQueryExecutions = totalQueryExecutions;
 		this.benchmarkState = benchmarkState;
 		this.keepAlive = keepAlive;
+		this.benchmarkResultIsValid = benchmarkResultIsValid;
+		this.updateRateReachTime = updateQueryRateFirstReachTimePercent;
 		this.seconds = 0;
+		this.runPeriodSeconds = runPeriodSeconds;
 		this.benchmarkByQueryRuns = benchmarkByQueryRuns;
 		this.verbose = verbose;
 		this.aggregationAgentsCount = aggregationAgentsCount;
 		this.editorialAgentsCount = editorialAgentsCount;
+		this.requiredUpdateRateThresholdOps = requiredUpdateQueriesRateThresholdOps;
+		this.requiredUpdateRatePassesCount = 0;
+		this.initializedCount = 0;
 	}
 	
 	/* (non-Javadoc)
@@ -46,7 +58,7 @@ public class Reporter extends Thread {
 			while (benchmarkState.get() || keepAlive.get()) {
 				seconds++;
 				Thread.sleep(1000);
-				displayResultsSummary((benchmarkByQueryRuns == 0));
+				collectAndShowResults((benchmarkByQueryRuns == 0));
 			}
 		} catch (InterruptedException ie) {
 		}
@@ -56,7 +68,7 @@ public class Reporter extends Thread {
 	 * Displays to console and writes to log file a result summary of the benchmark.
 	 * Editorial and Aggregation operations per second.
 	 */
-	private void displayResultsSummary(boolean secondsOrExecutions) {
+	private void collectAndShowResults(boolean secondsOrExecutions) {
 		StringBuilder sb = new StringBuilder();
 		
 		long insertOpsCount = Statistics.insertCreativeWorksQueryStatistics.getRunsCount();
@@ -96,6 +108,10 @@ public class Reporter extends Thread {
 		}
 
 		double averageOperationsPerSecond = (double)(insertOpsCount + updateOpsCount + deleteOpsCount) / (double)seconds;
+		
+		//keep track of update rate ops
+		updateQueriesRateThresoldCheck(averageOperationsPerSecond);
+		
 		sb.append(String.format("\t\t%.4f average operations per second\n", averageOperationsPerSecond));
 
 		sb.append("\n");
@@ -122,7 +138,75 @@ public class Reporter extends Thread {
 		double averageQueriesPerSecond = (double)totalAggregateOpsCount / (double)seconds;
 		sb.append(String.format("\t\t%.4f average queries per second\n", averageQueriesPerSecond));	
 		
+		String message = "";
+		
+		//in case using requiredUpdateRateThresholdOps option, display a message that benchmark is not 
+		if (requiredUpdateRateThresholdOps > 0.0) {
+			if (!benchmarkResultIsValid.get()) {
+				if ((seconds <= (int)(runPeriodSeconds * updateRateReachTime)) && requiredUpdateRatePassesCount <= 1) {
+					message = String.format("Waiting for update operations rate (%.1f) to reach required threshold of %.1f ops in %d second(s)", averageOperationsPerSecond, requiredUpdateRateThresholdOps, ((int)(runPeriodSeconds * updateRateReachTime) - seconds));
+					LOGGER.info(message);
+					System.out.println(message);
+				} else {
+					message = String.format("Warning : update operations rate has not reached or has dropped below required threshold of %.1f ops at second : %d, benchmark results are not valid!", requiredUpdateRateThresholdOps, (int)(runPeriodSeconds * updateRateReachTime));
+					LOGGER.warn(message);
+					System.out.println(message);
+					System.exit(0);
+				}				
+				
+				return;
+			}
+		}
+		
 		LOGGER.info(sb.toString());
 		System.out.println(sb.toString());
 	}	
+	
+	private void updateQueriesRateThresoldCheck(double averageOperationsPerSecond) {
+		
+		if (requiredUpdateRateThresholdOps <= 0.0 && initializedCount >= 0) {
+			//skip setting same values for AtomicBoolean variable : benchmarkResultIsValid, as it is read from other
+			if (initializedCount > 0) {
+				return;
+			}
+			//default value for requiredUpdateRateThresholdOps is 0.0 (or if explicitly set in properties file to 0.0), then 
+			//disable the UpdateQueriesRateThreshold feature and consider results from benchmark always as valid 
+			benchmarkResultIsValid.set(true);
+			initializedCount++;
+			return;
+		}
+		
+		//the time frame during which update rate should be reached (and kept during the whole benchmark run)
+		if (seconds < (runPeriodSeconds * updateRateReachTime)) {
+			String message = "";
+			//initial reaching of the threshold
+			if ((averageOperationsPerSecond >= requiredUpdateRateThresholdOps) && (requiredUpdateRatePassesCount == 0)) {
+				message = String.format("Threshold %.1f ops (current update operations rate value : %.1f) has been reached reached at second %d ", requiredUpdateRateThresholdOps, averageOperationsPerSecond, seconds);
+				requiredUpdateRatePassesCount++;
+				benchmarkResultIsValid.set(true);
+				LOGGER.info(message);
+				System.out.println(message);
+			}
+			
+			//averageOperationsPerSecond are dropping below the threshold - in which case the benchmark result is considered invalid
+			if ((averageOperationsPerSecond < requiredUpdateRateThresholdOps) && (requiredUpdateRatePassesCount == 1)) {
+				message = String.format("Warning : Current update operations rate : %.1f ops has dropped below required threshold %.1f at second : %d", averageOperationsPerSecond, requiredUpdateRateThresholdOps, seconds);
+				requiredUpdateRatePassesCount++;
+				benchmarkResultIsValid.set(false);
+				LOGGER.warn(message);
+				System.out.println(message);
+			}
+		//rest of the benchmark run time
+		} else {
+			//requiredUpdateRatePassedCount should be equal to 1 if threshold was reached during the first time frame, and hasn't dropped after reaching it
+			if (requiredUpdateRatePassesCount != 1) {
+				benchmarkResultIsValid.set(false);
+				return;
+			}
+			
+			if (averageOperationsPerSecond < requiredUpdateRateThresholdOps) {
+				benchmarkResultIsValid.set(false);
+			}
+		}
+	}
 }
