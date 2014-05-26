@@ -137,11 +137,10 @@ public class BenchmarkProcessObserver extends Thread {
 		
 		double averageQueriesPerSecond = (double)totalAggregateOpsCount / (double)seconds;
 		sb.append(String.format("\t\t%.4f average queries per second\n", averageQueriesPerSecond));	
-		
-		String message = "";
-		
+				
 		//in case using requiredUpdateRateThresholdOps option, display a message that benchmark is not 
 		if (requiredUpdateRateThresholdOps > 0.0) {
+			String message = "";
 			if (!benchmarkResultIsValid.get()) {
 				if ((seconds <= (int)(runPeriodSeconds * updateRateReachTime)) && requiredUpdateRatePassesCount <= 1) {
 					message = String.format("Waiting for update operations rate (%.1f) to reach required threshold of %.1f ops in %d second(s)", averageOperationsPerSecond, requiredUpdateRateThresholdOps, ((int)(runPeriodSeconds * updateRateReachTime) - seconds));
@@ -153,7 +152,6 @@ public class BenchmarkProcessObserver extends Thread {
 					System.out.println(message);
 					System.exit(0);
 				}				
-				
 				return;
 			}
 		}
