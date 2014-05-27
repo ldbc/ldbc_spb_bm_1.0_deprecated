@@ -1,2 +1,2 @@
-Important : before compiling with build.xml, make sure that all modified or new templates are first added to the corresponding .zip file.
-            Build process will extract contents of base.zip or full.zip and will override your changes!!!
+Important : before compiling with build.xml, make sure that all modified or new templates are first added to the corresponding base.zip or full.zip files - for 
+			base query mix or full query mix. Build process will extract contents of base.zip or full.zip and will override your changes!!!
