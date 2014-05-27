@@ -20,7 +20,7 @@
 	
 	<target name="clean">
 		<delete dir="${dir.bin}" />
-		<delete file="${dir.dist}/${jar.file.name}*.jar" />
+		<delete dir="${dir.dist}" />
 	</target>
 
 	<target name="compile" depends="clean">
@@ -200,9 +200,7 @@
 		</jar>
 		<antcall target="copy-config-files-to-dist"/>
 		<antcall target="unzip-all-compressed-datasets"/>
-		<antcall target="zip-reference-knowledge-and-queries">
-			<param name="query_mix" value="base"/>
-		</antcall>
+		<antcall target="move-reference-knowledge-and-queries"/>
 		<delete dir="./data"/>
 		<delete file="./definitions.properties" />
 	</target>
@@ -221,9 +219,7 @@
 		</jar>
 		<antcall target="copy-config-files-to-dist"/>
 		<antcall target="unzip-all-compressed-datasets"/>
-		<antcall target="zip-reference-knowledge-and-queries">
-			<param name="query_mix" value="base"/>
-		</antcall>	
+		<antcall target="move-reference-knowledge-and-queries"/>		
 		<delete dir="./data"/>
 		<delete file="./definitions.properties" />
 	</target>	
@@ -242,9 +238,7 @@
 		</jar>
 		<antcall target="copy-config-files-to-dist"/>
 		<antcall target="unzip-all-compressed-datasets"/>
-		<antcall target="zip-reference-knowledge-and-queries">
-			<param name="query_mix" value="full"/>
-		</antcall>		
+		<antcall target="move-reference-knowledge-and-queries"/>		
 		<delete dir="./data"/>
 		<delete file="./definitions.properties" />
 	</target>
@@ -263,9 +257,7 @@
 		</jar>
 		<antcall target="copy-config-files-to-dist"/>
 		<antcall target="unzip-all-compressed-datasets"/>
-		<antcall target="zip-reference-knowledge-and-queries">
-			<param name="query_mix" value="full"/>
-		</antcall>		
+		<antcall target="move-reference-knowledge-and-queries"/>
 		<delete dir="./data"/>
 		<delete file="./definitions.properties" />
 	</target>	
@@ -275,6 +267,15 @@
 		<zip destfile="${dir.dist}/${ref.knowledge.and.queries.archive.name}-${query_mix}.zip">
 			<zipfileset dir="." includes="data/**" excludes="data/datasets/*.zip"/>
 		</zip>
+	</target>
+	
+	<!-- Move reference knowledge (ontologies and reference datasets) to distribution folder -->
+	<target name="move-reference-knowledge-and-queries">
+		<move todir="${dir.dist}/data">
+			<fileset dir="data/">
+				<exclude name="data/datasets/*.zip"/>
+			</fileset>
+		</move>
 	</target>
 	
 	<!-- UnZip all compressed datasets -->
@@ -327,10 +328,10 @@
   </target>
 	
 	<target name="deploy">
-		<copy todir="${dir.deploy}">
+		<move todir="${dir.deploy}">
 			<fileset dir="${dir.dist}" includes="*.jar"/>
 			<fileset dir="${dir.dist}" includes="*.zip"/>
-		</copy>
+		</move>
 	</target>
 	
 	<target name="show-usage">

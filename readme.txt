@@ -5,7 +5,7 @@ Semantic Publishing Benchmark
 Description : 
 ------------------------------------------------------------------------------
 
-The benchmark driver measures the performance of CRUD operations of a SPARQL endpoint, by starting a number of concurrently running agents (editorial and aggregation) 
+Semantic Publishing Benchmark benchmark driver measures the performance of CRUD operations of a SPARQL endpoint, by starting a number of concurrently running agents (editorial and aggregation) 
 which execute a series of INSERT/UPDATE/DELETE (for editorial agents) and CONSTRUCT/SELECT (for aggregation agents) queries on a SPARQL endpoint.
 
 
@@ -13,16 +13,16 @@ which execute a series of INSERT/UPDATE/DELETE (for editorial agents) and CONSTR
 Distribution : 
 ------------------------------------------------------------------------------
 
-The benchmark test driver is distributed as a jar file : semantic_publishing_benchmark-*.jar accompanied by a datasets archive file : semantic_publishing_benchmark_reference_knowledge_data*.zip
-The datasets file contains ontologies and reference datasets (required by the data-generator). Required set of configuration files : test.properties and definitions.properties (can also be found in the jar file) 
+The benchmark test driver is distributed as a jar file : semantic_publishing_benchmark-*.jar accompanied by reference datasets and ontologies.
+Required set of configuration files are : test.properties and definitions.properties (can be found in the distribution folder, or semantic_publishing_benchmark-*jar file) 
 
 
 
 How to build the benchmark driver :
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
-  Use the Ant with build.xml script. Default Ant task builds the jar and saves it to the 'dist' folder.
-  Currently two versions of the Benchmark exist : a base version - containing a reduced query-mix with 9 queries and advanced version with 26 queries,
+  Use the Ant with build.xml script. Default Ant task builds the benchmark and saves it to the 'dist' folder.
+  Currently two versions of the Benchmark exist : a base version - containing a reduced query-mix with 9 queries and advanced version with 25 queries,
   use appropriate ant-tasks to build them, e.g.
   > ant build-base-querymix-standard //builds the standard benchmark driver compliant to SPARQL 1.1
   > ant build-full-querymix-standard //builds the standard benchmark driver compliant to SPARQL 1.1 with extended query mix
@@ -34,12 +34,10 @@ How to build the benchmark driver :
 How to install the benchmark driver :
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
-Save the distribution jar and reference knowledge data files to a folder of choice, then extract from both following items :
-    - folder data/ from reference knowledge data file - contains required ontologies, knowledge reference data and query templates
-    - additional reference datasets (see project ldbc_semanticpub_bm_additional_datasets) - all files of type .ttl and save to data/datasets folder    
-    - file test.properties - configuration parameters for running the benchmark, found in distribution folder (also in the benchmark jar file)
-    - file definitions.properties - configuration parameters on the benchmark generator, found in distribution folder (also in the benchmark jar file)
+All necessary files required to run the benchmark are saved to the 'dist' folder. You can run the benchmark from it or move it to a new location.
 
+Optionally you can install the additinal reference datasets :
+    - download project ldbc_semanticpub_bm_additional_datasets from https://github.com/ldbc/ldbc_semanticpub_bm_additional_datasets and unzip all files to folder data/datasets    
 
 
 Benchmark Phases : 
@@ -48,7 +46,6 @@ Benchmark Phases :
   * The Semantic Publishing Benchmark can be configured to run through these phases ordered by the sequence they should be run : 
 
     - loadOntologies        		          		: load ontologies (from the 'data/ontologies' folder) into database
-    - adjustRefDatasetsSizes    	        		: optional phase, if reference dataset files exist with the extension '.adjustablettl', then for each, a new .ttl file is created with adjusted size depending on the selected size of data to be generated (parameter 'datasetSize' in test.properties file).
     - loadDatasets          		          		: load the reference datasets (from the 'data/datasets' folder) into database
     - generateCreativeWorks 		          		: using uploaded data from previous two phases, generates Creative Works and saves them to files. Generated files need to be loaded into database manually (or automatically if file format is n-quads)
                                               			Note: Requires phases : loadOntologies, loadDatasets.
@@ -82,47 +79,7 @@ How to run the benchmark :
     - Enable context indexing if available
     - Enable geo-spatial indexing if available
   
-  * Configure the benchmark driver
-  
-      Edit file : test.properties, set values for :
-  
-    - ontologiesPath                    (ontologies path, e.g. "./data/ontologies")
-    - referenceDatasetsPath             (reference dataset path, e.g. "./data/datasets")
-    - creativeWorksPath                 (generated creative works path, e.g. "./data/generated")
-    - queriesPath                       (queries path, e.g. "./data/sparql")
-    - definitionsPath                   (definitions path, e.g. "./definitions.properties")
-    - endpointURL                       (URL of endpoint, e.g. "http://localhost:8080/openrdf-sesame/repositories/ldbc1")
-    - endpointUpdateURL                 (URL of endpoint for executing update queries, e.g. "http://localhost:8080/openrdf-sesame/repositories/ldbc1/statements")
-    - datasetSize                       (target dataset size in triples, number of triples that will be generated by the data-generator)
-    - allowSizeAdjustmentsOnDataModels  (allows the data generator to adjust the amount of correlations, clusterings and randomly generated models (Creative Works) in relation to the 'datasetSize', thus keeping a ratio of 1/3 for each in generated data. Default value is true.)
-    - validationPath                    (location where generated and reference data related to validation phase is located)
-    - generatedTriplesPerFile           (generated triples per file)
-    - queryTimeoutSeconds               (query timeout)
-    - systemQueryTimeoutSeconds			    (system queries timeout, default value 1h)
-    - warmupPeriodSeconds               (warmup period)
-    - benchmarkRunPeriodSeconds         (benchmark run period)
-    - generateCreativeWorksFormat       (available options: TriG, TriX, N-Triples, N-Quads, N3, RDF/XML, RDF/JSON, Turtle)
-    - aggregationAgents                 (aggregation agents count which will execute mix of aggregation queries concurrently. Query mix can be configured by changing 
-                                         parameter aggregationOperationsAllocation in definitions.properties file)
-    - editorialAgents                   (editorial agents count which will execute a mix of editorial queries concurrently. Query mix can be configured by changing
-                                         parameter editorialOperationsAllocation in definitions.properties file)
-    - dataGeneratorWorkers              (number of simultaneously working data generator threads)
-    - generatorRandomSeed				        (use it to set the random set for the data generator (default value is 0). e.g. in cases when several benchmark drivers are started in separate
-                                         processes to generate data - to be used with creativeWorkNextId parameter)
-    - creativeWorkNextId                (set the next ID for the data generator of Creative Works. When running the benchmark driver in separate processes, to guarantee that generated
-                                         creative works will not overlap their IDs
-                                         e.g. for generating 50M dataset, expected number of Creative Works is ~2.5M and next ID should start at that value)
-    - creativeWorksInfo                 (file name, that will be saved in creativeWorksPath and will contain system info about the generated dataset, e.g. interesting entities, etc.)
-    - querySubstitutionParameters       (number substitution parameters that will be generated for each query)
-    - benchmarkByQueryRuns				(sets the amount of aggregate queries which the benchmark phase will execute. If value is greater than zero then parameter 'benchmarkRunPeriodSeconds' is ignored. e.g. if set to 100, benchmark will measure the time to execute 100 aggregate operations.)
-    - updateRateThresholdOps        	(defines the update rate of operations per second which should be reached during the first 15% of benchmark time and should be kept during the rest of the benchmark run in order to have a valid result. If set to zero, update rate threshold is ignored.
-    									e.g. if required update rate is set to 6.3 update operations per second, then benchmark will consider that value during its benchmark run and will report invalid results if that rate drops below the threshold)
-	- updateRateThresholdReachTimePercent (defines the time frame during which the defined value in property 'updateRateThresholdOps' should be reached. Default value is 0.1 (10%)
-										e.g. if set to 0.1 (i.e. 10%) then the update rate defined in 'updateRateThresholdOps' should be reached during the first 10% of the benchmark run time, if not reached, the result is considered invalid)    									
-                                         
-                                         Note : For optimal results the sum of editorial and aggregation agents should be set to be equal to the number of CPU cores.
-	
-      (Configure the benchmark phases. One, several or all phases can be enabled to run in a sequence. Running the first three phases is mandatory for the benchmark )
+  (Configure the benchmark phases. One, several or all phases can be enabled to run in a sequence. Running the first three phases is mandatory for the benchmark )
       
     - loadOntologies                    (populate the database with required ontologies, it is possible to manually upload the data stored in all .ttl files at /data/ontologies)
     - loadReferenceDatasets             (populate the database with required reference datasets, it is possible to manually upload the data stored in all .ttl files at /data/datasets)
@@ -137,7 +94,47 @@ How to run the benchmark :
     - clearDatabase                     (erases all triples from database)
 	 
       Sample of a test.properties file can be found in the distribution jar file.
-
+  
+  
+  * Configure the benchmark driver
+  
+      Edit file : test.properties, All configuration parameters are stored in properties file (test.properties). Most have default values that are ready to use, others however require updating.
+  
+    - ontologiesPath                    (path to ontologies from reference knowledge, default: ./data/ontologies)
+    - referenceDatasetsPath             (path to data from reference knowledge, default: ./data/datasets)
+    - creativeWorksPath                 (path to generated data, default: ./data/generated)
+    - queriesPath                       (path to query templates, default: ./data/sparql)
+    - definitionsPath                   (path to definitions.properties configuration file, default: ./definitions.properties)
+    - endpointURL                       (URL of SPARQL endpoint provided by the RDF database, *requires updating*)
+    - endpointUpdateURL                 (URL of endpoint for executing update queries, *requires updating*)
+    - datasetSize                       (amount of generated data (triples), *requires updating*)
+    - adjustRefDatasetsSizes    	    (optional, if reference dataset files exist with the extension '.adjustablettl', then for each, a new .ttl file is created with adjusted size depending on the selected size of data to be generated (parameter 'datasetSize'), default value is true)    
+    - allowSizeAdjustmentsOnDataModels  (allows the data generator to adjust the amount of correlations, clusterings and randomly generated models (Creative Works) in relation to the 'datasetSize', thus keeping a ratio of 1/3 for each in generated data. Default value is true  * ***generatedTriplesPerFile*** - number of triples per generated file. Used to split the data generation into a number of files)
+    - queryTimeoutSeconds               (query timeout in seconds, default value is 300 s)
+    - systemQueryTimeoutSeconds			(system queries timeout, default value 1h)
+    - validationPath                    (location where generated and reference data related to validation phase is located, can use default value)
+    - generatedTriplesPerFile           (generated triples per file, sets the number of triples per file)
+    - warmupPeriodSeconds               (warmup period, *requires updating*)
+    - benchmarkRunPeriodSeconds         (benchmark run period, *requires updating*)
+    - generateCreativeWorksFormat       (serialization format for generated data. Available options : TriG, TriX, N-Triples, N-Quads, N3, RDF/XML, RDF/JSON, Turtle. Use exact names. Required are context aware serialization formats such as: N-Quads, TriX, TriG)
+    - aggregationAgents                 (number of aggregation agents that will execute mix of aggregation queries simultaneously, *requires updating*)
+    - editorialAgents                   (number of editorial agents that will execute a mix of editorial queries simultaneously, *requires updating*)
+    - dataGeneratorWorkers              (number of worker threads used by the data generator to produce data, *requires updating*)
+    - generatorRandomSeed				(use it to set the random set for the data generator (default value is 0). e.g. in cases when several benchmark drivers are started in separate
+                                         processes to generate data - to be used with creativeWorkNextId parameter)
+    - creativeWorkNextId                (set the next ID for the data generator of Creative Works. When running the benchmark driver in separate processes, to guarantee that generated
+                                         creative works will not overlap their IDs
+                                         e.g. for generating 50M dataset, expected number of Creative Works is ~2.5M and next ID should start at that value)
+    - creativeWorksInfo                 (name of file that contains system info about the generated dataset, e.g. interesting entities, etc. (will be saved in 'creativeWorksPath'))
+    - querySubstitutionParameters       (number substitution parameters that will be generated for each query, default value is 100000)
+    - benchmarkByQueryRuns				(sets the amount of aggregate queries which the benchmark phase will execute. If value is greater than zero then parameter 'benchmarkRunPeriodSeconds' is ignored. e.g. if set to 100, benchmark will measure the time to execute 100 aggregate operations.)
+    - updateRateThresholdOps        	(defines the update rate of operations per second which should be reached during the first 15% of benchmark time and should be kept during the rest of the benchmark run in order to have a valid result. If set to zero, update rate threshold is ignored.
+    									e.g. if required update rate is set to 6.3 update operations per second, then benchmark will consider that value during its benchmark run and will report invalid results if that rate drops below the threshold)
+	- updateRateThresholdReachTimePercent (defines the time frame during which the defined value in property 'updateRateThresholdOps' should be reached. Default value is 0.1 (10%)
+										e.g. if set to 0.1 (i.e. 10%) then the update rate defined in 'updateRateThresholdOps' should be reached during the first 10% of the benchmark run time, if not reached, the result is considered invalid)    									
+                                         
+                                         Note : For optimal results the sum of editorial and aggregation agents should be set to be equal to the number of CPU cores.
+	
   * definitions.properties - currently pre-configured and no need to modify. Can be edited to tune various allocations, used in -generateCreativeWorks and -runBenchmark phases.
   
     - aboutsAllocations                 (Defines allocation amount of About tags in Creative Works)
