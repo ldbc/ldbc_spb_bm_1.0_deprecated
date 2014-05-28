@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryExecuteManager;
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection.QueryType;
-import eu.ldbc.semanticpublishing.resultanalyzers.saxparsers.SAXCreativeWorksCountTransformer;
+import eu.ldbc.semanticpublishing.resultanalyzers.sax.SAXCreativeWorksCountTransformer;
 import eu.ldbc.semanticpublishing.templates.MustacheTemplatesHolder;
 
 /**

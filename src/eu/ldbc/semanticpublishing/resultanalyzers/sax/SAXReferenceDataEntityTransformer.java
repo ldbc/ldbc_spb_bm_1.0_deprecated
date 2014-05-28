@@ -1,4 +1,4 @@
-package eu.ldbc.semanticpublishing.resultanalyzers.saxparsers;
+package eu.ldbc.semanticpublishing.resultanalyzers.sax;
 
 import java.io.IOException;
 import java.io.InputStream;

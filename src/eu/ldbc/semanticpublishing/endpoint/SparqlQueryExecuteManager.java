@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection.QueryType;
-import eu.ldbc.semanticpublishing.resultanalyzers.saxparsers.SAXResultTransformer;
+import eu.ldbc.semanticpublishing.resultanalyzers.sax.SAXResultTransformer;
 
 /**
  * The class for handling a SPARQL query execution.

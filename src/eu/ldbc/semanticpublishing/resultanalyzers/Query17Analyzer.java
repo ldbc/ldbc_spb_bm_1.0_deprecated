@@ -5,7 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import eu.ldbc.semanticpublishing.refdataset.model.Entity;
-import eu.ldbc.semanticpublishing.resultanalyzers.saxparsers.SAXQuery17TemplateTransformer;
+import eu.ldbc.semanticpublishing.resultanalyzers.sax.SAXQuery17TemplateTransformer;
 
 /**
  * A class used to extract cwork uris, geonamesids, lat and long properties from a query17.txt result.

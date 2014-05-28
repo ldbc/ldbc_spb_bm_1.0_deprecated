@@ -1,9 +1,11 @@
 package eu.ldbc.semanticpublishing.validation;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -18,6 +20,8 @@ import eu.ldbc.semanticpublishing.endpoint.SparqlQueryExecuteManager;
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection.QueryType;
 import eu.ldbc.semanticpublishing.properties.Configuration;
 import eu.ldbc.semanticpublishing.properties.Definitions;
+import eu.ldbc.semanticpublishing.resultanalyzers.sax.SPARQLResultStatementsCounter;
+import eu.ldbc.semanticpublishing.resultanalyzers.sesame.RDFXMLResultStatementsCounter;
 import eu.ldbc.semanticpublishing.statistics.Statistics;
 import eu.ldbc.semanticpublishing.substitutionparameters.SubstitutionParametersGenerator;
 import eu.ldbc.semanticpublishing.templates.MustacheTemplate;
@@ -33,6 +37,8 @@ public class AggregateOperationsValidator extends Validator {
 	private HashMap<String, String> aggregateQueryTemplates;
 	private Configuration configuration;
 	private Definitions definitions;
+	private RDFXMLResultStatementsCounter rdfxmlResultStatementsCounter;
+	private SPARQLResultStatementsCounter sparqlResultStatementsCounter;
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(EditorialAgent.class.getName());
 	private final static Logger BRIEF_LOGGER = LoggerFactory.getLogger(TestDriver.class.getName());	
@@ -46,6 +52,8 @@ public class AggregateOperationsValidator extends Validator {
 		this.aggregateQueryTemplates = aggregateQueryTemplates;
 		this.configuration = configuration;
 		this.definitions = definitions;
+		this.rdfxmlResultStatementsCounter = RDFXMLResultStatementsCounter.getInstance();
+		this.sparqlResultStatementsCounter = SPARQLResultStatementsCounter.getInstance();		
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -79,12 +87,28 @@ public class AggregateOperationsValidator extends Validator {
 			
 			queryResult = queryExecuteManager.executeQuery(connection, queryName, queryString, queryType, false, true);			
 
-			BRIEF_LOGGER.info(String.format("Query [%s] executed, iteration %d", queryName, (i + 1)));
-			LOGGER.info("\n*** Query [" + queryName + "], iteration " + (i + 1) + "\n" + queryString + "\n---------------------------------------------\n*** Result for query [" + queryName + "]" + " : \n" + "Length : " + queryResult.length() + "\n" + queryResult + "\n\n");
-	
-			System.out.println(String.format("\tQuery %-1d : ", (i + 1)));
-			int errorsForQuery = validateAggregate(queryResult, "AGGREGATE", (i + 1), validationValues.getValidationResultsList(), false);
-			System.out.print(String.format("\t\t%d errors found in %d expected validation results\n", errorsForQuery, validationValues.getValidationResultsList().size()));
+			long resultsCount = 0;
+			InputStream iStream = null;
+					
+			try {
+				iStream = new ByteArrayInputStream(queryResult.getBytes("UTF-8"));
+				
+				if (queryType == QueryType.CONSTRUCT || queryType == QueryType.DESCRIBE) {
+					resultsCount = rdfxmlResultStatementsCounter.getStatementsCount(iStream);
+				} else {
+					resultsCount = sparqlResultStatementsCounter.getStatementsCount(iStream);
+				}
+			
+				BRIEF_LOGGER.info(String.format("Query [%s] executed, iteration %d, results %d", queryName, (i + 1), resultsCount));
+				LOGGER.info("\n*** Query [" + queryName + "], iteration " + (i + 1) + ", results " + resultsCount + "\n" + queryString + "\n---------------------------------------------\n*** Result for query [" + queryName + "]" + " : \n" + "Length : " + queryResult.length() + "\n" + queryResult + "\n\n");
+		
+				System.out.println(String.format("\tQuery %-1d : ", (i + 1)));
+				int errorsForQuery = validateAggregate(queryResult, "AGGREGATE", (i + 1), validationValues.getValidationResultsList(), false);
+				System.out.print(String.format("\t\t%d errors found in %d expected validation results\n", errorsForQuery, validationValues.getValidationResultsList().size()));
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}			
 		}
 	}
 	

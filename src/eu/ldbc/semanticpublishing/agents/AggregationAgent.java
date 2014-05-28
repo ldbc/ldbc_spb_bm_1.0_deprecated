@@ -1,6 +1,9 @@
 package eu.ldbc.semanticpublishing.agents;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -19,6 +22,8 @@ import eu.ldbc.semanticpublishing.resultanalyzers.Query17Analyzer;
 import eu.ldbc.semanticpublishing.resultanalyzers.Query18Analyzer;
 import eu.ldbc.semanticpublishing.resultanalyzers.Query21Analyzer;
 import eu.ldbc.semanticpublishing.resultanalyzers.Query22Analyzer;
+import eu.ldbc.semanticpublishing.resultanalyzers.sax.SPARQLResultStatementsCounter;
+import eu.ldbc.semanticpublishing.resultanalyzers.sesame.RDFXMLResultStatementsCounter;
 import eu.ldbc.semanticpublishing.statistics.Statistics;
 import eu.ldbc.semanticpublishing.templates.MustacheTemplate;
 import eu.ldbc.semanticpublishing.templates.aggregation.*;
@@ -36,6 +41,8 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 	private SparqlQueryConnection connection;
 	private Definitions definitions;
 	private SubstitutionQueryParametersManager substitutionQueryParametersMngr;
+	private RDFXMLResultStatementsCounter rdfxmlResultStatementsCounter;
+	private SPARQLResultStatementsCounter sparqlResultStatementsCounter;
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(AggregationAgent.class.getName());
 	private final static Logger BRIEF_LOGGER = LoggerFactory.getLogger(TestDriver.class.getName());
@@ -51,6 +58,8 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 		this.connection = new SparqlQueryConnection(queryExecuteManager.getEndpointUrl(), queryExecuteManager.getEndpointUpdateUrl(), queryExecuteManager.getTimeoutMilliseconds(), true);
 		this.definitions = definitions;
 		this.substitutionQueryParametersMngr = substitutionQueryParametersMngr;
+		this.rdfxmlResultStatementsCounter = RDFXMLResultStatementsCounter.getInstance();
+		this.sparqlResultStatementsCounter = SPARQLResultStatementsCounter.getInstance();
 	}
 	
 	@Override
@@ -394,34 +403,52 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 		int queryNumber = getQueryNumber(queryName);
 		String queryNameId = constructQueryNameId(queryName, id);
 		
-		if (queryResult.length() >= 0 && benchmarkingState.get()) {
-			if (startedDuringBenchmarkPhase) {
-				if (reportSuccess) {
-					Statistics.aggregateQueriesArray[queryNumber - 1].reportSuccess(queryExecutionTimeMs);
-					Statistics.totalAggregateQueryStatistics.reportSuccess(queryExecutionTimeMs);
-					logBrief(queryNameId, queryType, queryResult, "", queryExecutionTimeMs);
-				} else {				
-					Statistics.aggregateQueriesArray[queryNumber - 1].reportFailure();
-					Statistics.totalAggregateQueryStatistics.reportFailure();
-					logBrief(queryNameId, queryType, queryResult, ", query has timed out!", queryExecutionTimeMs);
-				}
+		//count results (statements)
+		long resultsCount = 0;
+		InputStream iStream = null;
+				
+		try {
+			iStream = new ByteArrayInputStream(queryResult.getBytes("UTF-8"));
+			
+			if (queryType == QueryType.CONSTRUCT || queryType == QueryType.DESCRIBE) {
+				resultsCount = rdfxmlResultStatementsCounter.getStatementsCount(iStream);
+				Statistics.timeCorrectionsMS.addAndGet(rdfxmlResultStatementsCounter.getParseTime());
 			} else {
-				if (queryExecutionTimeMs > 0) {
-					LOGGER.info("\tQuery : " + queryName + ", time : " + queryExecutionTimeMs + " ms, queryResult.length : " + queryResult.length() + ", has been started during the warmup phase, it will be ignored in the benchmark result!");
-					logBrief(queryNameId, queryType, queryResult, ", has been started during the warmup phase, it will be ignored in the benchmark result!", queryExecutionTimeMs);
+				resultsCount = sparqlResultStatementsCounter.getStatementsCount(iStream);
+				Statistics.timeCorrectionsMS.addAndGet(sparqlResultStatementsCounter.getParseTime());
+			}
+			
+			if (queryResult.length() >= 0 && benchmarkingState.get()) {
+				if (startedDuringBenchmarkPhase) {
+					if (reportSuccess) {
+						Statistics.aggregateQueriesArray[queryNumber - 1].reportSuccess(queryExecutionTimeMs);
+						Statistics.totalAggregateQueryStatistics.reportSuccess(queryExecutionTimeMs);
+						logBrief(queryNameId, queryType, queryResult, "", queryExecutionTimeMs, resultsCount);
+					} else {				
+						Statistics.aggregateQueriesArray[queryNumber - 1].reportFailure();
+						Statistics.totalAggregateQueryStatistics.reportFailure();
+						logBrief(queryNameId, queryType, queryResult, ", query has timed out!", queryExecutionTimeMs, resultsCount);
+					}
 				} else {
-					LOGGER.warn("\tQuery : " + queryName + ", time : " + queryExecutionTimeMs + " ms, queryResult.length : " + queryResult.length() + ", has failed to execute... possibly query timeout has been reached!");					
-					logBrief(queryNameId, queryType, queryResult, ", has failed to execute... possibly query timeout has been reached!", queryExecutionTimeMs);
+					if (queryExecutionTimeMs > 0) {
+						LOGGER.info("\tQuery : " + queryName + ", time : " + queryExecutionTimeMs + " ms, queryResult.length : " + queryResult.length() + ", results : " + resultsCount + ", has been started during the warmup phase, it will be ignored in the benchmark result!");
+						logBrief(queryNameId, queryType, queryResult, ", has been started during the warmup phase, it will be ignored in the benchmark result!", queryExecutionTimeMs, resultsCount);
+					} else {
+						LOGGER.warn("\tQuery : " + queryName + ", time : " + queryExecutionTimeMs + " ms, queryResult.length : " + queryResult.length() + ", results : " + resultsCount + ", has failed to execute... possibly query timeout has been reached!");					
+						logBrief(queryNameId, queryType, queryResult, ", has failed to execute... possibly query timeout has been reached!", queryExecutionTimeMs, resultsCount);
+					}
 				}
 			}
+			
+			LOGGER.info("\n*** Query [" + queryNameId + "], execution time : " + queryExecutionTimeMs + " ms, results : " + resultsCount + "\n" + queryString + "\n---------------------------------------------\n*** Result for query [" + queryNameId + "]" + " : \n" + "Length : " + queryResult.length() + "\n" + queryResult + "\n\n");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
 		}
-		
-		LOGGER.info("\n*** Query [" + queryNameId + "], execution time : " + queryExecutionTimeMs + " ms\n" + queryString + "\n---------------------------------------------\n*** Result for query [" + queryNameId + "]" + " : \n" + "Length : " + queryResult.length() + "\n" + queryResult + "\n\n");
 	}
 	
-	private void logBrief(String queryId, QueryType queryType, String queryResult, String appendString, long queryExecutionTimeMs) {
+	private void logBrief(String queryId, QueryType queryType, String queryResult, String appendString, long queryExecutionTimeMs, long resultStatementsCount) {
 		StringBuilder reportSb = new StringBuilder();
-		reportSb.append(String.format("\t[%s] Query executed, execution time : %d ms %s", queryId, queryExecutionTimeMs, appendString));
+		reportSb.append(String.format("\t[%s] Query executed, execution time : %d ms, results : %d %s", queryId, queryExecutionTimeMs, resultStatementsCount, appendString));
 		if (queryType == QueryType.SELECT || queryType == QueryType.CONSTRUCT || queryType == QueryType.DESCRIBE) {
 			reportSb.append(", characters returned : " + queryResult.length());
 		}

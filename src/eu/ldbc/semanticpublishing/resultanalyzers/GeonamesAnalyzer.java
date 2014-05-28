@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryExecuteManager;
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection.QueryType;
-import eu.ldbc.semanticpublishing.resultanalyzers.saxparsers.SAXGeonamesTransformer;
+import eu.ldbc.semanticpublishing.resultanalyzers.sax.SAXGeonamesTransformer;
 import eu.ldbc.semanticpublishing.templates.MustacheTemplatesHolder;
 
 /**

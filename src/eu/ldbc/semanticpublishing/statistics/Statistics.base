@@ -1,5 +1,7 @@
 package eu.ldbc.semanticpublishing.statistics;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 public class Statistics {
 	private static final String INSERT_QUERIES_STATISTICS = "INSERT";
 	private static final String UPDATE_QUERIES_STATISTICS = "UPDATE";
@@ -11,6 +13,8 @@ public class Statistics {
 	
 	public static final String AGGREGATE_QUERY_NAME = "query";
 	public static final QueryStatistics[] aggregateQueriesArray;
+	
+	public static final AtomicLong timeCorrectionsMS = new AtomicLong(0);
 	
 	static {
 		aggregateQueriesArray = new QueryStatistics[AGGREGATE_QUERIES_COUNT];

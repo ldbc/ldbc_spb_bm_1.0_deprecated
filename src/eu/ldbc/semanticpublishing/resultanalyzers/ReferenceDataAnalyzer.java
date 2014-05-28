@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryExecuteManager;
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection.QueryType;
 import eu.ldbc.semanticpublishing.refdataset.model.Entity;
-import eu.ldbc.semanticpublishing.resultanalyzers.saxparsers.SAXReferenceDataEntityTransformer;
+import eu.ldbc.semanticpublishing.resultanalyzers.sax.SAXReferenceDataEntityTransformer;
 import eu.ldbc.semanticpublishing.templates.MustacheTemplatesHolder;
 
 /**

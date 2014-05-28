@@ -107,6 +107,7 @@ public class BenchmarkProcessObserver extends Thread {
 																											 deleteOpsCount) );
 		}
 
+		//time correction is not needed for update operations, as they are performed by separate agents and are not counting/parsing results
 		double averageOperationsPerSecond = (double)(insertOpsCount + updateOpsCount + deleteOpsCount) / (double)seconds;
 		
 		//keep track of update rate ops
@@ -135,8 +136,9 @@ public class BenchmarkProcessObserver extends Thread {
 			sb.append(String.format("\n\t\t%d total retrieval queries\n", totalAggregateOpsCount));
 		}
 		
-		double averageQueriesPerSecond = (double)totalAggregateOpsCount / (double)seconds;
-		sb.append(String.format("\t\t%.4f average queries per second\n", averageQueriesPerSecond));	
+		//considering a time correction caused by result parsing for each aggregate query by each of aggregate agents, that time is subtracted when calculating the total average
+		double averageQueriesPerSecond = (double)totalAggregateOpsCount / ((double)seconds - (double)(Statistics.timeCorrectionsMS.get() / 1000));		
+		sb.append(String.format("\t\t%.4f average queries per second\n", averageQueriesPerSecond));		
 				
 		//in case using requiredUpdateRateThresholdOps option, display a message that benchmark is not 
 		if (requiredUpdateRateThresholdOps > 0.0) {

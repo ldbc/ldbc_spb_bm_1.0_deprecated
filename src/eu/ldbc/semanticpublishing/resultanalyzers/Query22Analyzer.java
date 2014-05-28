@@ -4,7 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
-import eu.ldbc.semanticpublishing.resultanalyzers.saxparsers.SAXQuery22TemplateTransformer;
+import eu.ldbc.semanticpublishing.resultanalyzers.sax.SAXQuery22TemplateTransformer;
 
 /**
  * A class used to extract title, year, month, day from a query21.txt's result.
