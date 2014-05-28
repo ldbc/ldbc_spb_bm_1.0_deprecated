@@ -50,18 +50,18 @@ Benchmark Phases :
     - generateCreativeWorks 		          		: using uploaded data from previous two phases, generates Creative Works and saves them to files. Generated files need to be loaded into database manually (or automatically if file format is n-quads)
                                               			Note: Requires phases : loadOntologies, loadDatasets.
     - loadCreativeWorks	  		            		: load generated creative works into database (It is advisable to use serialization format : N-Quads)
-    - generateQuerySubstitutionParameters 			: Controls generation of query substitution parameters which later can be used during the warmup and benchmark phases. For each query a substitution parameters file is created and saved into 'creativeWorksPath' location. 
+    - generateQuerySubstitutionParameters 		: Controls generation of query substitution parameters which later can be used during the warmup and benchmark phases. For each query a substitution parameters file is created and saved into 'creativeWorksPath' location. 
                                               			Note : If no files are found at that location, queries executed during warmup and benchmark phases will use randomly generated parameters.
                                               			Note2: Requires phases : loadOntologies, loadDatasets, generateCreativeWorks, loadCreativeWorks.
-    - validateQueryResults                			: validate correctness of results for editorial and aggregate operations against a validation dataset.
+    - validateQueryResults                		: validate correctness of results for editorial and aggregate operations against a validation dataset.
                                               			Note : Requires phases : loadOntologies, loadDatasets.
     - warmUp                		          		: a series of Aggregation queries are executed for a fixed amount of time.
     - benchmark             		          		: all aggregation and editorial agents are started and kept running for a period of 'benchmarkRunPeriodSeconds'.
-    - benchmarkOnlineReplicationAndBackup 			: benchmark is measuring performance under currently ongoing backup process. Verifies that certain conditions are met such as milestone points at which backup has been started. 
+    - benchmarkOnlineReplicationAndBackup 		: benchmark is measuring performance under currently ongoing backup process. Verifies that certain conditions are met such as milestone points at which backup has been started. 
                                             			Note : Requires phases : loadOntologies, loadDatasets, generateCreativeWorks, loadCreativeWorks, warmUp (optional). Phases that should be disabled : benchmark.
                                             			Note2: Requires all necessary enterprise script files (data/enterprise/scripts) to have DB Engie's commands added (Commands for : starting, shutting down, backing up, etc).
                                             			Note3: Required to set the full path for property 'enterpriseFeaturesPath' in test.properties file and all scripts need to have an execution permission enabled.  
-    - checkConformance                    			: executes predefined queries (from folder 'data/sparql/conformance'. Checking for OWL2-RL : prp-irp, prp-asyp, prp-pdw, prp-adp, cax-dw, cax-adc, cls-maxc1, prp-key, prp-spo2, prp-inv1)  
+    - checkConformance                    		: executes predefined queries (from folder 'data/sparql/conformance'. Checking for OWL2-RL : prp-irp, prp-asyp, prp-pdw, prp-adp, cax-dw, cax-adc, cls-maxc1, prp-key, prp-spo2, prp-inv1)  
                                               			Note : Requires phase : loadOntologies.
     - cleanup               		          		: optional, the benchmark can be set to clear all data from database
                                               			Note : all data will be erased from repository
@@ -108,10 +108,10 @@ How to run the benchmark :
     - endpointURL                       (URL of SPARQL endpoint provided by the RDF database, *requires updating*)
     - endpointUpdateURL                 (URL of endpoint for executing update queries, *requires updating*)
     - datasetSize                       (amount of generated data (triples), *requires updating*)
-    - adjustRefDatasetsSizes    	    (optional, if reference dataset files exist with the extension '.adjustablettl', then for each, a new .ttl file is created with adjusted size depending on the selected size of data to be generated (parameter 'datasetSize'), default value is true)    
+    - adjustRefDatasetsSizes    	      (optional, if reference dataset files exist with the extension '.adjustablettl', then for each, a new .ttl file is created with adjusted size depending on the selected size of data to be generated (parameter 'datasetSize'), default value is true)    
     - allowSizeAdjustmentsOnDataModels  (allows the data generator to adjust the amount of correlations, clusterings and randomly generated models (Creative Works) in relation to the 'datasetSize', thus keeping a ratio of 1/3 for each in generated data. Default value is true  * ***generatedTriplesPerFile*** - number of triples per generated file. Used to split the data generation into a number of files)
     - queryTimeoutSeconds               (query timeout in seconds, default value is 300 s)
-    - systemQueryTimeoutSeconds			(system queries timeout, default value 1h)
+    - systemQueryTimeoutSeconds			    (system queries timeout, default value 1h)
     - validationPath                    (location where generated and reference data related to validation phase is located, can use default value)
     - generatedTriplesPerFile           (generated triples per file, sets the number of triples per file)
     - warmupPeriodSeconds               (warmup period, *requires updating*)
@@ -120,18 +120,18 @@ How to run the benchmark :
     - aggregationAgents                 (number of aggregation agents that will execute mix of aggregation queries simultaneously, *requires updating*)
     - editorialAgents                   (number of editorial agents that will execute a mix of editorial queries simultaneously, *requires updating*)
     - dataGeneratorWorkers              (number of worker threads used by the data generator to produce data, *requires updating*)
-    - generatorRandomSeed				(use it to set the random set for the data generator (default value is 0). e.g. in cases when several benchmark drivers are started in separate
+    - generatorRandomSeed				        (use it to set the random set for the data generator (default value is 0). e.g. in cases when several benchmark drivers are started in separate
                                          processes to generate data - to be used with creativeWorkNextId parameter)
     - creativeWorkNextId                (set the next ID for the data generator of Creative Works. When running the benchmark driver in separate processes, to guarantee that generated
                                          creative works will not overlap their IDs
                                          e.g. for generating 50M dataset, expected number of Creative Works is ~2.5M and next ID should start at that value)
     - creativeWorksInfo                 (name of file that contains system info about the generated dataset, e.g. interesting entities, etc. (will be saved in 'creativeWorksPath'))
     - querySubstitutionParameters       (number substitution parameters that will be generated for each query, default value is 100000)
-    - benchmarkByQueryRuns				(sets the amount of aggregate queries which the benchmark phase will execute. If value is greater than zero then parameter 'benchmarkRunPeriodSeconds' is ignored. e.g. if set to 100, benchmark will measure the time to execute 100 aggregate operations.)
-    - updateRateThresholdOps        	(defines the update rate of operations per second which should be reached during the first 15% of benchmark time and should be kept during the rest of the benchmark run in order to have a valid result. If set to zero, update rate threshold is ignored.
+    - benchmarkByQueryRuns				      (sets the amount of aggregate queries which the benchmark phase will execute. If value is greater than zero then parameter 'benchmarkRunPeriodSeconds' is ignored. e.g. if set to 100, benchmark will measure the time to execute 100 aggregate operations.)
+    - updateRateThresholdOps        	  (defines the update rate of operations per second which should be reached during the first 15% of benchmark time and should be kept during the rest of the benchmark run in order to have a valid result. If set to zero, update rate threshold is ignored.
     									e.g. if required update rate is set to 6.3 update operations per second, then benchmark will consider that value during its benchmark run and will report invalid results if that rate drops below the threshold)
-	- updateRateThresholdReachTimePercent (defines the time frame during which the defined value in property 'updateRateThresholdOps' should be reached. Default value is 0.1 (10%)
-										e.g. if set to 0.1 (i.e. 10%) then the update rate defined in 'updateRateThresholdOps' should be reached during the first 10% of the benchmark run time, if not reached, the result is considered invalid)    									
+    - updateRateThresholdReachTimePercent (defines the time frame during which the defined value in property 'updateRateThresholdOps' should be reached. Default value is 0.1 (10%)
+                      e.g. if set to 0.1 (i.e. 10%) then the update rate defined in 'updateRateThresholdOps' should be reached during the first 10% of the benchmark run time, if not reached, the result is considered invalid)    									
                                          
                                          Note : For optimal results the sum of editorial and aggregation agents should be set to be equal to the number of CPU cores.
 		
@@ -151,16 +151,16 @@ How to run the benchmark :
     - majorEventsPerYear                (Defines the maximum number of 'major' events that could happen in one year. Each major event will be tagged by a number of Creative Works which will decay exponentially in time.)
     - minorEventsPerYear                (Defines the maximum number of 'minor' events that could happen in one year. Each minor event will be tagged by a number of Creative Works which will decay exponentially in time. Value of exponentialDecayUpperLimitOfCWs for minor events will be ten times smaller for them.)
     - seedYear                          (Defines a seed year that will be used for generating the Creative Works. Each Creative Work will have its creation date during that year. All date-range queries will use that value also.)
-    - dataGenerationPeriodYears			(Defines the period (in years) of the gnerated data, starting from 'seedYear')
-    - correlationsAmount				(Defines the amount of correlations that data generator will model between entities from reference knowledge data. Default value (50) will produce around 15 million triples.)
-    - correlationsMagnitude				(Defines maximum amount of Creative Works that will be generated for a particular correlation in a single day.)
-    - correlationDuration				(Defines the duration of correlation between two entities as a percent of the total data generation period. Default generation period is one year.)
-    - correlationEntityLifespan			(Defines the life span of each entity that participates in a correlation as a percent of the total data generation period.)
-    - minLat							(Defines minimum latitude, a geo-spatial property used to configure the geo-spatial search area of queries.)
-    - maxLat							(Defines maximum latitude, a geo-spatial property.)
-    - minLong							(Defines minimum longtitude, ,a geo-spatial property.)
-    - maxLong							(Defines maximum longtitude, a geo-spatial property.)    
-  	- mileStoneQueryPosition (Defines the position in terms of percents at which a milestone query is executed (related to Online and Replication Benchmark feature))
+    - dataGenerationPeriodYears			    (Defines the period (in years) of the gnerated data, starting from 'seedYear')
+    - correlationsAmount				        (Defines the amount of correlations that data generator will model between entities from reference knowledge data. Default value (50) will produce around 15 million triples.)
+    - correlationsMagnitude				      (Defines maximum amount of Creative Works that will be generated for a particular correlation in a single day.)
+    - correlationDuration				        (Defines the duration of correlation between two entities as a percent of the total data generation period. Default generation period is one year.)
+    - correlationEntityLifespan			    (Defines the life span of each entity that participates in a correlation as a percent of the total data generation period.)
+    - minLat							              (Defines minimum latitude, a geo-spatial property used to configure the geo-spatial search area of queries.)
+    - maxLat							              (Defines maximum latitude, a geo-spatial property.)
+    - minLong							              (Defines minimum longtitude, ,a geo-spatial property.)
+    - maxLong							              (Defines maximum longtitude, a geo-spatial property.)    
+  	- mileStoneQueryPosition            (Defines the position in terms of percents at which a milestone query is executed (related to Online and Replication Benchmark feature))
     
       Sample definitions.properties file can be found in the distribution jar file.
 
