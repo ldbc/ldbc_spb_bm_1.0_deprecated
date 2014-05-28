@@ -42,7 +42,7 @@ Result of the build process is saved to the distribution folder (dist/) :
 ###Install
 
 All necessary files required to run the benchmark are saved to the 'dist/' folder. You can run the benchmark from it or move it to a new location.
-Optionally, additinal reference datasets can be added - dowload it from https://github.com/ldbc/ldbc_semanticpub_bm_additional_datasets and unzip all files to folder 'data/datasets/'
+Optionally, additinal reference datasets can be added - dowload them from https://github.com/ldbc/ldbc_semanticpub_bm_additional_datasets and unzip all files to folder 'data/datasets/'
 
 ###Configure
 
@@ -64,13 +64,10 @@ Optionally, additinal reference datasets can be added - dowload it from https://
   * ***warmUp*** - runs the aggregation agents for *warmupPeriodSeconds* seconds, results are not collected. *Requires phases : loadOntologies, loadDatasets, generateCreativeWorks (optional, in case it has been already done), loadCreativeWorks (optional, in case it has been already done), generateQuerySubstitutionParameters.*
   * ***runBenchmark*** - runs the benchmark for *benchmarkRunPeriodSeconds* seconds, results are collected. Editorial and aggregation agents are run simultaneously. *Requires phases : loadOntologies, loadDatasets, generateCreativeWorks (optional, in case it has been already done), loadCreativeWorks (optional, in case it has been already done), generateQuerySubstitutionParameters.*
   * ***runBenchmarkOnlineReplicationAndBackup*** - benchmark is measuring performance under currently ongoing backup process. Verifies that certain conditions are met such as milestone points at which backup has been started. Requires additional implementation of provided shell script files (/data/enterprise/scripts) for using vendor's specific command for backup. *Requires phases : loadOntologies, loadDatasets, generateCreativeWorks, loadCreativeWorks, generateQuerySubstitutionParameters. Also making a full backup prior to running the benchmark for later restore point.*
- 
-* Conformance Validation Phase 
-    To be run independently on a new repository (using OWL2-RL rule-set). Required phase before running : *loadOntologies*. No data generation and loading is required.
-  * ***checkConformance*** - runs tests for conformance to the **OWL2-RL** rules. *Requires phase : loadOntologies.*
+  * ***checkConformance*** - runs tests for conformance to the **OWL2-RL** rules. *Requires phase : loadOntologies.*. To be run independently on an empty repository (using OWL2-RL rule-set). Required phase before running : *loadOntologies*. No data generation and loading is required.
 
 
-* Benchmark driver configuration. All configuration parameters are stored in properties file (test.properties). Most have default values that are ready to use, others however require updating.
+* Detailed configuration. All configuration parameters are stored in properties file (test.properties). Most have default values that are ready to use, others however require updating.
 
   * ***ontologiesPath*** - path to ontologies from reference knowledge, default: ./data/ontologies
   * ***referenceDatasetsPath*** - path to data from reference knowledge, default: ./data/datasets
@@ -98,6 +95,16 @@ Optionally, additinal reference datasets can be added - dowload it from https://
   * ***benchmarkByQueryRuns*** - sets the amount of aggregate queries which the benchmark phase will execute. If value is greater than zero then parameter 'benchmarkRunPeriodSeconds' is ignored. e.g. if set to 100, benchmark will measure the time to execute 100 aggregate operations
   * ***updateRateThresholdOps*** - defines the update rate of operations per second which should be reached during the first 15% of benchmark time and should be kept during the rest of the benchmark run in order to have a valid result. If set to zero, update rate threshold is ignored. e.g. if required update rate is set to 6.3 update operations per second, then benchmark will consider that value during its benchmark run and will report invalid results if that rate drops below the threshold
   * ***updateRateThresholdReachTimePercent*** - defines the time frame during which the defined value in property 'updateRateThresholdOps' should be reached. Default value is 0.1 (10%). e.g. if set to 0.1 (i.e. 10%) then the update rate defined in 'updateRateThresholdOps' should be reached during the first 10% of the benchmark run time, if not reached, the result is considered invalid
+  
+  
+* Conifgure the driver to :
+  * ***Generate Data*** - enable phases : loadOntologies, loadReferenceDatasets, generateCreativeWorks
+  * ***Load Generated Data*** - *Generate Data*, enable phase : loadCreativeWorks (generated data can also be loaded manually from folder 'creativeWorksPath/' if database doesn't support automatic loading)
+  * ***Generate Query Substitution Parameters*** - *Generate Data* and *Load Generated Data*, enable phase : generateQuerySubstitutionParameters
+  * ***Validate Query Results*** - to be executed on an empty database, enable phases : loadOntologies, loadDatasets
+  * ***Run The Benchmark*** - *Generate Data*, *Load Generated Data*, *Generate Query Substitution Parameters*, enable phases : warmUp, runBenchmark
+  * ***Run Online Replication and Backup Benchmark*** - *Generate Data*, *Load Generated Data*, *Generate Query Substitution Parameters*, enable phase : runBenchmarkOnlineReplicationAndBackup. Also make a full backup prior to running the benchmark for later restore point and implement all scripts in folder 'data/enterprise/scripts/' specific to each database.
+  * ***Check Conformance to OWL2-RL Rule-Set*** - to be executed on an empty database with OWL2-RL rule-set, enable phase : loadOntologies. No data generation or loading is required.
   
 ###Run
 
