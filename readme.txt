@@ -24,8 +24,9 @@ How to build the benchmark driver :
   Use the Ant with build.xml script. Default Ant task builds the benchmark and saves it to the 'dist' folder.
   Currently two versions of the Benchmark exist : a base version - containing a reduced query-mix with 9 queries and advanced version with 25 queries,
   use appropriate ant-tasks to build them, e.g.
-  > ant build-base-querymix-standard //builds the standard benchmark driver compliant to SPARQL 1.1
-  > ant build-full-querymix-standard //builds the standard benchmark driver compliant to SPARQL 1.1 with extended query mix
+  
+  > ant build-base-querymix          //builds the standard benchmark driver compliant to SPARQL 1.1
+  > ant build-full-querymix          //builds the standard benchmark driver compliant to SPARQL 1.1 with extended query mix
   > ant build-base-querymix-virtuoso //builds a custom version of the driver customized for Virtuoso's small deviation in SPARQL queries
   > ant build-full-querymix-virtuoso //builds a custom version of the driver customized for Virtuoso's small deviation in SPARQL queries with extended query mix
 
@@ -93,12 +94,12 @@ How to run the benchmark :
                                         Note : execute -loadOntologies phase before running conformance check
     - clearDatabase                     (erases all triples from database)
 	 
-      Sample of a test.properties file can be found in the distribution jar file.
+      Sample of a test.properties file can be found in the distribution folder.
   
   
   * Detailed configuration of the benchmark driver
   
-      Edit file : test.properties, All configuration parameters are stored in properties file (test.properties). Most have default values that are ready to use, others however require updating.
+      Edit file : test.properties, All configuration parameters are stored in test.properties file. Most have default values that are ready to use, others however require updating.
   
     - ontologiesPath                    (path to ontologies from reference knowledge, default: ./data/ontologies)
     - referenceDatasetsPath             (path to data from reference knowledge, default: ./data/datasets)
@@ -129,9 +130,9 @@ How to run the benchmark :
     - querySubstitutionParameters       (number substitution parameters that will be generated for each query, default value is 100000)
     - benchmarkByQueryRuns				      (sets the amount of aggregate queries which the benchmark phase will execute. If value is greater than zero then parameter 'benchmarkRunPeriodSeconds' is ignored. e.g. if set to 100, benchmark will measure the time to execute 100 aggregate operations.)
     - updateRateThresholdOps        	  (defines the update rate of operations per second which should be reached during the first 15% of benchmark time and should be kept during the rest of the benchmark run in order to have a valid result. If set to zero, update rate threshold is ignored.
-    									e.g. if required update rate is set to 6.3 update operations per second, then benchmark will consider that value during its benchmark run and will report invalid results if that rate drops below the threshold)
+                                         e.g. if required update rate is set to 6.3 update operations per second, then benchmark will consider that value during its benchmark run and will report invalid results if that rate drops below the threshold)
     - updateRateThresholdReachTimePercent (defines the time frame during which the defined value in property 'updateRateThresholdOps' should be reached. Default value is 0.1 (10%)
-                      e.g. if set to 0.1 (i.e. 10%) then the update rate defined in 'updateRateThresholdOps' should be reached during the first 10% of the benchmark run time, if not reached, the result is considered invalid)    									
+                                         e.g. if set to 0.1 (i.e. 10%) then the update rate defined in 'updateRateThresholdOps' should be reached during the first 10% of the benchmark run time, if not reached, the result is considered invalid)    									
                                          
                                          Note : For optimal results the sum of editorial and aggregation agents should be set to be equal to the number of CPU cores.
 		
@@ -162,7 +163,7 @@ How to run the benchmark :
     - maxLong							              (Defines maximum longtitude, a geo-spatial property.)    
   	- mileStoneQueryPosition            (Defines the position in terms of percents at which a milestone query is executed (related to Online and Replication Benchmark feature))
     
-      Sample definitions.properties file can be found in the distribution jar file.
+      Sample definitions.properties file can be found in the distribution folder.
 
   * Conifgure the driver to :
   	 - Generate Data - enable phases : loadOntologies, loadReferenceDatasets, generateCreativeWorks

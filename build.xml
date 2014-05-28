@@ -186,7 +186,7 @@
 		</copy>
 	</target>
 	
-	<target name="build-base-querymix-standard" depends="build.release.version, setup-base-sparql-standard, rebuild">	
+	<target name="build-base-querymix" depends="build.release.version, setup-base-sparql-standard, rebuild">	
 		<jar destfile="${dir.dist}\${jar.file.name}-base.jar" basedir="${dir.bin}">
 			<manifest>
 				<attribute name="Main-Class" value="eu.ldbc.semanticpublishing.TestDriver"/>
@@ -224,7 +224,7 @@
 		<delete file="./definitions.properties" />
 	</target>	
 	
-	<target name="build-full-querymix-standard" depends="build.release.version, setup-full-sparql-standard, rebuild">
+	<target name="build-full-querymix" depends="build.release.version, setup-full-sparql-standard, rebuild">
 		<jar destfile="${dir.dist}\${jar.file.name}-full.jar" basedir="${dir.bin}">
 			<manifest>
 				<attribute name="Main-Class" value="eu.ldbc.semanticpublishing.TestDriver"/>
@@ -340,8 +340,8 @@
 To BUILD the LDBC Semantic Publishing Benchmark, you should execute :
       
 	Standard version :
-		ant build-base-querymix-standard (builds the benchmark driver with base query mix, standard SPARQL 1.1 compliance)
-		ant build-full-querymix-standard (builds the benchmark driver with full query mix, standard SPARQL 1.1 compliance)
+		ant build-base-querymix (builds the benchmark driver with base query mix, standard SPARQL 1.1 compliance)
+		ant build-full-querymix (builds the benchmark driver with full query mix, standard SPARQL 1.1 compliance)
     	
 	Virtuoso customized : 
 		ant build-base-querymix-virtuoso (builds the benchmark driver with base query mix and customized query syntax for Virtuoso)

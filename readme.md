@@ -4,26 +4,26 @@ Semantic Publishing Benchmark
 
 ###Description
 
-Semantic Publishing Benchmark is an LDBC benchmark for testing the performance of RDF engines inspired by the Media/Publishing industry.
+Semantic Publishing Benchmark is an LDBC benchmark for testing the performance of RDF databases inspired by the Media/Publishing industry.
 Performance is measured by producing a workload of CRUD (Create, Read, Update, Delete) operations which are executed simultaneously.
 
 The benchmark offers a data generator that uses real reference data to produce datasets of various sizes and tests the scalability aspect
-of RDF systems. The benchmark workload consists of (a) editorial operations that add new data, alter or delete existing (b) aggregation
+of RDF systems. The benchmark workload consists of editorial operations that add new, update or delete existing data and aggregation
 operations that retrieve content according to various criteria. The aggregation queries define different "choke points", that is technical 
-challenges that a standard RDF store must overcome thus giving opportunities for improvement regarding query optimization.
+challenges that a standard RDF database must overcome thus giving opportunities for improvement regarding query optimization.
 
 The benchmark also tests conformance for various rules inside the OWL2-RL rule-set.
 
 ###Build
 
-Apache Ant build tool is required. Use one of the following tasks : 
+Apache Ant build tool is required. Start one of the following tasks : 
 
 ```
 #to build a standard version of the benchmark, compliant to SPARQL 1.1 standard
-ant build-base-querymix-standard
+ant build-base-querymix
 
 #to build a standard version of the benchmark, compliant to SPARQL 1.1 standard with extended query mix
-ant build-full-querymix-standard
+ant build-full-querymix
 
 #to build a version of the benchmark customized for Virtuoso Database
 ant build-base-querymix-virtuoso
@@ -41,8 +41,8 @@ Result of the build process is saved to the distribution folder (dist/) :
 
 ###Install
 
-All necessary files required to run the benchmark are saved to the 'dist/' folder. You can run the benchmark from it or move it to a new location.
-Optionally, additinal reference datasets can be added - dowload them from https://github.com/ldbc/ldbc_semanticpub_bm_additional_datasets and unzip all files to folder 'data/datasets/'
+All necessary files required to run the benchmark are saved to the 'dist/' folder. The benchmark can be started from there or can be moved to a new location.
+Optionally, additinal reference datasets can be added - they can be dowloaded from https://github.com/ldbc/ldbc_semanticpub_bm_additional_datasets. All files should be unzipped in folder 'data/datasets/'
 
 ###Configure
 
