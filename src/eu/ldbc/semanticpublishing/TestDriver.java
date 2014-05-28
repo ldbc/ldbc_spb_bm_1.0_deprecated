@@ -509,13 +509,15 @@ public class TestDriver {
 			
 			ThreadUtil.join(observerThread);
 			
-			if (!benchmarkResultIsValid.get()) {
-				message = String.format("Warning : Benchmark results are not valid! Required query rate has not been reached, or has dropped below threshold (%.1f ops) during the benchmark run.", configuration.getDouble(Configuration.UPDATE_RATE_THRESHOLD_OPS));
-			} else {
-				message = "Benchmark result is valid!";
+			if (configuration.getDouble(Configuration.UPDATE_RATE_THRESHOLD_OPS) > 0.0) {
+				if (!benchmarkResultIsValid.get()) {
+					message = String.format("Warning : Benchmark results are not valid! Required query rate has not been reached, or has dropped below threshold (%.1f ops) during the benchmark run.", configuration.getDouble(Configuration.UPDATE_RATE_THRESHOLD_OPS));
+				} else {
+					message = "Benchmark result is valid!";
+				}
+				System.out.println(message);
+				LOGGER.info(message);
 			}
-			System.out.println(message);
-			LOGGER.info(message);								
 			
 			message = "Stopping the benchmark...";
 			System.out.println(message);
@@ -663,13 +665,15 @@ public class TestDriver {
 			
 			ThreadUtil.join(observerThread);
 			
-			if (!benchmarkResultIsValid.get()) {
-				message = String.format("Warning : Benchmark results are not valid! Required query rate has not been reached, or has dropped below threshold (%.1f ops) during the benchmark run.", configuration.getDouble(Configuration.UPDATE_RATE_THRESHOLD_OPS));
-			} else {
-				message = "Benchmark result is valid!";
+			if (configuration.getDouble(Configuration.UPDATE_RATE_THRESHOLD_OPS) > 0.0) {
+				if (!benchmarkResultIsValid.get()) {
+					message = String.format("Warning : Benchmark results are not valid! Required query rate has not been reached, or has dropped below threshold (%.1f ops) during the benchmark run.", configuration.getDouble(Configuration.UPDATE_RATE_THRESHOLD_OPS));
+				} else {
+					message = "Benchmark result is valid!";
+				}
+				System.out.println(message);
+				LOGGER.info(message);
 			}
-			System.out.println(message);
-			LOGGER.info(message);	
 			
 			message = "Verifying milestone points...\nShutting down the database (system_shutdown)...";
 			System.out.println(message);
