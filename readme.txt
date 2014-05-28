@@ -96,7 +96,7 @@ How to run the benchmark :
       Sample of a test.properties file can be found in the distribution jar file.
   
   
-  * Configure the benchmark driver
+  * Detailed configuration of the benchmark driver
   
       Edit file : test.properties, All configuration parameters are stored in properties file (test.properties). Most have default values that are ready to use, others however require updating.
   
@@ -134,7 +134,7 @@ How to run the benchmark :
 										e.g. if set to 0.1 (i.e. 10%) then the update rate defined in 'updateRateThresholdOps' should be reached during the first 10% of the benchmark run time, if not reached, the result is considered invalid)    									
                                          
                                          Note : For optimal results the sum of editorial and aggregation agents should be set to be equal to the number of CPU cores.
-	
+		
   * definitions.properties - currently pre-configured and no need to modify. Can be edited to tune various allocations, used in -generateCreativeWorks and -runBenchmark phases.
   
     - aboutsAllocations                 (Defines allocation amount of About tags in Creative Works)
@@ -157,12 +157,21 @@ How to run the benchmark :
     - correlationDuration				(Defines the duration of correlation between two entities as a percent of the total data generation period. Default generation period is one year.)
     - correlationEntityLifespan			(Defines the life span of each entity that participates in a correlation as a percent of the total data generation period.)
     - minLat							(Defines minimum latitude, a geo-spatial property used to configure the geo-spatial search area of queries.)
-	- maxLat							(Defines maximum latitude, a geo-spatial property.)
-	- minLong							(Defines minimum longtitude, ,a geo-spatial property.)
-	- maxLong							(Defines maximum longtitude, a geo-spatial property.)    
+    - maxLat							(Defines maximum latitude, a geo-spatial property.)
+    - minLong							(Defines minimum longtitude, ,a geo-spatial property.)
+    - maxLong							(Defines maximum longtitude, a geo-spatial property.)    
   	- mileStoneQueryPosition (Defines the position in terms of percents at which a milestone query is executed (related to Online and Replication Benchmark feature))
     
       Sample definitions.properties file can be found in the distribution jar file.
+
+  * Conifgure the driver to :
+  	 - Generate Data - enable phases : loadOntologies, loadReferenceDatasets, generateCreativeWorks
+     - Load Generated Data - *Generate Data*, enable phase : loadCreativeWorks (generated data can also be loaded manually from folder 'creativeWorksPath/' if database doesn't support automatic loading)
+     - Generate Query Substitution Parameters - *Generate Data* and *Load Generated Data*, enable phase : generateQuerySubstitutionParameters
+     - Validate Query Results - to be executed on an empty database, enable phases : loadOntologies, loadDatasets
+     - Run The Benchmark - *Generate Data*, *Load Generated Data*, *Generate Query Substitution Parameters*, enable phases : warmUp, runBenchmark
+     - Run Online Replication and Backup Benchmark - *Generate Data*, *Load Generated Data*, *Generate Query Substitution Parameters*, enable phase : runBenchmarkOnlineReplicationAndBackup. Also make a full backup prior to running the benchmark for later restore point and implement all scripts in folder 'data/enterprise/scripts/' specific to each database.
+     - Check Conformance to OWL2-RL Rule-Set - to be executed on an empty database with OWL2-RL rule-set, enable phase : loadOntologies. No data generation or loading is required.
 
   * Example benchmark run command : 
 
