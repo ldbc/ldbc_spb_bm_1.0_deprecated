@@ -46,8 +46,8 @@ Benchmark Phases :
 
   * The Semantic Publishing Benchmark can be configured to run through these phases ordered by the sequence they should be run : 
 
-    - loadOntologies        		          		: load ontologies (from the 'data/ontologies' folder) into database
-    - loadDatasets          		          		: load the reference datasets (from the 'data/datasets' folder) into database
+    - loadOntologies        		          		: load ontologies (from the 'data/ontologies' folder) into database. It can be done manually by uploading all .ttl files located at : /data/ontologies into the database
+    - loadDatasets          		          		: load the reference datasets (from the 'data/datasets' folder) into database. It can be done manually by uploading all .ttl files located at : /data/ontologies into the database
     - generateCreativeWorks 		          		: using uploaded data from previous two phases, generates Creative Works and saves them to files. Generated files need to be loaded into database manually (or automatically if file format is n-quads)
                                               			Note: Requires phases : loadOntologies, loadDatasets.
     - loadCreativeWorks	  		            		: load generated creative works into database (It is advisable to use serialization format : N-Quads)
