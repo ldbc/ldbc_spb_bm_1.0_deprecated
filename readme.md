@@ -20,16 +20,16 @@ Apache Ant build tool is required. Start one of the following tasks :
 
 ```
 #to build a standard version of the benchmark, compliant to SPARQL 1.1 standard
-ant build-base-querymix
+ant build-basic-querymix
 
 #to build a standard version of the benchmark, compliant to SPARQL 1.1 standard with extended query mix
-ant build-full-querymix
+ant build-advanced-querymix
 
 #to build a version of the benchmark customized for Virtuoso Database
-ant build-base-querymix-virtuoso
+ant build-basic-querymix-virtuoso
 
 #to build a version of the benchmark customized for Virtuoso Database with extended query mix
-ant build-full-querymix-virtuoso
+ant build-advanced-querymix-virtuoso
 ```
 
 Result of the build process is saved to the distribution folder (dist/) : 

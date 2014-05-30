@@ -1,2 +1,2 @@
 Important : before compiling with build.xml, make sure that all modified or new templates are first added to the corresponding .zip file.
-            Build process will extract contents of base.zip or full.zip and will override your changes!!!
+            Build process will extract contents of basic.zip or advanced.zip and will override your changes!!!

@@ -1,2 +1,2 @@
-Important : before compiling with build.xml, make sure that changes in file AggragationAgent.java are first merged with existing .base or .full version.
-            Build process will use contents of AggregationAgent.base or AggregationAgent.full and will override your changes!!!
+Important : before compiling with build.xml, make sure that changes in file AggragationAgent.java are first merged with existing .basic or .advanced version.
+            Build process will use contents of AggregationAgent.basic or AggregationAgent.advanced and will override your changes!!!

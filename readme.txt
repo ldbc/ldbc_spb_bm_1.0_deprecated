@@ -22,13 +22,13 @@ How to build the benchmark driver :
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
   Use the Ant with build.xml script. Default Ant task builds the benchmark and saves it to the 'dist' folder.
-  Currently two versions of the Benchmark exist : a base version - containing a reduced query-mix with 9 queries and advanced version with 25 queries,
+  Currently two versions of the Benchmark exist : a basic version - containing a reduced query-mix with 9 queries and advanced version with 25 queries,
   use appropriate ant-tasks to build them, e.g.
   
-  > ant build-base-querymix          //builds the standard benchmark driver compliant to SPARQL 1.1
-  > ant build-full-querymix          //builds the standard benchmark driver compliant to SPARQL 1.1 with extended query mix
-  > ant build-base-querymix-virtuoso //builds a custom version of the driver customized for Virtuoso's small deviation in SPARQL queries
-  > ant build-full-querymix-virtuoso //builds a custom version of the driver customized for Virtuoso's small deviation in SPARQL queries with extended query mix
+  > ant build-basic-querymix          //builds the standard benchmark driver compliant to SPARQL 1.1
+  > ant build-advanced-querymix          //builds the standard benchmark driver compliant to SPARQL 1.1 with extended query mix
+  > ant build-basic-querymix-virtuoso //builds a custom version of the driver customized for Virtuoso's small deviation in SPARQL queries
+  > ant build-advanced-querymix-virtuoso //builds a custom version of the driver customized for Virtuoso's small deviation in SPARQL queries with extended query mix
 
 
 

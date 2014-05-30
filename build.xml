@@ -16,7 +16,7 @@
     <fileset dir="${dir.lib}">
       <include name="*.jar"/>
     </fileset>
-  </path>
+  	</path>
 	
 	<target name="clean">
 		<delete dir="${dir.bin}" />
@@ -147,33 +147,33 @@
 	</target>
 	
 	<!--  Use this target to setup benchmark driver with standard SPARQL 1.1 query syntax and reduced query mix -->
-	<target name="setup-base-sparql-standard">
+	<target name="setup-basic-sparql-standard">
     <antcall target="setup-query-mix">
-      <param name="query_mix" value="base"/>
+      <param name="query_mix" value="basic"/>
       <param name="customization" value="standard"/>
     </antcall>
 	</target>
 
 	<!--  Use this target to setup benchmark driver with Virtuoso's custom SPARQL query syntax and reduced query mix -->
-	<target name="setup-base-virtuoso">
+	<target name="setup-basic-virtuoso">
     <antcall target="setup-query-mix">
-      <param name="query_mix" value="base"/>
+      <param name="query_mix" value="basic"/>
       <param name="customization" value="virtuoso"/>
     </antcall>	
 	</target>
 
-	<!--  Use this target to setup benchmark driver with standard SPARQL 1.1 query syntax and full query mix -->
-	<target name="setup-full-sparql-standard">
+	<!--  Use this target to setup benchmark driver with standard SPARQL 1.1 query syntax and advanced query mix -->
+	<target name="setup-advanced-sparql-standard">
     <antcall target="setup-query-mix">
-      <param name="query_mix" value="full"/>
+      <param name="query_mix" value="advanced"/>
       <param name="customization" value="standard"/>
     </antcall>
 	</target>	
 	
-	<!--  Use this target to setup benchmark driver with Virtuoso's custom SPARQL 1.1 query syntax and full query mix -->
-	<target name="setup-full-virtuoso">
+	<!--  Use this target to setup benchmark driver with Virtuoso's custom SPARQL 1.1 query syntax and advanced query mix -->
+	<target name="setup-advanced-virtuoso">
     <antcall target="setup-query-mix">
-      <param name="query_mix" value="full"/>
+      <param name="query_mix" value="advanced"/>
       <param name="customization" value="virtuoso"/>
     </antcall>
 	</target>		
@@ -186,12 +186,12 @@
 		</copy>
 	</target>
 	
-	<target name="build-base-querymix" depends="build.release.version, setup-base-sparql-standard, rebuild">	
-		<jar destfile="${dir.dist}\${jar.file.name}-base.jar" basedir="${dir.bin}">
+	<target name="build-basic-querymix" depends="build.release.version, setup-basic-sparql-standard, rebuild">	
+		<jar destfile="${dir.dist}\${jar.file.name}-basic.jar" basedir="${dir.bin}">
 			<manifest>
 				<attribute name="Main-Class" value="eu.ldbc.semanticpublishing.TestDriver"/>
 				<attribute name="Benchmark-Release-Version" value="${version.number.major}.${version.number.minor}.${revision.number}"/>
-				<attribute name="Benchmark-Release-Type" value="base qierymix, standard SPARQL 1.1"/>
+				<attribute name="Benchmark-Release-Type" value="basic qierymix, standard SPARQL 1.1"/>
 			</manifest>
 			<zipgroupfileset dir="${dir.lib}" includes="*.jar"/>
 			<fileset file="readme.txt" />
@@ -205,12 +205,12 @@
 		<delete file="./definitions.properties" />
 	</target>
 	
-	<target name="build-base-querymix-virtuoso" depends="build.release.version, setup-base-virtuoso, rebuild">
-		<jar destfile="${dir.dist}\${jar.file.name}-base-virtuoso.jar" basedir="${dir.bin}">
+	<target name="build-basic-querymix-virtuoso" depends="build.release.version, setup-basic-virtuoso, rebuild">
+		<jar destfile="${dir.dist}\${jar.file.name}-basic-virtuoso.jar" basedir="${dir.bin}">
 			<manifest>
 				<attribute name="Main-Class" value="eu.ldbc.semanticpublishing.TestDriver"/>
 				<attribute name="Benchmark-Release-Version" value="${version.number.major}.${version.number.minor}.${revision.number}"/>
-				<attribute name="Benchmark-Release-Type" value="base qierymix, Virtuoso"/>
+				<attribute name="Benchmark-Release-Type" value="basic qierymix, Virtuoso"/>
 			</manifest>
 			<zipgroupfileset dir="${dir.lib}" includes="*.jar"/>
 			<fileset file="readme.txt" />
@@ -224,12 +224,12 @@
 		<delete file="./definitions.properties" />
 	</target>	
 	
-	<target name="build-full-querymix" depends="build.release.version, setup-full-sparql-standard, rebuild">
-		<jar destfile="${dir.dist}\${jar.file.name}-full.jar" basedir="${dir.bin}">
+	<target name="build-advanced-querymix" depends="build.release.version, setup-advanced-sparql-standard, rebuild">
+		<jar destfile="${dir.dist}\${jar.file.name}-advanced.jar" basedir="${dir.bin}">
 			<manifest>
 				<attribute name="Main-Class" value="eu.ldbc.semanticpublishing.TestDriver"/>
 				<attribute name="Benchmark-Release-Version" value="${version.number.major}.${version.number.minor}.${revision.number}"/>
-				<attribute name="Benchmark-Release-Type" value="full qierymix, standard SPARQL 1.1"/>
+				<attribute name="Benchmark-Release-Type" value="advanced qierymix, standard SPARQL 1.1"/>
 			</manifest>
 			<zipgroupfileset dir="${dir.lib}" includes="*.jar"/>
 			<fileset file="readme.txt" />
@@ -243,12 +243,12 @@
 		<delete file="./definitions.properties" />
 	</target>
 	
-	<target name="build-full-querymix-virtuoso" depends="build.release.version, setup-full-virtuoso, rebuild">	
-		<jar destfile="${dir.dist}\${jar.file.name}-full-virtuoso.jar" basedir="${dir.bin}">
+	<target name="build-advanced-querymix-virtuoso" depends="build.release.version, setup-advanced-virtuoso, rebuild">	
+		<jar destfile="${dir.dist}\${jar.file.name}-advanced-virtuoso.jar" basedir="${dir.bin}">
 			<manifest>
 				<attribute name="Main-Class" value="eu.ldbc.semanticpublishing.TestDriver"/>
 				<attribute name="Benchmark-Release-Version" value="${version.number.major}.${version.number.minor}.${revision.number}"/>
-				<attribute name="Benchmark-Release-Type" value="full qierymix, Virtuoso"/>
+				<attribute name="Benchmark-Release-Type" value="advanced qierymix, Virtuoso"/>
 			</manifest>
 			<zipgroupfileset dir="${dir.lib}" includes="*.jar"/>
 			<fileset file="readme.txt" />
@@ -340,12 +340,12 @@
 To BUILD the LDBC Semantic Publishing Benchmark, you should execute :
       
 	Standard version :
-		ant build-base-querymix (builds the benchmark driver with base query mix, standard SPARQL 1.1 compliance)
-		ant build-full-querymix (builds the benchmark driver with full query mix, standard SPARQL 1.1 compliance)
+		ant build-basic-querymix (builds the benchmark driver with basic query mix, standard SPARQL 1.1 compliance)
+		ant build-advanced-querymix (builds the benchmark driver with advanced query mix, standard SPARQL 1.1 compliance)
     	
 	Virtuoso customized : 
-		ant build-base-querymix-virtuoso (builds the benchmark driver with base query mix and customized query syntax for Virtuoso)
-		ant build-full-querymix-virtuoso (builds the benchmark driver with full query mix and customized query syntax for Virtuoso)
+		ant build-basic-querymix-virtuoso (builds the benchmark driver with basic query mix and customized query syntax for Virtuoso)
+		ant build-advanced-querymix-virtuoso (builds the benchmark driver with advanced query mix and customized query syntax for Virtuoso)
 ---------------------------------------------------------------------------------------------------------------------------------------
     </echo>
 	</target>
