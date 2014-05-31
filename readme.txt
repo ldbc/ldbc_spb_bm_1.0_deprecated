@@ -109,27 +109,26 @@ How to run the benchmark :
     - endpointURL                       (URL of SPARQL endpoint provided by the RDF database, *requires updating*)
     - endpointUpdateURL                 (URL of endpoint for executing update queries, *requires updating*)
     - datasetSize                       (amount of generated data (triples), *requires updating*)
+    - generatedTriplesPerFile           (number of triples per generated file. Used to split the data generation into a number of files)    
     - adjustRefDatasetsSizes    	      (optional, if reference dataset files exist with the extension '.adjustablettl', then for each, a new .ttl file is created with adjusted size depending on the selected size of data to be generated (parameter 'datasetSize'), default value is true)    
-    - allowSizeAdjustmentsOnDataModels  (allows the data generator to adjust the amount of correlations, clusterings and randomly generated models (Creative Works) in relation to the 'datasetSize', thus keeping a ratio of 1/3 for each in generated data. Default value is true  * ***generatedTriplesPerFile*** - number of triples per generated file. Used to split the data generation into a number of files)
+    - allowSizeAdjustmentsOnDataModels  (allows the data generator to adjust the amount of correlations, clusterings and randomly generated models (Creative Works) in relation to the 'datasetSize', thus keeping a ratio of 1/3 for each in generated data. Default value is true  
     - queryTimeoutSeconds               (query timeout in seconds, default value is 300 s)
     - systemQueryTimeoutSeconds			    (system queries timeout, default value 1h)
     - validationPath                    (location where generated and reference data related to validation phase is located, can use default value)
+    - generateCreativeWorksFormat       (serialization format for generated data. Available options : TriG, TriX, N-Triples, N-Quads, N3, RDF/XML, RDF/JSON, Turtle. Use exact names. Required are context aware serialization formats such as: N-Quads, TriX, TriG)    
     - generatedTriplesPerFile           (generated triples per file, sets the number of triples per file)
     - warmupPeriodSeconds               (warmup period, *requires updating*)
     - benchmarkRunPeriodSeconds         (benchmark run period, *requires updating*)
-    - generateCreativeWorksFormat       (serialization format for generated data. Available options : TriG, TriX, N-Triples, N-Quads, N3, RDF/XML, RDF/JSON, Turtle. Use exact names. Required are context aware serialization formats such as: N-Quads, TriX, TriG)
     - aggregationAgents                 (number of aggregation agents that will execute mix of aggregation queries simultaneously, *requires updating*)
     - editorialAgents                   (number of editorial agents that will execute a mix of editorial queries simultaneously, *requires updating*)
     - dataGeneratorWorkers              (number of worker threads used by the data generator to produce data, *requires updating*)
     - generatorRandomSeed				        (use it to set the random set for the data generator (default value is 0). e.g. in cases when several benchmark drivers are started in separate
                                          processes to generate data - to be used with creativeWorkNextId parameter)
-    - creativeWorkNextId                (set the next ID for the data generator of Creative Works. When running the benchmark driver in separate processes, to guarantee that generated
-                                         creative works will not overlap their IDs
-                                         e.g. for generating 50M dataset, expected number of Creative Works is ~2.5M and next ID should start at that value)
+    - creativeWorkNextId                (sets the next ID of Creative Works. When running the benchmark driver to generate synthetic data in separate processes, in order to guarantee that all generated creative works will not overlap by their IDs, add an increment in value ~ 2.6M for each 50M generated triples)
     - creativeWorksInfo                 (name of file that contains system info about the generated dataset, e.g. interesting entities, etc. (will be saved in 'creativeWorksPath'))
     - querySubstitutionParameters       (number substitution parameters that will be generated for each query, default value is 100000)
     - benchmarkByQueryRuns				      (sets the amount of aggregate queries which the benchmark phase will execute. If value is greater than zero then parameter 'benchmarkRunPeriodSeconds' is ignored. e.g. if set to 100, benchmark will measure the time to execute 100 aggregate operations.)
-    - updateRateThresholdOps        	  (defines the update rate of operations per second which should be reached during the first 15% of benchmark time and should be kept during the rest of the benchmark run in order to have a valid result. If set to zero, update rate threshold is ignored.
+    - updateRateThresholdOps        	  (defines the update rate of editorial operations per second which should be reached during the first 15% of benchmark time and should be kept during the rest of the benchmark run in order to have a valid result. If set to zero, update rate threshold is ignored.
                                          e.g. if required update rate is set to 6.3 update operations per second, then benchmark will consider that value during its benchmark run and will report invalid results if that rate drops below the threshold)
     - updateRateThresholdReachTimePercent (defines the time frame during which the defined value in property 'updateRateThresholdOps' should be reached. Default value is 0.1 (10%)
                                          e.g. if set to 0.1 (i.e. 10%) then the update rate defined in 'updateRateThresholdOps' should be reached during the first 10% of the benchmark run time, if not reached, the result is considered invalid)    									

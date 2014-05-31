@@ -79,10 +79,10 @@ minLat = 50.45
 #Defines maximum latitude
 maxLat = 53.25
 
-#Defines minimum longtitude
+#Defines minimum longitude
 minLong = -2.15
 
-#Defines maximum longtitude
+#Defines maximum longitude
 maxLong = 0.25
 
 #Defines the position in terms of percents at which a milestone query is executed (see Online and Replication Benchmark feature)
