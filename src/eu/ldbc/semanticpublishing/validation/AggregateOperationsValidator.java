@@ -52,8 +52,8 @@ public class AggregateOperationsValidator extends Validator {
 		this.aggregateQueryTemplates = aggregateQueryTemplates;
 		this.configuration = configuration;
 		this.definitions = definitions;
-		this.rdfxmlResultStatementsCounter = RDFXMLResultStatementsCounter.getInstance();
-		this.sparqlResultStatementsCounter = SPARQLResultStatementsCounter.getInstance();		
+		this.rdfxmlResultStatementsCounter = new RDFXMLResultStatementsCounter();
+		this.sparqlResultStatementsCounter = new SPARQLResultStatementsCounter();	
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -93,10 +93,12 @@ public class AggregateOperationsValidator extends Validator {
 			try {
 				iStream = new ByteArrayInputStream(queryResult.getBytes("UTF-8"));
 				
-				if (queryType == QueryType.CONSTRUCT || queryType == QueryType.DESCRIBE) {
-					resultsCount = rdfxmlResultStatementsCounter.getStatementsCount(iStream);
-				} else {
-					resultsCount = sparqlResultStatementsCounter.getStatementsCount(iStream);
+				if ((!queryResult.trim().isEmpty())) {
+					if (queryType == QueryType.CONSTRUCT || queryType == QueryType.DESCRIBE) {
+						resultsCount = rdfxmlResultStatementsCounter.getStatementsCount(iStream);
+					} else {
+						resultsCount = sparqlResultStatementsCounter.getStatementsCount(iStream);
+					}
 				}
 			
 				BRIEF_LOGGER.info(String.format("Query [%s] executed, iteration %d, results %d", queryName, (i + 1), resultsCount));

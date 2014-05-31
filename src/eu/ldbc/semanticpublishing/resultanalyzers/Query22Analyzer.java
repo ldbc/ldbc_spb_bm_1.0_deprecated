@@ -11,6 +11,9 @@ import eu.ldbc.semanticpublishing.resultanalyzers.sax.SAXQuery22TemplateTransfor
  */
 public class Query22Analyzer {
 	public ArrayList<String> collectDatesList(String result) throws UnsupportedEncodingException {
+		if (result.trim().isEmpty()) {
+			return null;
+		}
 		SAXQuery22TemplateTransformer transformer = new SAXQuery22TemplateTransformer();
 		transformer.transform(new ByteArrayInputStream(result.getBytes("UTF-8")));
 		return transformer.getDatesList();

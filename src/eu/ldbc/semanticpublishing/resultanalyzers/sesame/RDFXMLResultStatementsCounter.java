@@ -14,9 +14,6 @@ import org.openrdf.rio.Rio;
 import org.openrdf.rio.helpers.RDFHandlerBase;
 
 public class RDFXMLResultStatementsCounter {
-	//Singleton
-	private static RDFXMLResultStatementsCounter instance = null;
-	
 	private final RDFParser rdfParser;
 	private final StatementsCounter statementsCounter;
 	
@@ -24,15 +21,8 @@ public class RDFXMLResultStatementsCounter {
 	private long parseTime = 0;
 	
 	private static final String BASE_URI_STRING = "http://www.ldbc.eu";
-
-	public static RDFXMLResultStatementsCounter getInstance() {
-		if (instance == null) {
-			instance = new RDFXMLResultStatementsCounter();
-		}
-		return instance;
-	}
 	
-	private RDFXMLResultStatementsCounter() {
+	public RDFXMLResultStatementsCounter() {
 		statementsCounter = new StatementsCounter();
 		rdfParser = Rio.createParser(RDFFormat.RDFXML);
 		rdfParser.setRDFHandler(statementsCounter);

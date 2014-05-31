@@ -14,9 +14,6 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class SPARQLResultStatementsCounter extends DefaultHandler {
-	//Singleton
-	private static SPARQLResultStatementsCounter instance = null;
-	
 	private boolean resultElementBeginFlag = false;
 	private long statementsCount = 0;
 	
@@ -29,15 +26,8 @@ public class SPARQLResultStatementsCounter extends DefaultHandler {
 
 	
 	private static final String RESULT_XML_ELEMENT = "result";
-
-	public static SPARQLResultStatementsCounter getInstance() {
-		if (instance == null) {
-			instance = new SPARQLResultStatementsCounter();
-		}
-		return instance;
-	}
 	
-	private SPARQLResultStatementsCounter() {
+	public SPARQLResultStatementsCounter() {
 		try {
 			spf.setNamespaceAware(true);
 			spf.setValidating(false);
@@ -86,7 +76,7 @@ public class SPARQLResultStatementsCounter extends DefaultHandler {
 		try {
 			long currentTime = System.currentTimeMillis();			
 			xmlReader.parse(new InputSource(is));
-			parseTime = System.currentTimeMillis() - currentTime;			
+			parseTime = System.currentTimeMillis() - currentTime;
 		} catch (SAXException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

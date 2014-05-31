@@ -10,8 +10,10 @@ import eu.ldbc.semanticpublishing.resultanalyzers.sax.SAXQuery21TemplateTransfor
  * A class used to extract title, year, month, day from a query21.txt's result.
  */
 public class Query21Analyzer {
-	
 	public ArrayList<String> collectDatesList(String result) throws UnsupportedEncodingException {
+		if (result.trim().isEmpty()) {	
+			return null;
+		}
 		SAXQuery21TemplateTransformer transformer = new SAXQuery21TemplateTransformer();
 		transformer.transform(new ByteArrayInputStream(result.getBytes("UTF-8")));
 		return transformer.getDatesList();

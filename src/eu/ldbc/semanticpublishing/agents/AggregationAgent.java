@@ -58,8 +58,8 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 		this.connection = new SparqlQueryConnection(queryExecuteManager.getEndpointUrl(), queryExecuteManager.getEndpointUpdateUrl(), queryExecuteManager.getTimeoutMilliseconds(), true);
 		this.definitions = definitions;
 		this.substitutionQueryParametersMngr = substitutionQueryParametersMngr;
-		this.rdfxmlResultStatementsCounter = RDFXMLResultStatementsCounter.getInstance();
-		this.sparqlResultStatementsCounter = SPARQLResultStatementsCounter.getInstance();
+		this.rdfxmlResultStatementsCounter = new RDFXMLResultStatementsCounter();
+		this.sparqlResultStatementsCounter = new SPARQLResultStatementsCounter();
 	}
 	
 	@Override
@@ -249,6 +249,12 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 				case 16 :
 					Query17Analyzer query17Analyzer = new Query17Analyzer();
 					entitiesList = query17Analyzer.collectEntitiesList(qResult);
+					
+					if (entitiesList == null) {
+						//no results from previous query
+						return;
+					}		
+
 					if (entitiesList.size() > 0) {
 						int randomEntity = ru.nextInt(entitiesList.size());
 						Entity entity = entitiesList.get(randomEntity);
@@ -266,14 +272,20 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 
 						updateQueryStatistics(true, benchmarkingState.get(), aggregateQuery.getTemplateQueryType(), aggregateQuery.getTemplateFileName(), qString, qResult, queryId, System.currentTimeMillis() - executionTimeMs);
 					} else {
-					return;
-				}
+            return;
+          }
 				
 				break;
 				
 			case 17 :
 				Query18Analyzer query18Analyzer = new Query18Analyzer();
 				entitiesList = query18Analyzer.collectEntitiesList(qResult);
+
+				if (entitiesList == null) {
+					//no results from previous query
+					return;
+				}
+          
 				if (entitiesList.size() > 0) {
 					int randomEntity = ru.nextInt(entitiesList.size());
 					Entity entity = entitiesList.get(randomEntity);
@@ -323,6 +335,11 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 						//date string format : 2010-10-02
 						datesList = query21Analyzer.collectDatesList(qResult);
 						
+						if (datesList == null) {
+							//no results from previous query
+							break;
+						}						
+						
 						if (datesList.size() == 0) {
 							//no results from previous query
 							break;
@@ -351,6 +368,11 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 						Query22Analyzer query22Analyzer = new Query22Analyzer();
 						//date string format : 2010-10
 						datesList = query22Analyzer.collectDatesList(qResult);
+						
+						if (datesList == null) {
+							//no results from previous query
+							break;
+						}												
 						
 						if (datesList.size() == 0) {
 							//no results from previous query
@@ -408,14 +430,15 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 		InputStream iStream = null;
 				
 		try {
-			iStream = new ByteArrayInputStream(queryResult.getBytes("UTF-8"));
-			
-			if (queryType == QueryType.CONSTRUCT || queryType == QueryType.DESCRIBE) {
-				resultsCount = rdfxmlResultStatementsCounter.getStatementsCount(iStream);
-				Statistics.timeCorrectionsMS.addAndGet(rdfxmlResultStatementsCounter.getParseTime());
-			} else {
-				resultsCount = sparqlResultStatementsCounter.getStatementsCount(iStream);
-				Statistics.timeCorrectionsMS.addAndGet(sparqlResultStatementsCounter.getParseTime());
+			if ((!queryResult.trim().isEmpty())) {			
+            iStream = new ByteArrayInputStream(queryResult.getBytes("UTF-8"));
+		        if (queryType == QueryType.CONSTRUCT || queryType == QueryType.DESCRIBE) {
+		          resultsCount = rdfxmlResultStatementsCounter.getStatementsCount(iStream);
+		          Statistics.timeCorrectionsMS.addAndGet(rdfxmlResultStatementsCounter.getParseTime());
+		        } else {
+		          resultsCount = sparqlResultStatementsCounter.getStatementsCount(iStream);
+		          Statistics.timeCorrectionsMS.addAndGet(sparqlResultStatementsCounter.getParseTime());
+		        }
 			}
 			
 			if (queryResult.length() >= 0 && benchmarkingState.get()) {

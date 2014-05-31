@@ -12,6 +12,9 @@ import eu.ldbc.semanticpublishing.resultanalyzers.sax.SAXQuery17TemplateTransfor
  */
 public class Query17Analyzer {
 	public ArrayList<Entity> collectEntitiesList(String result) throws UnsupportedEncodingException {
+		if (result.trim().isEmpty()) {		
+			return null;
+		}		
 		SAXQuery17TemplateTransformer transformer = new SAXQuery17TemplateTransformer();
 		transformer.transform(new ByteArrayInputStream(result.getBytes("UTF-8")));
 		return transformer.getEntitiesList();
