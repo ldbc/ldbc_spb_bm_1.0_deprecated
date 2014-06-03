@@ -18,7 +18,7 @@ public class BenchmarkProcessObserver extends Thread {
 	private final AtomicBoolean keepAlive;
 	private final AtomicBoolean benchmarkResultIsValid;
 	private double requiredUpdateRateThresholdOps;
-	private double updateRateReachTime;
+	private double updateRateReachTimePercent;
 	private boolean verbose;
 	private long seconds;
 	private long runPeriodSeconds;
@@ -35,7 +35,7 @@ public class BenchmarkProcessObserver extends Thread {
 		this.benchmarkState = benchmarkState;
 		this.keepAlive = keepAlive;
 		this.benchmarkResultIsValid = benchmarkResultIsValid;
-		this.updateRateReachTime = updateQueryRateFirstReachTimePercent;
+		this.updateRateReachTimePercent = updateQueryRateFirstReachTimePercent;
 		this.seconds = 0;
 		this.runPeriodSeconds = runPeriodSeconds;
 		this.benchmarkByQueryRuns = benchmarkByQueryRuns;
@@ -144,12 +144,12 @@ public class BenchmarkProcessObserver extends Thread {
 		if (requiredUpdateRateThresholdOps > 0.0) {
 			String message = "";
 			if (!benchmarkResultIsValid.get()) {
-				if ((seconds <= (int)(runPeriodSeconds * updateRateReachTime)) && requiredUpdateRatePassesCount <= 1) {
-					message = String.format("Waiting for update operations rate (current rate : %.1f ops) to reach required threshold of %.1f ops in %d second(s)", averageOperationsPerSecond, requiredUpdateRateThresholdOps, ((int)(runPeriodSeconds * updateRateReachTime) - seconds));
+				if ((seconds <= (int)(runPeriodSeconds * updateRateReachTimePercent)) && requiredUpdateRatePassesCount <= 1) {
+					message = String.format("Waiting for update operations rate (current rate : %.1f ops) to reach required threshold of %.1f ops in %d second(s)", averageOperationsPerSecond, requiredUpdateRateThresholdOps, ((int)(runPeriodSeconds * updateRateReachTimePercent) - seconds));
 					LOGGER.info(message);
 					System.out.println(message);
 				} else {
-					message = String.format("Warning : update operations rate has not reached or has dropped below required threshold of %.1f ops at second : %d, benchmark results are not valid!", requiredUpdateRateThresholdOps, (int)(runPeriodSeconds * updateRateReachTime));
+					message = String.format("Warning : Update operations rate has not reached or has dropped below required threshold of %.1f ops, benchmark results are not valid!", requiredUpdateRateThresholdOps);
 					LOGGER.warn(message);
 					System.out.println(message);
 					System.exit(0);
@@ -177,7 +177,7 @@ public class BenchmarkProcessObserver extends Thread {
 		}
 		
 		//the time frame during which update rate should be reached (and kept during the whole benchmark run)
-		if (seconds < (runPeriodSeconds * updateRateReachTime)) {
+		if (seconds < (runPeriodSeconds * updateRateReachTimePercent)) {
 			String message = "";
 			//initial reaching of the threshold
 			if ((averageOperationsPerSecond >= requiredUpdateRateThresholdOps) && (requiredUpdateRatePassesCount == 0)) {
