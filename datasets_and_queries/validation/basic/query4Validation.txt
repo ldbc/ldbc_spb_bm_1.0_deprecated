@@ -1,6 +1,9 @@
 [SubstitutionParameters]
 <http://dbpedia.org/resource/Michael_Fabricant>;cwork:TextualFormat;cwork:NewsItem;10000
 
+[ExpectedResultsSize]
+647
+
 [Results]
 <http://www.bbc.co.uk/things/32392#id>
 <http://www.bbc.co.uk/things/18884#id>

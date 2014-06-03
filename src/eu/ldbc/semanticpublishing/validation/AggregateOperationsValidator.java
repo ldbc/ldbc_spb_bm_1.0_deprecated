@@ -75,7 +75,7 @@ public class AggregateOperationsValidator extends Validator {
 		QueryType queryType;
 		
 		for (int i = 0; i < Statistics.AGGREGATE_QUERIES_COUNT; i++) {
-			ValidationValues validationValues = validationValuesManager.getValidationValuesFor(i);
+			ValidationValuesModel validationValues = validationValuesManager.getValidationValuesFor(i);
 			
 			c = (Class<SubstitutionParametersGenerator>) Class.forName(String.format("eu.ldbc.semanticpublishing.templates.aggregation.Query%dTemplate", (i + 1)));
 			cc = c.getConstructor(RandomUtil.class, HashMap.class, Definitions.class, String[].class);
@@ -87,7 +87,7 @@ public class AggregateOperationsValidator extends Validator {
 			
 			queryResult = queryExecuteManager.executeQuery(connection, queryName, queryString, queryType, false, true);			
 
-			long resultsCount = 0;
+			long actualResultsSize = 0;
 			InputStream iStream = null;
 					
 			try {
@@ -95,20 +95,19 @@ public class AggregateOperationsValidator extends Validator {
 				
 				if ((!queryResult.trim().isEmpty())) {
 					if (queryType == QueryType.CONSTRUCT || queryType == QueryType.DESCRIBE) {
-						resultsCount = rdfxmlResultStatementsCounter.getStatementsCount(iStream);
+						actualResultsSize = rdfxmlResultStatementsCounter.getStatementsCount(iStream);
 					} else {
-						resultsCount = sparqlResultStatementsCounter.getStatementsCount(iStream);
+						actualResultsSize = sparqlResultStatementsCounter.getStatementsCount(iStream);
 					}
 				}
 			
-				BRIEF_LOGGER.info(String.format("Query [%s] executed, iteration %d, results %d", queryName, (i + 1), resultsCount));
-				LOGGER.info("\n*** Query [" + queryName + "], iteration " + (i + 1) + ", results " + resultsCount + "\n" + queryString + "\n---------------------------------------------\n*** Result for query [" + queryName + "]" + " : \n" + "Length : " + queryResult.length() + "\n" + queryResult + "\n\n");
+				BRIEF_LOGGER.info(String.format("Query [%s] executed, iteration %d, results %d", queryName, (i + 1), actualResultsSize));
+				LOGGER.info("\n*** Query [" + queryName + "], iteration " + (i + 1) + ", results " + actualResultsSize + "\n" + queryString + "\n---------------------------------------------\n*** Result for query [" + queryName + "]" + " : \n" + "Length : " + queryResult.length() + "\n" + queryResult + "\n\n");
 		
 				System.out.println(String.format("\tQuery %-1d : ", (i + 1)));
-				int errorsForQuery = validateAggregate(queryResult, "AGGREGATE", (i + 1), validationValues.getValidationResultsList(), false);
-				System.out.print(String.format("\t\t%d errors found in %d expected validation results\n", errorsForQuery, validationValues.getValidationResultsList().size()));
+				int errorsForQuery = validateAggregate(queryResult, actualResultsSize, validationValues.getExpectedResultsSize(), "AGGREGATE", (i + 1), validationValues.getValidationResultsList(), false);
+				System.out.print(String.format("\t\t%d errors found in %d validation values, %d expected results, %d returned results\n", errorsForQuery, validationValues.getValidationResultsList().size(), validationValues.getExpectedResultsSize(), actualResultsSize));
 			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}			
 		}

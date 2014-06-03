@@ -1,6 +1,9 @@
 [SubstitutionParameters]
 <http://www.bbc.co.uk/things/18399#id>
 
+[ExpectedResultsSize]
+61
+
 [Results]
 <http://www.bbc.co.uk/things/144065337#id>
 <http://www.bbc.co.uk/things/655108673#id>

@@ -1,6 +1,9 @@
 [SubstitutionParameters]
 cwork:BlogPost;FILTER(?dateModif >= "2011-05-01T00:00:00.000"^^<http://www.w3.org/2001/XMLSchema#dateTime> && ?dateModif < "2011-05-31T23:59:59.999"^^<http://www.w3.org/2001/XMLSchema#dateTime>) .;ORDER BY ?dateModif;10000
 
+[ExpectedResultsSize]
+720
+
 [Results]
 <http://www.bbc.co.uk/things/11281#id>
 <http://www.bbc.co.uk/things/46784#id>

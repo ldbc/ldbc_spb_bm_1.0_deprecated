@@ -1,6 +1,9 @@
 [SubstitutionParameters]
 cwork:about;<http://www.wikidata.org/wiki/Q260489>
 
+[ExpectedResultsSize]
+1070
+
 [Results]
 <http://www.bbc.co.uk/things/1183461870#id>
 <http://www.bbc.co.uk/things/176046607#id>

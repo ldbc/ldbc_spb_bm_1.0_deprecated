@@ -1,6 +1,9 @@
 [SubstitutionParameters]
 news:Person;<http://www.bbc.co.uk/category/PoliticsPersonsAdditional>;<http://www.bbc.co.uk/category/PoliticsPersons>
 
+[ExpectedResultsSize]
+647
+
 [Results]
 <http://www.bbc.co.uk/things/ge066d72c-2e59-4ad7-b5f3-d6cd406ac5a2#id>
 <http://www.bbc.co.uk/things/g27dc2451-f1ae-4c63-bf36-8855216f8e3c#id>

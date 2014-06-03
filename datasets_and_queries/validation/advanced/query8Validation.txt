@@ -1,6 +1,9 @@
 [SubstitutionParameters]
 cwork:NewsItem;cwork:NationalAudience;"2011-05-02T09:25:26Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>;"2011-05-05T09:25:26Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>
 
+[ExpectedResultsSize]
+179
+
 [Results]
 <http://www.wikidata.org/wiki/Q333267>
 <http://dbpedia.org/resource/Michael_Connarty>

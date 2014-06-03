@@ -1,6 +1,9 @@
 [SubstitutionParameters]
 FILTER(?pcCount > 2);ORDER BY DESC(?count) ?mentions
 
+[ExpectedResultsSize]
+10
+
 [Results]
 7
 6

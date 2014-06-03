@@ -1,6 +1,9 @@
 [SubstitutionParameters]
 ?title ?description ?category ?tag ?audience ?liveCoverage ?primaryFormat ?year ?month;FILTER (CONTAINS(?title, "worst") || CONTAINS(?description, "all")) .;FILTER (?category = <http://www.bbc.co.uk/category/PoliticsPersonsReference>) .; ;ORDER BY ?tag ?year ?month
 
+[ExpectedResultsSize]
+500
+
 [Results]
 James Brokenshire centuries personally elaborate services fact members method phrase can commentators.
 Bob Ainsworth maintained its could enforced transfers private town cases represented affords.

@@ -1,6 +1,9 @@
 [SubstitutionParameters]
 cwork:BlogPost;cwork:InternationalAudience;FILTER(?dateModif >= "2011-08-01T00:00:00.000"^^<http://www.w3.org/2001/XMLSchema#dateTime> && ?dateModif < "2011-08-31T23:59:59.999"^^<http://www.w3.org/2001/XMLSchema#dateTime>) .;100000
 
+[ExpectedResultsSize]
+2482
+
 [Results]
 <http://www.bbc.co.uk/things/g5978e152-24ac-4d53-9740-e4353618b179#id>
 <http://rdf.freebase.com/ns/m.025vx5>

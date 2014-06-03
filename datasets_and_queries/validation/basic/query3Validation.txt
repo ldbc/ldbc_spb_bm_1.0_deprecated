@@ -1,6 +1,9 @@
 [SubstitutionParameters]
 <http://www.guardian.co.uk/politics/person/9343/>;cwork:InternationalAudience;10000
 
+[ExpectedResultsSize]
+303
+
 [Results]
 <http://www.bbc.co.uk/things/31030#id>
 <http://www.bbc.co.uk/things/13851#id>

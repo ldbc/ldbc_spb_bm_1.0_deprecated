@@ -1,6 +1,9 @@
 [SubstitutionParameters]
 51.47675973187948;-0.6245503807705104;0.24292683305263862;ORDER BY DESC(?dateModified);10000
 
+[ExpectedResultsSize]
+528
+
 [Results]
 <http://www.bbc.co.uk/things/11864#id>
 <http://www.bbc.co.uk/things/18065#id>

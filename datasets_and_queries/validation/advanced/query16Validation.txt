@@ -1,6 +1,9 @@
 [SubstitutionParameters]
 cwork:NationalAudience;100000
 
+[ExpectedResultsSize]
+3357
+
 [Results]
 <http://www.bbc.co.uk/things/33784#id>
 <http://www.bbc.co.uk/things/33605#id>

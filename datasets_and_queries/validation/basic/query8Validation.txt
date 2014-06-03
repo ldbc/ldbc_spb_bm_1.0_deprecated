@@ -1,6 +1,9 @@
 [SubstitutionParameters]
 "mediums";"faster";1000000
 
+[ExpectedResultsSize]
+88269
+
 [Results]
 <http://www.bbc.co.uk/things/38977#id>
 <http://www.bbc.co.uk/things/1362200166#id>

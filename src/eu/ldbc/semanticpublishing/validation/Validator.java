@@ -43,10 +43,10 @@ public class Validator {
 		return errors;
 	}
 	
-	protected int validateAggregate(String result, String validateOperation, int iteration, List<String> validationList, boolean strict) {
+	protected int validateAggregate(String result, long actualResultsSize, long expectedResultSize, String validateOperation, int iteration, List<String> validationList, boolean strict) {
 		int errors = 0;
 		String value;
-		
+				
 		for (String v : validationList) {
 			int errorsCount = 0;
 			
@@ -71,6 +71,10 @@ public class Validator {
 				System.out.println("\t\t" + /*validateOperation +*/ "validation failed on query : " + iteration + ", query result is missing value : " + value);
 				errors++;
 			}
+		}
+		
+		if (actualResultsSize != expectedResultSize) {
+			System.out.println("\t\tWarning : " + /*validateOperation +*/ "validation failed on query : " + iteration + ", expected amount of results : " + expectedResultSize + ",  actual value : " + actualResultsSize);
 		}
 		
 		return errors;

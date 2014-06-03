@@ -7,15 +7,15 @@ import eu.ldbc.semanticpublishing.statistics.Statistics;
 import eu.ldbc.semanticpublishing.util.StringUtil;
 
 public class ValidationValuesManager {
-	private static final ValidationValues[] validationValuesArray;
+	private static final ValidationValuesModel[] validationValuesArray;
 	
 	public static final String VALIDATION_PREFIX = "query";
 	public static final String VALIDATION_SUFFIX = "Validation.txt";
 	
 	static {
-		validationValuesArray = new ValidationValues[Statistics.AGGREGATE_QUERIES_COUNT];
+		validationValuesArray = new ValidationValuesModel[Statistics.AGGREGATE_QUERIES_COUNT];
 		for (int i = 0; i < Statistics.AGGREGATE_QUERIES_COUNT; i++) {
-			validationValuesArray[i] = new ValidationValues(String.format("%s%d%s", VALIDATION_PREFIX, (i + 1), VALIDATION_SUFFIX));
+			validationValuesArray[i] = new ValidationValuesModel(String.format("%s%d%s", VALIDATION_PREFIX, (i + 1), VALIDATION_SUFFIX));
 		}
 	}
 	
@@ -37,7 +37,7 @@ public class ValidationValuesManager {
 	 * @param index
 	 *            - Notice - index is zero based, while validation files are NOT
 	 */
-	public ValidationValues getValidationValuesFor(int index) {
+	public ValidationValuesModel getValidationValuesFor(int index) {
 		return validationValuesArray[index];
 	}	
 }

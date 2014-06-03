@@ -1,6 +1,9 @@
 [SubstitutionParameters]
 cwork:InternationalAudience;100000
 
+[ExpectedResultsSize]
+5270
+
 [Results]
 <http://www.bbc.co.uk/things/47238#id>
 <http://www.bbc.co.uk/things/33605#id>

@@ -1,6 +1,9 @@
 [SubstitutionParameters]
 ?title ?description ?category ?tag ?audience ?liveCoverage ?primaryFormat ?year ?month;FILTER (CONTAINS(?title, "using") || CONTAINS(?description, "turn")) .;FILTER (?category = <http://www.bbc.co.uk/category/PoliticsPersonsAdditional>) .; ; ;ORDER BY ?tag ?year ?month;100000
 
+[ExpectedResultsSize]
+8033
+
 [Results]
 Mark Lancaster society over affords assertion prolonged record-keeping billion billion web line.
 Mark Harper components refusing town worldwide software worst taxation enjoyment majority incur.

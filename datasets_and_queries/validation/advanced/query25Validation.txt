@@ -1,6 +1,9 @@
 [SubstitutionParameters]
 <http://www.guardian.co.uk/politics/person/1440/>;<http://www.guardian.co.uk/politics/person/1440/>;100000
 
+[ExpectedResultsSize]
+110
+
 [Results]
 <http://rdf.freebase.com/ns/m.0c3wbr1>
 <http://www.jonathandjanogly.com/>

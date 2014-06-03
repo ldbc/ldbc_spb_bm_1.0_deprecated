@@ -1,6 +1,9 @@
 [SubstitutionParameters]
 <http://www.bbc.co.uk/category/PoliticsPersonsAdditional>;<http://www.bbc.co.uk/category/SportsCompetitions>;ORDER BY ?dateModified ?thing
 
+[ExpectedResultsSize]
+100
+
 [Results]
 <http://www.bbc.co.uk/things/25345#id>
 <http://www.bbc.co.uk/things/12479#id>

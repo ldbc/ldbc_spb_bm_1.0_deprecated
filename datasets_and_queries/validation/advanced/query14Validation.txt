@@ -1,6 +1,9 @@
 [SubstitutionParameters]
 cwork:InternationalAudience;cwork:InternationalAudience;bbc:Mobile;cwork:AudioFormat;cwork:TextualFormat
 
+[ExpectedResultsSize]
+200
+
 [Results]
 <http://www.bbc.co.uk/things/43278#id>
 <http://www.bbc.co.uk/things/22124#id>

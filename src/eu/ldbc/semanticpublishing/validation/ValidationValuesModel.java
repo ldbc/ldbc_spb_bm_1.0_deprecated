@@ -8,15 +8,18 @@ import java.util.List;
 
 import eu.ldbc.semanticpublishing.substitutionparameters.SubstitutionQueryParameters;
 
-public class ValidationValues {
+public class ValidationValuesModel {
 	private static final String RESULTS_HEADER = "[Results]";
+	private static final String EXPECTED_RESULTS_SIZE_HEADER = "[ExpectedResultsSize]";
 	
 	private SubstitutionQueryParameters substitutionParameters;
 	private String queryName;
+	private long expectedResultsSize;
 	private List<String> validationResultsList;
 	
-	public ValidationValues(String queryName) {
+	public ValidationValuesModel(String queryName) {
 		this.queryName = queryName;
+		expectedResultsSize = -1;
 		substitutionParameters = new SubstitutionQueryParameters(queryName);
 		validationResultsList = new ArrayList<String>();
 	}
@@ -26,16 +29,26 @@ public class ValidationValues {
 		
 		BufferedReader br = null;
 		try {
-			boolean canAdd = false;
+			boolean canAddExpectedResultsCount = false;
+			boolean canAddResultValues = false;
 			br = new BufferedReader(new FileReader(fullPath));
 			String line = br.readLine();
 			while (line != null) {	
-				if (canAdd) {
+				if (canAddExpectedResultsCount) {
+					expectedResultsSize = Integer.parseInt(line);
+					canAddExpectedResultsCount = false;
+				}
+				
+				if (canAddResultValues) {
 					validationResultsList.add(line);
 				}
 				
+				if (line.contains(EXPECTED_RESULTS_SIZE_HEADER)) {
+					canAddExpectedResultsCount = true;
+				}
+				
 				if (line.contains(RESULTS_HEADER)) {
-					canAdd = true;
+					canAddResultValues = true;
 				}
 				
 				line = br.readLine();
@@ -51,6 +64,10 @@ public class ValidationValues {
 	
 	public String getQueryName() {
 		return this.queryName;
+	}
+	
+	public long getExpectedResultsSize() {
+		return expectedResultsSize;
 	}
 	
 	public String[] getSubstitutionParameters() {

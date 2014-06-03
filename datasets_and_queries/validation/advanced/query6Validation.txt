@@ -1,6 +1,9 @@
 [SubstitutionParameters]
 "true"^^<http://www.w3.org/2001/XMLSchema#boolean>;cwork:InternationalAudience;25
 
+[ExpectedResultsSize]
+12
+
 [Results]
 <http://www.w3.org/2002/07/owl#Thing>
 <http://www.bbc.co.uk/ontologies/coreconcepts/Thing>
