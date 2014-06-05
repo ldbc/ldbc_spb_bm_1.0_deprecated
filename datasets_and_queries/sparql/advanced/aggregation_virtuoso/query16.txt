@@ -51,7 +51,8 @@ WHERE
   ?a rdfs:subPropertyOf cwork:tag . 
   ?thing cwork:category ?category . 
   ?thing cwork:title ?title . 
-  FILTER (CONTAINS (?title, "policy") && (?tag = ?o)) .
+  ?title bif:contains "policy" . 
+  FILTER ((?tag = ?o)) .
   OPTIONAL {
     ?thing cwork:audience ?audience . 
     FILTER ( ?audience = {{{cwAudienceType}}} ) .
