@@ -136,8 +136,11 @@ public class BenchmarkProcessObserver extends Thread {
 			sb.append(String.format("\n\t\t%d total retrieval queries\n", totalAggregateOpsCount));
 		}
 		
-		//considering a time correction caused by result parsing for each aggregate query by each of aggregate agents, that time is subtracted when calculating the total average
-		double averageQueriesPerSecond = (double)totalAggregateOpsCount / ((double)seconds - (double)(Statistics.timeCorrectionsMS.get() / 1000));		
+		//considering a time correction caused by result parsing for each aggregate query by each of aggregate agents, that time is subtracted when calculating the total average		
+		double averageQueriesPerSecond = (double)totalAggregateOpsCount / ((double)seconds - (double)(Statistics.timeCorrectionsMS.get() / 1000));
+		if ((double)(Statistics.timeCorrectionsMS.get() / 1000) >= (double)seconds) {
+			averageQueriesPerSecond = (double)totalAggregateOpsCount / ((double)seconds);
+		}
 		sb.append(String.format("\t\t%.4f average queries per second\n", averageQueriesPerSecond));		
 				
 		//in case using requiredUpdateRateThresholdOps option, display a message that benchmark is not 
