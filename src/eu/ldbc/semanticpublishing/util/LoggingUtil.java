@@ -1,10 +1,14 @@
 package eu.ldbc.semanticpublishing.util;
 
+import java.io.File;
+
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.RollingFileAppender;
+
+import eu.ldbc.semanticpublishing.properties.Configuration;
 
 /**
  * A class used for configuring the log4j logging system.
@@ -28,11 +32,18 @@ public class LoggingUtil {
 	private static final String LAYOUT = ">> %d{HH:mm:ss.SSS} [%c{1}:%t] : %m\n";
 	private static final String LAYOUT_SIMPLE = "%d{HH:mm:ss.SSS} : %m\n";
 	
-	public static void Configure() {
+	private static final String LOGS_FOLDER = "logs";
+	
+	public static void Configure(Configuration configuration) {
+		if (!configuration.getBoolean(Configuration.ENABLE_LOGS)) {
+			System.out.println("Logging has been disabled...");
+			return;
+		}
+			
 		//Appender for breaf query execution log
 		RollingFileAppender briefQueriesLogFileAppender = new RollingFileAppender();
 		briefQueriesLogFileAppender.setName(EXECUTED_QUERIES_BRIEF_FILE_APPENDER_NAME);
-		briefQueriesLogFileAppender.setFile(EXECUTED_QUERIES_BRIEF_LOG_FILE_NAME);
+		briefQueriesLogFileAppender.setFile(LOGS_FOLDER + File.separator + EXECUTED_QUERIES_BRIEF_LOG_FILE_NAME);
 		briefQueriesLogFileAppender.setLayout(new PatternLayout(LAYOUT_SIMPLE));
 		briefQueriesLogFileAppender.setThreshold(Level.INFO);
 		briefQueriesLogFileAppender.setAppend(false);
@@ -46,7 +57,7 @@ public class LoggingUtil {
 		//Appender for detailed query execution log, queries and results
 		RollingFileAppender detailedQueriesLogFileAppender = new RollingFileAppender();
 		detailedQueriesLogFileAppender.setName(EXECUTED_QUERIES_DETAILED_FILE_APPENDER_NAME);
-		detailedQueriesLogFileAppender.setFile(EXECUTED_QUERIES_DETAILED_LOG_FILE_NAME);
+		detailedQueriesLogFileAppender.setFile(LOGS_FOLDER + File.separator + EXECUTED_QUERIES_DETAILED_LOG_FILE_NAME);
 		detailedQueriesLogFileAppender.setLayout(new PatternLayout(LAYOUT));
 		detailedQueriesLogFileAppender.setThreshold(Level.INFO);
 		detailedQueriesLogFileAppender.setAppend(false);
@@ -56,12 +67,12 @@ public class LoggingUtil {
 		detailedQueriesLogFileAppender.activateOptions();
 
 		Logger.getLogger("eu.ldbc.semanticpublishing.agents.AggregationAgent").addAppender(detailedQueriesLogFileAppender);
-		Logger.getLogger("eu.ldbc.semanticpublishing.agents.EditorialAgent").addAppender(detailedQueriesLogFileAppender);		
+		Logger.getLogger("eu.ldbc.semanticpublishing.agents.EditorialAgent").addAppender(detailedQueriesLogFileAppender);
 		
 		//Appender for benchmark results
 		RollingFileAppender benchmarkResultsFileAppander = new RollingFileAppender();
 		benchmarkResultsFileAppander.setName(BENCHMARK_RESULTS_FILE_APPENDER_NAME);
-		benchmarkResultsFileAppander.setFile(BENCHMARK_RESULTS_LOG_FILE_NAME);
+		benchmarkResultsFileAppander.setFile(LOGS_FOLDER + File.separator + BENCHMARK_RESULTS_LOG_FILE_NAME);
 		benchmarkResultsFileAppander.setLayout(new PatternLayout(LAYOUT_SIMPLE));
 		benchmarkResultsFileAppander.setThreshold(Level.INFO);
 		benchmarkResultsFileAppander.setAppend(false);

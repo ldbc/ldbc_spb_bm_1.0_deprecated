@@ -77,6 +77,9 @@ public class TestDriver {
 		configuration.loadFromFile(args[0]);
 		definitions.loadFromFile(configuration.getString(Configuration.DEFINITIONS_PATH), configuration.getBoolean(Configuration.VERBOSE));
 		mustacheTemplatesHolder.loadFrom(configuration.getString(Configuration.QUERIES_PATH));
+		
+		//initialize log4j
+		LoggingUtil.Configure(configuration);
 
 		//will read the dictionary file from jar file as a resource
 		randomGenerator = initializeRandomUtil(configuration.getString(Configuration.REFERENCE_DATASETS_PATH), configuration.getLong(Configuration.GENERATOR_RANDOM_SEED), definitions.getInt(Definitions.YEAR_SEED), definitions.getInt(Definitions.DATA_GENERATOR_PERIOD_YEARS));
@@ -837,7 +840,6 @@ public class TestDriver {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		LoggingUtil.Configure();
 		TestDriver testDriver = new TestDriver(args);
 		testDriver.executePhases();
 	}

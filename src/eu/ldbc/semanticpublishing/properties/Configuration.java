@@ -60,6 +60,7 @@ public class Configuration {
 	public static final String ENTERPRISE_FEATURES_PATH = "enterpriseFeaturesPath";
 	public static final String UPDATE_RATE_THRESHOLD_OPS = "updateRateThresholdOps";
 	public static final String UPDATE_RATE_THRESHOLD_REACH_TIME_PERCENT = "updateRateThresholdReachTimePercent";
+	public static final String ENABLE_LOGS = "enableLogs";
 	
 	/**
 	 * Initialise and set default values for parameters that make sense.
@@ -106,6 +107,7 @@ public class Configuration {
 		properties.setProperty(ENTERPRISE_FEATURES_PATH, "./data/enterprise");
 		properties.setProperty(UPDATE_RATE_THRESHOLD_OPS, "0.0");
 		properties.setProperty(UPDATE_RATE_THRESHOLD_REACH_TIME_PERCENT, "0.1");
+		properties.setProperty(ENABLE_LOGS, "true");
 	}
 	
 	/**
