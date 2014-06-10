@@ -20,16 +20,16 @@ Apache Ant build tool is required. Start one of the following tasks :
 
 ```
 #to build a standard version of the benchmark, compliant to SPARQL 1.1 standard
-ant build-basic-querymix
+$ ant build-basic-querymix
 
 #to build a standard version of the benchmark, compliant to SPARQL 1.1 standard with extended query mix
-ant build-advanced-querymix
+$ ant build-advanced-querymix
 
 #to build a version of the benchmark customized for Virtuoso Database
-ant build-basic-querymix-virtuoso
+$ ant build-basic-querymix-virtuoso
 
 #to build a version of the benchmark customized for Virtuoso Database with extended query mix
-ant build-advanced-querymix-virtuoso
+$ ant build-advanced-querymix-virtuoso
 ```
 
 Result of the build process is saved to the distribution folder (dist/) : 
@@ -50,6 +50,16 @@ Optionally, additinal reference datasets can be added - they can be dowloaded fr
   * Use RDFS rule-set
   * Enable context indexing (if available)
   * Enable geo-spatial indexing (if available)
+
+
+* Conifgure the benchmark driver to :
+  * ***Generate Data*** - enable phases : loadOntologies, loadReferenceDatasets, generateCreativeWorks
+  * ***Load Generated Data*** - *Generate Data*, enable phase : loadCreativeWorks (generated data can also be loaded manually from folder 'creativeWorksPath/' if database doesn't support automatic loading)
+  * ***Generate Query Substitution Parameters*** - *Generate Data* and *Load Generated Data*, enable phase : generateQuerySubstitutionParameters
+  * ***Validate Query Results*** - to be executed on an empty database, enable phases : loadOntologies, loadDatasets
+  * ***Run The Benchmark*** - *Generate Data*, *Load Generated Data*, *Generate Query Substitution Parameters*, enable phases : warmUp, runBenchmark
+  * ***Run Online Replication and Backup Benchmark*** - *Generate Data*, *Load Generated Data*, *Generate Query Substitution Parameters*, enable phase : runBenchmarkOnlineReplicationAndBackup. Also make a full backup prior to running the benchmark for later restore point and implement all scripts in folder 'data/enterprise/scripts/' specific to each database.
+  * ***Check Conformance to OWL2-RL Rule-Set*** - to be executed on an empty database with OWL2-RL rule-set, enable phase : loadOntologies. No data generation or loading is required.
 
 
 * Benchmark Phases (test.properties)
@@ -98,15 +108,6 @@ Optionally, additinal reference datasets can be added - they can be dowloaded fr
   * ***updateRateThresholdReachTimePercent*** - defines the time frame during which the defined value in property 'updateRateThresholdOps' should be reached. Default value is 0.1 (10%). e.g. if set to 0.1 (i.e. 10%) then the update rate defined in 'updateRateThresholdOps' should be reached during the first 10% of the benchmark run time, if not reached, the result is considered invalid
   * ***enableLogs*** - enables or disables logging of benchmark results and details, default: true
   
-  
-* Conifgure the driver to :
-  * ***Generate Data*** - enable phases : loadOntologies, loadReferenceDatasets, generateCreativeWorks
-  * ***Load Generated Data*** - *Generate Data*, enable phase : loadCreativeWorks (generated data can also be loaded manually from folder 'creativeWorksPath/' if database doesn't support automatic loading)
-  * ***Generate Query Substitution Parameters*** - *Generate Data* and *Load Generated Data*, enable phase : generateQuerySubstitutionParameters
-  * ***Validate Query Results*** - to be executed on an empty database, enable phases : loadOntologies, loadDatasets
-  * ***Run The Benchmark*** - *Generate Data*, *Load Generated Data*, *Generate Query Substitution Parameters*, enable phases : warmUp, runBenchmark
-  * ***Run Online Replication and Backup Benchmark*** - *Generate Data*, *Load Generated Data*, *Generate Query Substitution Parameters*, enable phase : runBenchmarkOnlineReplicationAndBackup. Also make a full backup prior to running the benchmark for later restore point and implement all scripts in folder 'data/enterprise/scripts/' specific to each database.
-  * ***Check Conformance to OWL2-RL Rule-Set*** - to be executed on an empty database with OWL2-RL rule-set, enable phase : loadOntologies. No data generation or loading is required.
   
 ###Run
 

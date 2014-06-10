@@ -25,10 +25,10 @@ How to build the benchmark driver :
   Currently two versions of the Benchmark exist : a basic version - containing a reduced query-mix with 9 queries and advanced version with 25 queries,
   use appropriate ant-tasks to build them, e.g.
   
-  > ant build-basic-querymix          //builds the standard benchmark driver compliant to SPARQL 1.1
-  > ant build-advanced-querymix          //builds the standard benchmark driver compliant to SPARQL 1.1 with extended query mix
-  > ant build-basic-querymix-virtuoso //builds a custom version of the driver customized for Virtuoso's small deviation in SPARQL queries
-  > ant build-advanced-querymix-virtuoso //builds a custom version of the driver customized for Virtuoso's small deviation in SPARQL queries with extended query mix
+  $ ant build-basic-querymix          //builds the standard benchmark driver compliant to SPARQL 1.1
+  $ ant build-advanced-querymix          //builds the standard benchmark driver compliant to SPARQL 1.1 with extended query mix
+  $ ant build-basic-querymix-virtuoso //builds a custom version of the driver customized for Virtuoso's small deviation in SPARQL queries
+  $ ant build-advanced-querymix-virtuoso //builds a custom version of the driver customized for Virtuoso's small deviation in SPARQL queries with extended query mix
 
 
 
@@ -79,6 +79,17 @@ How to run the benchmark :
     - Use rule-set : RDFS
     - Enable context indexing if available
     - Enable geo-spatial indexing if available
+  
+    
+  * Conifgure the benhcmark driver to :
+  	 - Generate Data - enable phases : loadOntologies, loadReferenceDatasets, generateCreativeWorks
+     - Load Generated Data - *Generate Data*, enable phase : loadCreativeWorks (generated data can also be loaded manually from folder 'creativeWorksPath/' if database doesn't support automatic loading)
+     - Generate Query Substitution Parameters - *Generate Data* and *Load Generated Data*, enable phase : generateQuerySubstitutionParameters
+     - Validate Query Results - to be executed on an empty database, enable phases : loadOntologies, loadDatasets
+     - Run The Benchmark - *Generate Data*, *Load Generated Data*, *Generate Query Substitution Parameters*, enable phases : warmUp, runBenchmark
+     - Run Online Replication and Backup Benchmark - *Generate Data*, *Load Generated Data*, *Generate Query Substitution Parameters*, enable phase : runBenchmarkOnlineReplicationAndBackup. Also make a full backup prior to running the benchmark for later restore point and implement all scripts in folder 'data/enterprise/scripts/' specific to each database.
+     - Check Conformance to OWL2-RL Rule-Set - to be executed on an empty database with OWL2-RL rule-set, enable phase : loadOntologies. No data generation or loading is required.    
+  
   
   (Configure the benchmark phases. One, several or all phases can be enabled to run in a sequence. Running the first three phases is mandatory for the benchmark )
       
@@ -165,16 +176,7 @@ How to run the benchmark :
     
       Sample definitions.properties file can be found in the distribution folder.
 
-  * Conifgure the driver to :
-  	 - Generate Data - enable phases : loadOntologies, loadReferenceDatasets, generateCreativeWorks
-     - Load Generated Data - *Generate Data*, enable phase : loadCreativeWorks (generated data can also be loaded manually from folder 'creativeWorksPath/' if database doesn't support automatic loading)
-     - Generate Query Substitution Parameters - *Generate Data* and *Load Generated Data*, enable phase : generateQuerySubstitutionParameters
-     - Validate Query Results - to be executed on an empty database, enable phases : loadOntologies, loadDatasets
-     - Run The Benchmark - *Generate Data*, *Load Generated Data*, *Generate Query Substitution Parameters*, enable phases : warmUp, runBenchmark
-     - Run Online Replication and Backup Benchmark - *Generate Data*, *Load Generated Data*, *Generate Query Substitution Parameters*, enable phase : runBenchmarkOnlineReplicationAndBackup. Also make a full backup prior to running the benchmark for later restore point and implement all scripts in folder 'data/enterprise/scripts/' specific to each database.
-     - Check Conformance to OWL2-RL Rule-Set - to be executed on an empty database with OWL2-RL rule-set, enable phase : loadOntologies. No data generation or loading is required.
-
-  * Example benchmark run command : 
+  * Example command to start the benchmark : 
 
   	  java -jar semantic_publishing_benchmark-*.jar test.properties
   	  
