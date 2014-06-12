@@ -96,7 +96,7 @@ public class BenchmarkProcessObserver extends Thread {
 			sb.append(String.format("\t\t%-5d updates (avg : %-7d ms, min : %-7d ms, max : %-7d ms)\n", updateOpsCount ,Statistics.updateCreativeWorksQueryStatistics.getAvgExecutionTimeMs(), Statistics.updateCreativeWorksQueryStatistics.getMinExecutionTimeMs(), Statistics.updateCreativeWorksQueryStatistics.getMaxExecutionTimeMs()));
 			sb.append(String.format("\t\t%-5d deletes (avg : %-7d ms, min : %-7d ms, max : %-7d ms)\n", deleteOpsCount ,Statistics.deleteCreativeWorksQueryStatistics.getAvgExecutionTimeMs(), Statistics.deleteCreativeWorksQueryStatistics.getMinExecutionTimeMs(), Statistics.deleteCreativeWorksQueryStatistics.getMaxExecutionTimeMs()));
 			sb.append("\n");
-			sb.append(String.format("\t\t%d operations (%d CW Inserts (%d failed), %d CW Updates (%d failed), %d CW Deletions (%d failed))\n", ( insertOpsCount + updateOpsCount + deleteOpsCount ),
+			sb.append(String.format("\t\t%d operations (%d CW Inserts (%d timed-out), %d CW Updates (%d timed-out), %d CW Deletions (%d timed-out))\n", ( insertOpsCount + updateOpsCount + deleteOpsCount ),
 																	  																			 insertOpsCount, failedInsertOpsCount,
 																	  																			 updateOpsCount, failedUpdateOpsCount,
 																	  																			 deleteOpsCount, failedDeleteOpsCount) );
@@ -120,14 +120,14 @@ public class BenchmarkProcessObserver extends Thread {
 		sb.append(String.format("\t\t%s agents\n\n", aggregationAgentsCount));
 		if (verbose) {
 			for (int i = 0; i < Statistics.AGGREGATE_QUERIES_COUNT; i++) {
-				sb.append(String.format("\t\t%-5d Q%-2d  queries (avg : %-7d ms, min : %-7d ms, max : %-7d ms, %d failed)\n", Statistics.aggregateQueriesArray[i].getRunsCount(), 
+				sb.append(String.format("\t\t%-5d Q%-2d  queries (avg : %-7d ms, min : %-7d ms, max : %-7d ms, %d timed-out)\n", Statistics.aggregateQueriesArray[i].getRunsCount(), 
 																											   				  (i + 1),
 																											   				  Statistics.aggregateQueriesArray[i].getAvgExecutionTimeMs(),
 																											   				  Statistics.aggregateQueriesArray[i].getMinExecutionTimeMs(), 
 																											   				  Statistics.aggregateQueriesArray[i].getMaxExecutionTimeMs(), 
 																											   				  Statistics.aggregateQueriesArray[i].getFailuresCount()));
 			}
-			sb.append(String.format("\n\t\t%d total retrieval queries (%d failed)\n", totalAggregateOpsCount, failedTotalAggregateOpsCount));
+			sb.append(String.format("\n\t\t%d total retrieval queries (%d timed-out)\n", totalAggregateOpsCount, failedTotalAggregateOpsCount));
 		} else {
 			for (int i = 0; i < Statistics.AGGREGATE_QUERIES_COUNT; i++) {
 				sb.append(String.format("\t\t%-5d Q%-2d  queries\n", Statistics.aggregateQueriesArray[i].getRunsCount(), (i + 1)));
