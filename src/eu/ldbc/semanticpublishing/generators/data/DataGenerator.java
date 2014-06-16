@@ -148,7 +148,7 @@ public class DataGenerator {
 		
 		//Generate MAJOR EVENTS with exponential decay
 		if (produceClusterings && definitions.getInt(Definitions.MAJOR_EVENTS_PER_YEAR) > 0) {			
-			for (int i = 0; i < definitions.getInt(Definitions.MAJOR_EVENTS_PER_YEAR); i++) {
+			for (int i = 0; i < definitions.getInt(Definitions.MAJOR_EVENTS_PER_YEAR) * definitions.getInt(Definitions.DATA_GENERATOR_PERIOD_YEARS); i++) {
 				edgu =  new ExponentialDecayNumberGeneratorUtil(/*ru.nextInt(1000, */exponentialDecayUpperLimitOfCws, 
 							  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_RATE), 
 							  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_THRESHOLD_PERCENT));
@@ -165,7 +165,7 @@ public class DataGenerator {
 
 		//Generate MINOR EVENTS with exponential decay
 		if (produceClusterings && definitions.getInt(Definitions.MINOR_EVENTS_PER_YEAR) > 0) {			
-			for (int i = 0; i < definitions.getInt(Definitions.MINOR_EVENTS_PER_YEAR); i++) {
+			for (int i = 0; i < definitions.getInt(Definitions.MINOR_EVENTS_PER_YEAR) * definitions.getInt(Definitions.DATA_GENERATOR_PERIOD_YEARS); i++) {
 				edgu =  new ExponentialDecayNumberGeneratorUtil(/*ru.nextInt(1000,*/ exponentialDecayUpperLimitOfCws / 10, 
 							  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_RATE), 
 							  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_THRESHOLD_PERCENT));
