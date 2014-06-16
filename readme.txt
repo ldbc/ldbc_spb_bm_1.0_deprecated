@@ -38,7 +38,7 @@ How to install the benchmark driver :
 All necessary files required to run the benchmark are saved to the 'dist' folder. You can run the benchmark from it or move it to a new location.
 
 Optionally you can install the additinal reference datasets :
-    - download project ldbc_semanticpub_bm_additional_datasets from https://github.com/ldbc/ldbc_semanticpub_bm_additional_datasets and unzip all files to folder data/datasets    
+    - download project ldbc_semanticpub_bm_additional_datasets from https://github.com/ldbc/ldbc_spb_optional_datasets and unzip all files to folder data/datasets    
 
 
 Benchmark Phases : 

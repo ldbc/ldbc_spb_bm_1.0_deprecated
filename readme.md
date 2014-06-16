@@ -42,7 +42,7 @@ Result of the build process is saved to the distribution folder (dist/) :
 ###Install
 
 All necessary files required to run the benchmark are saved to the 'dist/' folder. The benchmark can be started from there or can be moved to a new location.
-Optionally, additinal reference datasets can be added - they can be dowloaded from https://github.com/ldbc/ldbc_semanticpub_bm_additional_datasets. All files should be unzipped in folder 'data/datasets/'
+Optionally, additinal reference datasets can be added - they can be dowloaded from https://github.com/ldbc/ldbc_spb_optional_datasets. All files should be unzipped in folder 'data/datasets/'
 
 ###Configure
 
