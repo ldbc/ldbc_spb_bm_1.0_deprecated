@@ -131,7 +131,7 @@ public class DataGenerator {
 		if (definitions.getInt(Definitions.MAJOR_EVENTS_PER_YEAR) > 0) {
 			expDecayingMajorEntitiesList = new ArrayList<Entity>();
 			
-			for (int i = 0; i < definitions.getInt(Definitions.MAJOR_EVENTS_PER_YEAR); i++) {
+			for (int i = 0; i < definitions.getInt(Definitions.MAJOR_EVENTS_PER_YEAR) * definitions.getInt(Definitions.DATA_GENERATOR_PERIOD_YEARS); i++) {
 				Entity e = DataManager.popularEntitiesList.get(ru.nextInt(DataManager.popularEntitiesList.size()));
 				expDecayingMajorEntitiesList.add(e);				
 			}			
@@ -140,7 +140,7 @@ public class DataGenerator {
 		if (definitions.getInt(Definitions.MINOR_EVENTS_PER_YEAR) > 0) {
 			expDecayingMinorEntitiesList = new ArrayList<Entity>();
 			
-			for (int i = 0; i < definitions.getInt(Definitions.MINOR_EVENTS_PER_YEAR); i++) {
+			for (int i = 0; i < definitions.getInt(Definitions.MINOR_EVENTS_PER_YEAR) * definitions.getInt(Definitions.DATA_GENERATOR_PERIOD_YEARS); i++) {
 				Entity e = DataManager.regularEntitiesList.get(ru.nextInt(DataManager.regularEntitiesList.size()));
 				expDecayingMinorEntitiesList.add(e);
 			}			
