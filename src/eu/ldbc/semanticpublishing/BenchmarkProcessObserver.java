@@ -55,10 +55,12 @@ public class BenchmarkProcessObserver extends Thread {
 	@Override
 	public void run() {
 		try {
+			//time correction for collectAndShowResults()
+			long timeCorrection = 0;
 			while (benchmarkState.get() || keepAlive.get()) {
 				seconds++;
-				Thread.sleep(1000);
-				collectAndShowResults((benchmarkByQueryRuns == 0));
+				Thread.sleep(1000 - timeCorrection);
+				timeCorrection = collectAndShowResults((benchmarkByQueryRuns == 0));
 			}
 		} catch (InterruptedException ie) {
 		}
@@ -68,7 +70,8 @@ public class BenchmarkProcessObserver extends Thread {
 	 * Displays to console and writes to log file a result summary of the benchmark.
 	 * Editorial and Aggregation operations per second.
 	 */
-	private void collectAndShowResults(boolean secondsOrExecutions) {
+	private long collectAndShowResults(boolean secondsOrExecutions) {
+		long time = System.currentTimeMillis();		
 		StringBuilder sb = new StringBuilder();
 		
 		long insertOpsCount = Statistics.insertCreativeWorksQueryStatistics.getRunsCount();
@@ -157,12 +160,14 @@ public class BenchmarkProcessObserver extends Thread {
 					System.out.println(message);
 					System.exit(0);
 				}				
-				return;
+				return (System.currentTimeMillis() - time);
 			}
 		}
 		
 		LOGGER.info(sb.toString());
 		System.out.println(sb.toString());
+		
+		return (System.currentTimeMillis() - time);		
 	}	
 	
 	private void updateQueriesRateThresoldCheck(double averageOperationsPerSecond) {
