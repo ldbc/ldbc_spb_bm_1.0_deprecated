@@ -72,7 +72,7 @@ public class DataGenerator {
 
 		//Adjust the amount of correlations and clusterings, in relation to the targeted triples size, keeping ratio of 1/3 for each of the motellings in generated data
 		if (configuration.getBoolean(Configuration.ALLOW_SIZE_ADJUSTMENTS_ON_DATA_MODELS)) {
-			adjustDataAllocations(targetedTriplesSize, definitions);
+			adjustDataAllocations(targetedTriplesSize, definitions, definitions.getInt(Definitions.DATA_GENERATOR_PERIOD_YEARS));
 		}
 		
 		//create destination directory
@@ -100,12 +100,12 @@ public class DataGenerator {
 				Entity entityC = correlatedEntitiesList.get(i * 3 + 2);		
 
 				long generatedCWsByWorker = 0; 
-				int dataGenerationPeriodYears = definitions.getInt(Definitions.DATA_GENERATOR_PERIOD_YEARS);
+				int dataGeneratorPeriodYears = 1; //assuming that a correlation between entities will exist no longer than one year
 				int correlationsMagnitude = definitions.getInt(Definitions.CORRELATIONS_MAGNITUDE);
 				double correlationEntityLifespanPercent = definitions.getDouble(Definitions.CORRELATION_ENTITY_LIFESPAN);
 				double correlationDurationPercent = definitions.getDouble(Definitions.CORRELATIONS_DURATION);
-				int totalCorrelationPeriodDays = (int) (365 * dataGenerationPeriodYears * (correlationEntityLifespanPercent * 2 - correlationDurationPercent));
-				
+				int totalCorrelationPeriodDays = (int) (365 * dataGeneratorPeriodYears * (correlationEntityLifespanPercent * 2 - correlationDurationPercent));
+
 				//initialize a list of correlations magnitudes for each day
 				List<Integer> correlationsMagnitudesList = new ArrayList<Integer>();
 				for (int j = 0; j < totalCorrelationPeriodDays; j++) {
@@ -116,7 +116,7 @@ public class DataGenerator {
 				
 				nextCwId = DataManager.creativeWorksNextId.incrementAndGet();				
 				DataManager.creativeWorksNextId.addAndGet(generatedCWsByWorker - 1);				
-				CorrelationsWorker crw = new CorrelationsWorker(spawnedRu, entityA, entityB, entityC, nextCwId,  totalCorrelationPeriodDays, correlationsMagnitudesList, dataGenerationPeriodYears, 
+				CorrelationsWorker crw = new CorrelationsWorker(spawnedRu, entityA, entityB, entityC, nextCwId,  totalCorrelationPeriodDays, correlationsMagnitudesList, dataGeneratorPeriodYears, 
 															    correlationsMagnitude, correlationEntityLifespanPercent, correlationDurationPercent, syncLock, 
 															    filesCount, targetedTriplesSize, triplesPerFile, triplesGeneratedSoFar, destinationPath, serializationFormat, silent);
 				executorService.execute(crw);
@@ -131,7 +131,7 @@ public class DataGenerator {
 		if (definitions.getInt(Definitions.MAJOR_EVENTS_PER_YEAR) > 0) {
 			expDecayingMajorEntitiesList = new ArrayList<Entity>();
 			
-			for (int i = 0; i < definitions.getInt(Definitions.MAJOR_EVENTS_PER_YEAR) * definitions.getInt(Definitions.DATA_GENERATOR_PERIOD_YEARS); i++) {
+			for (int i = 0; i < definitions.getInt(Definitions.MAJOR_EVENTS_PER_YEAR); i++) {
 				Entity e = DataManager.popularEntitiesList.get(ru.nextInt(DataManager.popularEntitiesList.size()));
 				expDecayingMajorEntitiesList.add(e);				
 			}			
@@ -140,7 +140,7 @@ public class DataGenerator {
 		if (definitions.getInt(Definitions.MINOR_EVENTS_PER_YEAR) > 0) {
 			expDecayingMinorEntitiesList = new ArrayList<Entity>();
 			
-			for (int i = 0; i < definitions.getInt(Definitions.MINOR_EVENTS_PER_YEAR) * definitions.getInt(Definitions.DATA_GENERATOR_PERIOD_YEARS); i++) {
+			for (int i = 0; i < definitions.getInt(Definitions.MINOR_EVENTS_PER_YEAR); i++) {
 				Entity e = DataManager.regularEntitiesList.get(ru.nextInt(DataManager.regularEntitiesList.size()));
 				expDecayingMinorEntitiesList.add(e);
 			}			
@@ -148,7 +148,7 @@ public class DataGenerator {
 		
 		//Generate MAJOR EVENTS with exponential decay
 		if (produceClusterings && definitions.getInt(Definitions.MAJOR_EVENTS_PER_YEAR) > 0) {			
-			for (int i = 0; i < definitions.getInt(Definitions.MAJOR_EVENTS_PER_YEAR) * definitions.getInt(Definitions.DATA_GENERATOR_PERIOD_YEARS); i++) {
+			for (int i = 0; i < definitions.getInt(Definitions.MAJOR_EVENTS_PER_YEAR); i++) {
 				edgu =  new ExponentialDecayNumberGeneratorUtil(/*ru.nextInt(1000, */exponentialDecayUpperLimitOfCws, 
 							  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_RATE), 
 							  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_THRESHOLD_PERCENT));
@@ -165,7 +165,7 @@ public class DataGenerator {
 
 		//Generate MINOR EVENTS with exponential decay
 		if (produceClusterings && definitions.getInt(Definitions.MINOR_EVENTS_PER_YEAR) > 0) {			
-			for (int i = 0; i < definitions.getInt(Definitions.MINOR_EVENTS_PER_YEAR) * definitions.getInt(Definitions.DATA_GENERATOR_PERIOD_YEARS); i++) {
+			for (int i = 0; i < definitions.getInt(Definitions.MINOR_EVENTS_PER_YEAR); i++) {
 				edgu =  new ExponentialDecayNumberGeneratorUtil(/*ru.nextInt(1000,*/ exponentialDecayUpperLimitOfCws / 10, 
 							  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_RATE), 
 							  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_THRESHOLD_PERCENT));
@@ -230,7 +230,7 @@ public class DataGenerator {
 	 * @param targetTriples - targeted triples size to be generated
 	 * @param definitions - definitions properties
 	 */
-	private void adjustDataAllocations(long targetTriples, Definitions definitions) {
+	private void adjustDataAllocations(long targetTriples, Definitions definitions, int dataGeneratorPeriodYears) {
 		long majorEvents = (int)(EXP_DECAY_MAJOR_EVENTS_QT * (targetedTriplesSize / 1000000)) > 0 ? (int)(EXP_DECAY_MAJOR_EVENTS_QT * (targetedTriplesSize / 1000000)) : 0;
 		long minorEvents = (int)(EXP_DECAY_MINOR_EVENTS_QT * (targetedTriplesSize / 1000000)) > 0 ? (int)(EXP_DECAY_MINOR_EVENTS_QT * (targetedTriplesSize / 1000000)) : 0;
 		long correlations = (int)(CORRELATIONS_QT * (targetedTriplesSize / 1000000)) > 0 ? (int)(CORRELATIONS_QT * (targetedTriplesSize / 1000000)) : 0;
