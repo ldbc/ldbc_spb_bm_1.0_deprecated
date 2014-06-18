@@ -39,9 +39,9 @@ public class DataGenerator {
 	//defines quotient for major events for 1M triples - number of major events per million triples
 	private static final double EXP_DECAY_MAJOR_EVENTS_QT = 0.1;
 	//defines quotient for minor events for 1M triples - number of minor events per million triples
-	private static final double EXP_DECAY_MINOR_EVENTS_QT = 2;
+	private static final double EXP_DECAY_MINOR_EVENTS_QT = 2.2;
 	//defines quotient for correlations for 1M triples - number of correlations per million triples
-	private static final double CORRELATIONS_QT = 1;
+	private static final double CORRELATIONS_QT = 1.3;
 	
 	public DataGenerator(RandomUtil ru, Configuration configuration, Definitions definitions, int generatorThreads, long totalTriples, long triplesPerFile, String destinationPath, String serializationFormat) {
 		this.ru = ru;
@@ -128,27 +128,27 @@ public class DataGenerator {
 		int exponentialDecayUpperLimitOfCws = definitions.getInt(Definitions.EXPONENTIAL_DECAY_UPPER_LIMIT_OF_CWS);
 		
 		//preinitialize
-		if (definitions.getInt(Definitions.MAJOR_EVENTS_PER_YEAR) > 0) {
+		if (definitions.getInt(Definitions.MAJOR_EVENTS) > 0) {
 			expDecayingMajorEntitiesList = new ArrayList<Entity>();
 			
-			for (int i = 0; i < definitions.getInt(Definitions.MAJOR_EVENTS_PER_YEAR); i++) {
+			for (int i = 0; i < definitions.getInt(Definitions.MAJOR_EVENTS); i++) {
 				Entity e = DataManager.popularEntitiesList.get(ru.nextInt(DataManager.popularEntitiesList.size()));
 				expDecayingMajorEntitiesList.add(e);				
 			}			
 		}
 		
-		if (definitions.getInt(Definitions.MINOR_EVENTS_PER_YEAR) > 0) {
+		if (definitions.getInt(Definitions.MINOR_EVENTS) > 0) {
 			expDecayingMinorEntitiesList = new ArrayList<Entity>();
 			
-			for (int i = 0; i < definitions.getInt(Definitions.MINOR_EVENTS_PER_YEAR); i++) {
+			for (int i = 0; i < definitions.getInt(Definitions.MINOR_EVENTS); i++) {
 				Entity e = DataManager.regularEntitiesList.get(ru.nextInt(DataManager.regularEntitiesList.size()));
 				expDecayingMinorEntitiesList.add(e);
 			}			
 		}
 		
 		//Generate MAJOR EVENTS with exponential decay
-		if (produceClusterings && definitions.getInt(Definitions.MAJOR_EVENTS_PER_YEAR) > 0) {			
-			for (int i = 0; i < definitions.getInt(Definitions.MAJOR_EVENTS_PER_YEAR); i++) {
+		if (produceClusterings && definitions.getInt(Definitions.MAJOR_EVENTS) > 0) {			
+			for (int i = 0; i < definitions.getInt(Definitions.MAJOR_EVENTS); i++) {
 				edgu =  new ExponentialDecayNumberGeneratorUtil(/*ru.nextInt(1000, */exponentialDecayUpperLimitOfCws, 
 							  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_RATE), 
 							  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_THRESHOLD_PERCENT));
@@ -164,8 +164,8 @@ public class DataGenerator {
 		}
 
 		//Generate MINOR EVENTS with exponential decay
-		if (produceClusterings && definitions.getInt(Definitions.MINOR_EVENTS_PER_YEAR) > 0) {			
-			for (int i = 0; i < definitions.getInt(Definitions.MINOR_EVENTS_PER_YEAR); i++) {
+		if (produceClusterings && definitions.getInt(Definitions.MINOR_EVENTS) > 0) {			
+			for (int i = 0; i < definitions.getInt(Definitions.MINOR_EVENTS); i++) {
 				edgu =  new ExponentialDecayNumberGeneratorUtil(/*ru.nextInt(1000,*/ exponentialDecayUpperLimitOfCws / 10, 
 							  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_RATE), 
 							  									definitions.getDouble(Definitions.EXPONENTIAL_DECAY_THRESHOLD_PERCENT));
@@ -235,8 +235,8 @@ public class DataGenerator {
 		long minorEvents = (int)(EXP_DECAY_MINOR_EVENTS_QT * (targetedTriplesSize / 1000000)) > 0 ? (int)(EXP_DECAY_MINOR_EVENTS_QT * (targetedTriplesSize / 1000000)) : 0;
 		long correlations = (int)(CORRELATIONS_QT * (targetedTriplesSize / 1000000)) > 0 ? (int)(CORRELATIONS_QT * (targetedTriplesSize / 1000000)) : 0;
 		
-		definitions.setLong(Definitions.MAJOR_EVENTS_PER_YEAR, majorEvents);
-		definitions.setLong(Definitions.MINOR_EVENTS_PER_YEAR, minorEvents);
+		definitions.setLong(Definitions.MAJOR_EVENTS, majorEvents);
+		definitions.setLong(Definitions.MINOR_EVENTS, minorEvents);
 		definitions.setLong(Definitions.CORRELATIONS_AMOUNT, correlations);
 	}
 }

@@ -40,14 +40,14 @@ exponentialDecayRate=0.1
 # e.g. 5% threshold will be the value of 0.05
 exponentialDecayThresholdPercent=0.05
 
-#Defines the maximum number of 'major' events that could happen in one year. Each major event will be tagged by a number of Creative Works which will decay exponentially in time.
+#Defines the maximum number of 'major' events that could happen during data generation period. Each major event will be tagged by a number of Creative Works which will decay exponentially in time.
 #(using current settings, ~1M triples per major event are generated)
-majorEventsPerYear=5
+majorEvents=5
 
-#Defines the maximum number of 'minor' events that could happen in one year. Each minor event will be tagged by a number of Creative Works which will decay exponentially in time.
+#Defines the maximum number of 'minor' events that could happen during data generation period. Each minor event will be tagged by a number of Creative Works which will decay exponentially in time.
 #Value of exponentialDecayUpperLimitOfCWs for minor events will be ten times smaller for them.
 #(using current settings, ~100K triples per minor event are generated)
-minorEventsPerYear=100
+minorEvents=100
 
 #Defines a seed year that will be used for generating the Creative Works.
 # e.g. seedYear=2014 will have all creative works have dateCreated randomly picked in 2014, and dateModified in future interval

@@ -89,7 +89,7 @@ Optionally, additinal reference datasets can be added - they can be dowloaded fr
   * ***datasetSize*** - amount of generated data (triples), *requires updating*
   * ***generatedTriplesPerFile*** - number of triples per generated file. Used to split the data generation into a number of files
   * ***adjustRefDatasetsSizes*** - optional, if reference dataset files exist with the extension '.adjustablettl', then for each, a new .ttl file is created with adjusted size depending on the selected size of data to be generated (parameter 'datasetSize'), default value is true
-  * ***allowSizeAdjustmentsOnDataModels*** - allows the data generator to dynamically adjust the amount of correlations, clusterrings and randomly generated models (Creative Works) in relation to the 'datasetSize', thus keeping a ratio of 1/3 for each in generated data. Default value is true  
+  * ***allowSizeAdjustmentsOnDataModels*** - allows data generator to dynamically adjust the amount of correlations, clusterrings and randomly generated models keeping a ratio of 1/3 for each in generated data model. This property overrides definitions.properties' parameters : *majorEvents, minorEvents, correlationsAmount*. Default value is true
   * ***queryTimeoutSeconds*** - query timeout in seconds, default value is 300 s
   * ***systemQueryTimeoutSeconds*** -	system queries timeout, default value 1h
   * ***validationPath*** - location where generated and reference data related to validation phase is located, can use default value
