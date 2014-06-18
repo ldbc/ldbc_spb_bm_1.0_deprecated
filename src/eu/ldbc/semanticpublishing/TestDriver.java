@@ -419,7 +419,7 @@ public class TestDriver {
 			if (DataManager.regularEntitiesList.size() == 0) {
 				populateRefDataEntitiesLists(true, true, false, "");
 				if (DataManager.creativeWorksNextId.get() == 0) {
-					System.err.println("Warning : no Creative Works were found stored in the database, initialise it with ontologies and reference datasets first! Exiting.");
+					System.err.println("Warning : no Creative Works were found stored in the database, initialize it with ontologies and reference and generated data first! Exiting.");
 					System.exit(-1);
 				}
 			}
@@ -445,7 +445,7 @@ public class TestDriver {
 			if (DataManager.regularEntitiesList.size() == 0 || DataManager.correlatedEntitiesList.size() == 0) {
 				populateRefDataEntitiesLists(true, true, false, "");
 				if (DataManager.creativeWorksNextId.get() == 0) {
-					System.err.println("Warning : no Creative Works were found stored in the database, initialise it with ontologies and reference datasets first! Exiting.");
+					System.err.println("Warning : no Creative Works were found stored in the database, initialize it with ontologies and reference and generated data first! Exiting.");
 					System.exit(-1);
 				}
 			}
@@ -544,7 +544,7 @@ public class TestDriver {
 			if (DataManager.regularEntitiesList.size() == 0 || DataManager.correlatedEntitiesList.size() == 0) {
 				populateRefDataEntitiesLists(true, true, false, "");
 				if (DataManager.creativeWorksNextId.get() == 0) {
-					System.err.println("Warning : no Creative Works were found stored in the database, initialise it with ontologies and reference datasets first! Exiting.");
+					System.err.println("Warning : no Creative Works were found stored in the database, initialize it with ontologies and reference and generated data first! Exiting.");
 					System.exit(-1);
 				}
 			}
@@ -809,7 +809,7 @@ public class TestDriver {
 			if (DataManager.regularEntitiesList.size() == 0) {
 				populateRefDataEntitiesLists(true, false, true, "");
 				if (DataManager.creativeWorksNextId.get() == 0) {
-					System.err.println("Warmup : Warning : no Creative Works were found stored in the database, initialise it with ontologies and reference datasets first! Exiting.");
+					System.err.println("Warmup : Warning : no Creative Works were found stored in the database, initialize it with ontologies and reference and generated data first! Exiting.");
 					System.exit(-1);
 				}
 			}			
