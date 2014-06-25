@@ -1,12 +1,12 @@
-Semantic Publishing Benchmark
+LDBC - Semantic Publishing Benchmark
 
 
 
 Description : 
 ------------------------------------------------------------------------------
 
-Semantic Publishing Benchmark benchmark driver measures the performance of CRUD operations of a SPARQL endpoint, by starting a number of concurrently running agents (editorial and aggregation) 
-which execute a series of INSERT/UPDATE/DELETE (for editorial agents) and CONSTRUCT/SELECT (for aggregation agents) queries on a SPARQL endpoint.
+LDBC Semantic Publishing Benchmark measures performance RDF Stores, by starting a number of concurrently running editorial and aggregation agents 
+all executing a set of CRUD operations : INSERT/UPDATE/DELETE (for editorial agents) and CONSTRUCT/SELECT/DESCRIBE (for aggregation agents).
 
 
 
@@ -35,7 +35,7 @@ How to build the benchmark driver :
 How to install the benchmark driver :
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
-All necessary files required to run the benchmark are saved to the 'dist' folder. You can run the benchmark from it or move it to a new location.
+All necessary files required to run the benchmark are saved to the 'dist' folder of the project.
 
 Optionally you can install the additinal reference datasets :
     - download project ldbc_semanticpub_bm_additional_datasets from https://github.com/ldbc/ldbc_spb_optional_datasets and unzip all files to folder data/datasets    
