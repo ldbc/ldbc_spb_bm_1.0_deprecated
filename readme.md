@@ -106,7 +106,6 @@ Optionally, additinal reference datasets can be added - they can be dowloaded fr
   * ***benchmarkByQueryRuns*** - sets the amount of aggregate queries which the benchmark phase will execute. If value is greater than zero then parameter 'benchmarkRunPeriodSeconds' is ignored. e.g. if set to 100, benchmark will measure the time to execute 100 aggregate operations
   * ***updateRateThresholdOps*** - defines the update rate of editorial operations per second which should be reached during the first 15% of benchmark time and should be kept during the rest of the benchmark run in order to have a valid result. If set to zero, update rate threshold is ignored. e.g. if required update rate is set to 6.3 update operations per second, then benchmark will consider that value during its benchmark run and will report invalid results if that rate drops below the threshold
   * ***updateRateThresholdReachTimePercent*** - defines the time frame during which the defined value in property 'updateRateThresholdOps' should be reached. Default value is 0.1 (10%). e.g. if set to 0.1 (i.e. 10%) then the update rate defined in 'updateRateThresholdOps' should be reached during the first 10% of the benchmark run time, if not reached, the result is considered invalid
-  * ***enableLogs*** - enables or disables logging of benchmark results and details, default: true
   
   
 ###Run
@@ -117,6 +116,7 @@ java -jar semantic_publishing_benchmark-*.jar test.properties
 *Note: appropriate value for java maximum heap size may be required, e.g. -Xmx8G*
 
 ###Results
+Logging details can be controlled by a configuration file: log4j.xml saved in the distributed benchmark driver (semantic_publishing_benchmark.jar). After modifying log4j.xml, benchmark driver must be updated with contents of the new xml file.
 Results of the benchmark are saved to three types of log files :
 
 * ***brief*** - brief log of executed queries, saved in semantic_publishing_benchmark_queries_brief.log

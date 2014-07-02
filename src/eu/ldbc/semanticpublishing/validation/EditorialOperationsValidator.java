@@ -80,7 +80,7 @@ public class EditorialOperationsValidator extends Validator {
 		sqpm.intiSubstitutionParameters(targetFolder, true, false);
 		
 		//INSERT
-		System.out.println("\tValidating INSERT operation :");
+		System.out.println("\tvalidating INSERT operation :");
 		for (int i = 0; i < totalValidationIterations; i++) {
 			String[] parameters = sqpm.getSubstitutionParametersFor(SubstitutionQueryParametersManager.QueryType.EDITORIAL, 0).get(i);
 			insertErrors += validateAction(EditorialOperation.INSERT, i, parameters);
@@ -88,7 +88,7 @@ public class EditorialOperationsValidator extends Validator {
 		System.out.println("\t\t" + insertErrors + " errors");
 
 		//UPDATE
-		System.out.println("\tValidating UPDATE operation :");
+		System.out.println("\tvalidating UPDATE operation :");
 		for (int i = 0; i < totalValidationIterations; i++) {
 			String[] parameters = sqpm.getSubstitutionParametersFor(SubstitutionQueryParametersManager.QueryType.EDITORIAL, 0).get(i);
 			
@@ -99,7 +99,7 @@ public class EditorialOperationsValidator extends Validator {
 		System.out.println("\t\t" + updateErrors + " errors");
 		
 		//DELETE
-		System.out.println("\tValidating DELETE operation :");
+		System.out.println("\tvalidating DELETE operation :");
 		for (int i = 0; i < totalValidationIterations; i++) {
 			String[] parameters = sqpm.getSubstitutionParametersFor(SubstitutionQueryParametersManager.QueryType.EDITORIAL, 0).get(i);
 			deleteErrors += validateAction(EditorialOperation.DELETE, i, parameters);

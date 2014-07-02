@@ -143,7 +143,6 @@ How to run the benchmark :
                                          e.g. if required update rate is set to 6.3 update operations per second, then benchmark will consider that value during its benchmark run and will report invalid results if that rate drops below the threshold)
     - updateRateThresholdReachTimePercent (defines the time frame during which the defined value in property 'updateRateThresholdOps' should be reached. Default value is 0.1 (10%)
                                          e.g. if set to 0.1 (i.e. 10%) then the update rate defined in 'updateRateThresholdOps' should be reached during the first 10% of the benchmark run time, if not reached, the result is considered invalid)
-	- enableLogs						 (enables or disables logging of benchmark results and details, default: true)                   									
                                          
                                          Note : For optimal results the sum of editorial and aggregation agents should be set to be equal to the number of CPU cores.
 		
@@ -186,7 +185,7 @@ How to run the benchmark :
 
 Results of the benchmark :
 -----------------------------------------------------------------------------------------------------------------------------------------------
-
+  * Logging details can be controlled by a configuration file: log4j.xml saved in the distributed benchmark driver (semantic_publishing_benchmark.jar). After modifying log4j.xml, benchmark driver must be updated with contents of the new xml file.
   * Results are saved to three log files : 
   
     - semantic_publishing_benchmark_queries_brief.log 		- contains a brief information about each executed query, size of returned result, and time to execute.

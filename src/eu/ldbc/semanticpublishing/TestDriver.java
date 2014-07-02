@@ -36,7 +36,6 @@ import eu.ldbc.semanticpublishing.substitutionparameters.SubstitutionParametersG
 import eu.ldbc.semanticpublishing.substitutionparameters.SubstitutionQueryParametersManager;
 import eu.ldbc.semanticpublishing.templates.MustacheTemplatesHolder;
 import eu.ldbc.semanticpublishing.util.FileUtils;
-import eu.ldbc.semanticpublishing.util.LoggingUtil;
 import eu.ldbc.semanticpublishing.util.RandomUtil;
 import eu.ldbc.semanticpublishing.util.RdfUtils;
 import eu.ldbc.semanticpublishing.util.ShellUtil;
@@ -79,7 +78,7 @@ public class TestDriver {
 		mustacheTemplatesHolder.loadFrom(configuration.getString(Configuration.QUERIES_PATH));
 		
 		//initialize log4j
-		LoggingUtil.Configure(configuration);
+		//LoggingUtil.Configure(configuration);
 
 		//will read the dictionary file from jar file as a resource
 		randomGenerator = initializeRandomUtil(configuration.getString(Configuration.REFERENCE_DATASETS_PATH), configuration.getLong(Configuration.GENERATOR_RANDOM_SEED), definitions.getInt(Definitions.YEAR_SEED), definitions.getInt(Definitions.DATA_GENERATOR_PERIOD_YEARS));

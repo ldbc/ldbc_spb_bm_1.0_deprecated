@@ -58,7 +58,7 @@ public class AggregateOperationsValidator extends Validator {
 	
 	@SuppressWarnings("unchecked")
 	public void validate() throws Exception {
-		System.out.println("\tValidating AGGREGATE operations...");
+		System.out.println("\tvalidating AGGREGATE operations...");
 		
 		//load validation dataset into the database
 		loadValidationData();
@@ -114,7 +114,7 @@ public class AggregateOperationsValidator extends Validator {
 	}
 	
 	private void loadValidationData() throws IOException {
-		System.out.println("\tLoading Validation Data...");
+		System.out.println("Loading Validation Data...");
 		
 		String endpoint = configuration.getString(Configuration.ENDPOINT_UPDATE_URL);
 		

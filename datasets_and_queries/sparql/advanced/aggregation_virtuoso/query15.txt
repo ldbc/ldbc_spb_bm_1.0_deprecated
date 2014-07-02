@@ -51,7 +51,7 @@ WHERE
   ?about rdf:type ?entityType . 
   ?thing cwork:category ?category . 
   ?thing cwork:title ?title . 
-  ?title bif:contains "policy" . 
+  ?title bif:contains '"policy"' . 
   OPTIONAL {
     ?thing cwork:audience {{{cwAudienceType}}} . 
   }

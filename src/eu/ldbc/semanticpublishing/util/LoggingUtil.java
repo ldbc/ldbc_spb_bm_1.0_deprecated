@@ -40,7 +40,7 @@ public class LoggingUtil {
 			return;
 		}
 			
-		//Appender for breaf query execution log
+		//Appender for brief query execution log
 		RollingFileAppender briefQueriesLogFileAppender = new RollingFileAppender();
 		briefQueriesLogFileAppender.setName(EXECUTED_QUERIES_BRIEF_FILE_APPENDER_NAME);
 		briefQueriesLogFileAppender.setFile(LOGS_FOLDER + File.separator + EXECUTED_QUERIES_BRIEF_LOG_FILE_NAME);

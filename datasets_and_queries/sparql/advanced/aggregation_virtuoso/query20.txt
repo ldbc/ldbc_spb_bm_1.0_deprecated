@@ -65,6 +65,19 @@ WHERE {
     ?cWork bbc:primaryContentOf ?pco . 
     ?pco bbc:webDocumentType ?webDocType . 
   } 
-  FILTER (CONTAINS(?title, {{{word}}}) || CONTAINS(?description, {{{word}}})) .
+  { 
+    SELECT DISTINCT ?cWork  WHERE
+    {
+      {
+        ?cWork cwork:title ?title .
+        ?title bif:contains '{{{word}}}'
+      }
+      UNION
+      {
+        ?cWork cwork:description ?description .
+        ?description bif:contains '{{{word}}}'
+      }
+    }
+  }
 }
 LIMIT {{{randomLimit}}}

@@ -1,2 +1,3 @@
 Important : before compiling with build.xml, make sure that all modified or new templates are first added to the corresponding .zip file.
             Build process will extract contents of base.zip or full.zip and will override your changes!!!
+            Also make sure that corresponding extension (if any : .standard and .virtuoso) has been modified related benchmark driver customization : virtuoso or standard
