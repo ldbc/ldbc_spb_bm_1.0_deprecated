@@ -300,6 +300,7 @@
 	
 	<!-- SVN -->
 	<!-- This target requires that an svn client is installed -->
+	<!--	
 	<target name="build.release.version">
 		<exec executable="svn" outputproperty="revision.number">
 			<arg line="info"/>
@@ -316,9 +317,9 @@
 		</exec>
 		<echo>Benchmark Release Version : ${version.number.major}.${version.number.minor}.${revision.number}</echo>
 	</target>
+	-->
 	
 	<!-- Git -->
-	<!--
   <available file=".git" type="dir" property="git.present"/>	
   
   <target name="build.release.version" description="Store git revision in ${revision.number}" if="git.present">
@@ -336,7 +337,6 @@
     </condition>
     <echo>Benchmark Release Version : ${version.number.major}.${version.number.minor}.${revision.number}</echo>
   </target>
-	-->
 	
 	<target name="deploy">
 		<move todir="${dir.deploy}">
