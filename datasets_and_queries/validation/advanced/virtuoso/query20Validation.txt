@@ -1,5 +1,5 @@
 [SubstitutionParameters]
-"mediums";"faster";1000000
+"mediums";"faster";100000
 
 [ExpectedResultsSize]
 88269

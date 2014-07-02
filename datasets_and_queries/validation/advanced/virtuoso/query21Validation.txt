@@ -1,5 +1,5 @@
 [SubstitutionParameters]
-?title ?description ?category ?tag ?audience ?liveCoverage ?primaryFormat ?year ?month;{select distinct ?creativework  where { { ?creativework cwork:title ?title . ?title bif:contains '"using"'} union { ?creativework cwork:description ?description . ?description bif:contains '"turn"'}}};FILTER (?category = <http://www.bbc.co.uk/category/PoliticsPersonsAdditional>) .; ; ;ORDER BY ?tag ?year ?month;100000
+?title ?description ?category ?tag ?audience ?liveCoverage ?primaryFormat ?year ?month;{select distinct ?creativework  where { { ?creativework cwork:title ?title . ?title bif:contains '"using"'} union { ?creativework cwork:description ?description . ?description bif:contains '"turn"'}}};FILTER (?category = <http://www.bbc.co.uk/category/PoliticsPersonsAdditional>) .; ; ;ORDER BY ?tag ?year ?month;10000
 
 [ExpectedResultsSize]
 8033

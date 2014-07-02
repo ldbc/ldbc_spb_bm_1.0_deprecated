@@ -1,5 +1,5 @@
 [SubstitutionParameters]
-<http://www.guardian.co.uk/politics/person/1440/>;<http://www.guardian.co.uk/politics/person/1440/>;100000
+<http://www.guardian.co.uk/politics/person/1440/>;<http://www.guardian.co.uk/politics/person/1440/>;10000
 
 [ExpectedResultsSize]
 110

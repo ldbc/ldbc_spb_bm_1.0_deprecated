@@ -1,5 +1,5 @@
 [SubstitutionParameters]
-cwork:NationalAudience;100000
+cwork:NationalAudience;10000
 
 [ExpectedResultsSize]
 3357
