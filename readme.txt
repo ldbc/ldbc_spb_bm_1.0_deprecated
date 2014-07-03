@@ -78,6 +78,7 @@ How to run the benchmark :
   
     - Use rule-set : RDFS
     - Enable context indexing if available
+    - Enable text indexing if available
     - Enable geo-spatial indexing if available
   
     

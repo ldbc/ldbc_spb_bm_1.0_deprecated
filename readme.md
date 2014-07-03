@@ -49,6 +49,7 @@ Optionally, additinal reference datasets can be added - they can be dowloaded fr
 * RDF Repository configuration
   * Use RDFS rule-set
   * Enable context indexing (if available)
+  * Enable text indexing (if available)
   * Enable geo-spatial indexing (if available)
 
 
