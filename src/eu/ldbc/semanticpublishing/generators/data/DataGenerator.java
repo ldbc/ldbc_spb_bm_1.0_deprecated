@@ -33,7 +33,7 @@ public class DataGenerator {
 	private AtomicLong triplesGeneratedSoFar = new AtomicLong(0);
 	private String destinationPath;
 	private String serializationFormat;
-	private static final long AWAIT_PERIOD_HOURS = 6; 
+	private static final long AWAIT_PERIOD_HOURS = 168; 
 	private Object syncLock;
 	
 	//defines quotient for major events for 1M triples - number of major events per million triples
