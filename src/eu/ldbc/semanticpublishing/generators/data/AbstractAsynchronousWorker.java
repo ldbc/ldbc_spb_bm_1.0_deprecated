@@ -5,7 +5,7 @@ package eu.ldbc.semanticpublishing.generators.data;
  */
 public abstract class AbstractAsynchronousWorker extends Thread {
 	
-	protected static final String FILENAME_FORMAT = "%s%sgeneratedCreativeWorks-%04d.";
+	protected static final String FILENAME_FORMAT = "%s%sgeneratedCreativeWorks-%05d.";
 	
 	@Override
 	public void run() {
