@@ -1,24 +1,29 @@
-LDBC - Semantic Publishing Benchmark
+LDBC Semantic Publishing Benchmark
 
 
 
 Description : 
 ------------------------------------------------------------------------------
 
-LDBC Semantic Publishing Benchmark measures performance RDF Stores, by starting a number of concurrently running editorial and aggregation agents 
-all executing a set of CRUD operations : INSERT/UPDATE/DELETE (for editorial agents) and CONSTRUCT/SELECT/DESCRIBE (for aggregation agents).
+LDBC Semantic Publishing Benchmark (SPB) measures the performance RDF Stores by simulating a workload scenario of a publishing/media organisation. SPB starts a number of editorial and 
+aggregation agents all concurrently executing CRUD operations : INSERT/UPDATE/DELETE (for editorial agents) and CONSTRUCT/SELECT/DESCRIBE (for aggregation agents) against a SPARQL endpoint.
+Measured performance is giving details on executed CRUD operations per second, per operation or average values.
+For further information about the LDBC SPB refer to the LDBC SPB documentation located at folder 'doc/'.
 
 
 
-Distribution : 
+Download : 
 ------------------------------------------------------------------------------
 
-The benchmark test driver is distributed as a jar file : semantic_publishing_benchmark-*.jar accompanied by reference datasets and ontologies.
-Required set of configuration files are : test.properties and definitions.properties (can be found in the distribution folder, or semantic_publishing_benchmark-*jar file) 
+LDBC Semantic Publishing Benchmark
+    - https://github.com/ldbc/ldbc_spb_bm
+
+Additional datasets - optional datasets which can be used to further enrich reference knowledge data for benchmark's data generation process
+    - https://github.com/ldbc/ldbc_spb_optional_datasets
 
 
 
-How to build the benchmark driver :
+Build :
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
   Use the Ant with build.xml script. Default Ant task builds the benchmark and saves it to the 'dist' folder.
@@ -32,13 +37,12 @@ How to build the benchmark driver :
 
 
 
-How to install the benchmark driver :
+Install :
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
-All necessary files required to run the benchmark are saved to the 'dist' folder of the project.
+All necessary components are saved to folder : 'dist/'. SPB can be started from the 'dist/'.
+Additinal reference datasets can also be added - by downloading (https://github.com/ldbc/ldbc_spb_optional_datasets) and unziping them to folder 'data/datasets/'
 
-Optionally you can install the additinal reference datasets :
-    - download project ldbc_semanticpub_bm_additional_datasets from https://github.com/ldbc/ldbc_spb_optional_datasets and unzip all files to folder data/datasets    
 
 
 Benchmark Phases : 
