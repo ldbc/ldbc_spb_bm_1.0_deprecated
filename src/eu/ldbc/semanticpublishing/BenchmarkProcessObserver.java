@@ -59,10 +59,11 @@ public class BenchmarkProcessObserver extends Thread {
 			long timeCorrection = 0;
 			while (benchmarkState.get() || keepAlive.get()) {
 				seconds++;
-				Thread.sleep(1000 - timeCorrection);
+				Thread.sleep(Math.abs(1000 - timeCorrection));
 				timeCorrection = collectAndShowResults((benchmarkByQueryRuns == 0));
 			}
-		} catch (InterruptedException ie) {
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	
