@@ -62,8 +62,9 @@ public class BenchmarkProcessObserver extends Thread {
 				Thread.sleep(Math.abs(1000 - timeCorrection));
 				timeCorrection = collectAndShowResults((benchmarkByQueryRuns == 0));
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable t) {
+			System.out.println("BenchmarkProcessObserver :: encountered a problem : " + t.getMessage());
+			t.printStackTrace();
 		}
 	}
 	
