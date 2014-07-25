@@ -1,8 +1,10 @@
 package eu.ldbc.semanticpublishing.generators.data;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -15,6 +17,7 @@ import org.openrdf.rio.Rio;
 
 import eu.ldbc.semanticpublishing.generators.data.sesamemodelbuilders.CreativeWorkBuilder;
 import eu.ldbc.semanticpublishing.refdataset.model.Entity;
+import eu.ldbc.semanticpublishing.util.CompressionUtil;
 import eu.ldbc.semanticpublishing.util.RandomUtil;
 import eu.ldbc.semanticpublishing.util.SesameUtils;
 
@@ -32,8 +35,8 @@ public class ExpDecayWorker extends RandomWorker {
 	
 	public ExpDecayWorker(List<Long> exponentialDecayIerations, long firstCwId, Date startDate, Entity entity, 
 						  RandomUtil ru, Object lock, AtomicLong globalFilesCount, long triplesPerFile, long totalTriples, 
-						  AtomicLong triplesGeneratedSoFar, String destinationPath, String serializationFormat, boolean silent) {
-		super(ru, lock, globalFilesCount, totalTriples, triplesPerFile, triplesGeneratedSoFar, destinationPath, serializationFormat, silent);
+						  AtomicLong triplesGeneratedSoFar, String destinationPath, String serializationFormat, boolean compress, boolean silent) {
+		super(ru, lock, globalFilesCount, totalTriples, triplesPerFile, triplesGeneratedSoFar, destinationPath, serializationFormat, compress, silent);
 		this.exponentialDecayIerations = exponentialDecayIerations;
 		this.startDate = startDate;
 		this.entity = entity;
@@ -42,7 +45,7 @@ public class ExpDecayWorker extends RandomWorker {
 	
 	@Override
 	public void execute() throws Exception {
-		FileOutputStream fos = null;
+		OutputStream os = null;
 		RDFFormat rdfFormat = SesameUtils.parseRdfFormat(serializationFormat);
 
 		int cwsInFileCount = 0;
@@ -61,16 +64,19 @@ public class ExpDecayWorker extends RandomWorker {
 		long iterationStep = 0;
 		
 		try {
-			fos = new FileOutputStream(fileName);
+			os = new BufferedOutputStream(new FileOutputStream(fileName));
 
 			for (int i = 0; i < exponentialDecayIerations.size(); i++) {
 				creativeWorksForCurrentIteration = exponentialDecayIerations.get(i);
 				iterationStep = i + 1;
 				for (int j = 0; j < creativeWorksForCurrentIteration; j++) {
 					if (currentTriplesCount >= triplesPerFile) {
-						flushClose(fos);
+						flushClose(os);
+						if (compress) {
+							CompressionUtil.compressFile(fileName, true);
+						}
 						if (!silent && cwsInFileCount > 0) {
-							System.out.println(Thread.currentThread().getName() + " " + this.getClass().getSimpleName() + " :: Saving file #" + currentFilesCount + " with " + String.format("%,d", cwsInFileCount) + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
+							System.out.println(Thread.currentThread().getName() + " " + this.getClass().getSimpleName() + " :: Saving " + (compress ? "compressed " : "") + "file #" + currentFilesCount + " with " + String.format("%,d", cwsInFileCount) + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
 						}
 							
 						cwsInFileCount = 0;
@@ -79,7 +85,7 @@ public class ExpDecayWorker extends RandomWorker {
 						currentFilesCount = filesCount.incrementAndGet();
 						fileName = String.format(FILENAME_FORMAT + rdfFormat.getDefaultFileExtension(), destinationPath, File.separator, currentFilesCount);						
 						
-						fos = new FileOutputStream(fileName);
+						os = new BufferedOutputStream(new FileOutputStream(fileName));
 					}
 					
 					if (triplesGeneratedSoFar.get() > targetTriples) {
@@ -96,8 +102,8 @@ public class ExpDecayWorker extends RandomWorker {
 						sesameModel = creativeWorkBuilder.buildSesameModel();												
 					}
 					
-					Rio.write(sesameModel, fos, rdfFormat);
-					
+					Rio.write(sesameModel, os, rdfFormat);
+										
 					cwsInFileCount++;
 					currentTriplesCount += sesameModel.size();					
 
@@ -109,9 +115,12 @@ public class ExpDecayWorker extends RandomWorker {
 		} catch (NoSuchElementException nse) {
 			//reached the end of iteration, close file stream in finally section
 		} finally {
-			flushClose(fos);
+			flushClose(os);
+			if (compress) {
+				CompressionUtil.compressFile(fileName, true);
+			}
 			if (!silent && cwsInFileCount > 0) {
-				System.out.println(Thread.currentThread().getName() + " " + this.getClass().getSimpleName() + " :: Saving file #" + currentFilesCount + " with " + String.format("%,d", cwsInFileCount) + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
+				System.out.println(Thread.currentThread().getName() + " " + this.getClass().getSimpleName() + " :: Saving " + (compress ? "compressed " : "") + "file #" + currentFilesCount + " with " + String.format("%,d", cwsInFileCount) + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
 			}
 		}
 	}

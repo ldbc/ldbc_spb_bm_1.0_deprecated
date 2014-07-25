@@ -1,8 +1,10 @@
 package eu.ldbc.semanticpublishing.generators.data;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -15,6 +17,7 @@ import org.openrdf.rio.Rio;
 
 import eu.ldbc.semanticpublishing.generators.data.sesamemodelbuilders.CreativeWorkBuilder;
 import eu.ldbc.semanticpublishing.refdataset.model.Entity;
+import eu.ldbc.semanticpublishing.util.CompressionUtil;
 import eu.ldbc.semanticpublishing.util.RandomUtil;
 import eu.ldbc.semanticpublishing.util.SesameUtils;
 
@@ -45,8 +48,8 @@ public class CorrelationsWorker extends RandomWorker {
 	
 	public CorrelationsWorker(RandomUtil ru, Entity entityA, Entity entityB, Entity entityC, long firstCwId, int totalCorrelationPeriodDays, List<Integer> correlationsMagnitudesForSingleIterationList, int dataGenerationPeriodYears, int correlationsMagnitude, 
 							  double correlationEntityLifespan, double correlationDuration, Object lock, AtomicLong filesCount, 
-							  long totalTriples, long triplesPerFile, AtomicLong triplesGeneratedSoFar, String destinationPath, String serializationFormat, boolean silent) {
-		super(ru, lock, filesCount, totalTriples, triplesPerFile, triplesGeneratedSoFar, destinationPath, serializationFormat, silent);
+							  long totalTriples, long triplesPerFile, AtomicLong triplesGeneratedSoFar, String destinationPath, String serializationFormat, boolean compress, boolean silent) {
+		super(ru, lock, filesCount, totalTriples, triplesPerFile, triplesGeneratedSoFar, destinationPath, serializationFormat, compress, silent);
 		this.entityA = entityA;
 		this.entityB = entityB;
 		this.entityC = entityC;
@@ -68,7 +71,7 @@ public class CorrelationsWorker extends RandomWorker {
 			return;
 		}
 		
-		FileOutputStream fos = null;
+		OutputStream os = null;
 		RDFFormat rdfFormat = SesameUtils.parseRdfFormat(serializationFormat);
 
 		int cwsInFileCount = 0;
@@ -83,7 +86,7 @@ public class CorrelationsWorker extends RandomWorker {
 		int thirdEntityInCorrelationOccurences = (int) ((365 * dataGenerationPeriodYears * correlationDurationPercent) / 10);
 		int thirdEntityOutsideCorrelationOccurences = (int) ((365 * dataGenerationPeriodYears * (correlationEntityLifespanPercent * 2 - correlationDurationPercent)) / 10) / 2;
 		
-		fos = new FileOutputStream(fileName);
+		os = new BufferedOutputStream(new FileOutputStream(fileName));
 		
 		//pick a random date starting from 1.Jan to the value of totalCorrelationPeriodDays
 		startDate = ru.randomDateTime(365 * dataGenerationPeriodYears - totalCorrelationPeriodDays);
@@ -101,9 +104,12 @@ public class CorrelationsWorker extends RandomWorker {
 				//generate Creative Works with correlations for that day
 				for (int i = 0; i < correlationsMagnitudeForIteration; i++) {
 					if (currentTriplesCount >= triplesPerFile) {						
-						flushClose(fos);
+						flushClose(os);
+						if (compress) {
+							CompressionUtil.compressFile(fileName, true);
+						}
 						if (!silent && cwsInFileCount > 0) {
-							System.out.println(Thread.currentThread().getName() + " " + this.getClass().getSimpleName() + " :: Saving file #" + currentFilesCount + " with " + String.format("%,d", cwsInFileCount) + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
+							System.out.println(Thread.currentThread().getName() + " " + this.getClass().getSimpleName() + " :: Saving " + (compress ? "compressed " : "") + "file #" + currentFilesCount + " with " + String.format("%,d", cwsInFileCount) + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
 						}
 	
 						cwsInFileCount = 0;
@@ -112,7 +118,7 @@ public class CorrelationsWorker extends RandomWorker {
 						currentFilesCount = filesCount.incrementAndGet();
 						fileName = String.format(FILENAME_FORMAT + rdfFormat.getDefaultFileExtension(), destinationPath, File.separator, currentFilesCount);
 	
-						fos = new FileOutputStream(fileName);										
+						os = new BufferedOutputStream(new FileOutputStream(fileName));
 					}
 					
 					if (triplesGeneratedSoFar.get() > targetTriples) {
@@ -159,8 +165,8 @@ public class CorrelationsWorker extends RandomWorker {
 						}
 					}
 					
-					Rio.write(sesameModel, fos, rdfFormat);
-					
+					Rio.write(sesameModel, os, rdfFormat);
+										
 					cwsInFileCount++;
 					currentTriplesCount += sesameModel.size();
 					
@@ -175,9 +181,12 @@ public class CorrelationsWorker extends RandomWorker {
 		} catch(RDFHandlerException e) {
 			throw new IOException("A problem occurred while generating RDF data: " + e.getMessage());
 		} finally {
-			flushClose(fos);
+			flushClose(os);
+			if (compress) {
+				CompressionUtil.compressFile(fileName, true);
+			}
 			if (!silent && cwsInFileCount > 0) {
-				System.out.println(Thread.currentThread().getName() + " " + this.getClass().getSimpleName() + " :: Saving file #" + currentFilesCount + " with " + String.format("%,d", cwsInFileCount) + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
+				System.out.println(Thread.currentThread().getName() + " " + this.getClass().getSimpleName() + " :: Saving " + (compress ? "compressed " : "") + "file #" + currentFilesCount + " with " + String.format("%,d", cwsInFileCount) + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
 			}
 		}
 	}

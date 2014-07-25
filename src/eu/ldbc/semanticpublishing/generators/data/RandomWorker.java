@@ -1,8 +1,10 @@
 package eu.ldbc.semanticpublishing.generators.data;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.openrdf.model.Model;
@@ -11,6 +13,7 @@ import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.Rio;
 
 import eu.ldbc.semanticpublishing.generators.data.sesamemodelbuilders.CreativeWorkBuilder;
+import eu.ldbc.semanticpublishing.util.CompressionUtil;
 import eu.ldbc.semanticpublishing.util.RandomUtil;
 import eu.ldbc.semanticpublishing.util.SesameUtils;
 
@@ -29,9 +32,10 @@ public class RandomWorker extends AbstractAsynchronousWorker {
 	protected AtomicLong triplesGeneratedSoFar;
 	protected RandomUtil ru;
 	protected Object lock;
+	protected boolean compress;
 	protected boolean silent;
 	
-	public RandomWorker(RandomUtil ru, Object lock, AtomicLong filesCount, long totalTriples, long triplesPerFile, AtomicLong triplesGeneratedSoFar, String destinationPath, String serializationFormat, boolean silent) {
+	public RandomWorker(RandomUtil ru, Object lock, AtomicLong filesCount, long totalTriples, long triplesPerFile, AtomicLong triplesGeneratedSoFar, String destinationPath, String serializationFormat, boolean compress, boolean silent) {
 		this.ru = ru;
 		this.lock = lock;
 		this.targetTriples = totalTriples;
@@ -40,12 +44,13 @@ public class RandomWorker extends AbstractAsynchronousWorker {
 		this.triplesGeneratedSoFar = triplesGeneratedSoFar;
 		this.destinationPath = destinationPath;
 		this.serializationFormat = serializationFormat;
+		this.compress = compress;
 		this.silent = silent;
 	}
 	
 	@Override
 	public void execute() throws Exception {
-		FileOutputStream fos = null;
+		OutputStream os = null;
 		RDFFormat rdfFormat = SesameUtils.parseRdfFormat(serializationFormat);
 
 		long currentFilesCount = filesCount.incrementAndGet();
@@ -67,7 +72,7 @@ public class RandomWorker extends AbstractAsynchronousWorker {
 			}
 			
 			try {
-				fos = new FileOutputStream(fileName);
+				os = new BufferedOutputStream(new FileOutputStream(fileName));
 				
 				Model sesameModel;
 
@@ -86,16 +91,19 @@ public class RandomWorker extends AbstractAsynchronousWorker {
 						sesameModel = creativeWorkBuilder.buildSesameModel();
 					}
 					
-					Rio.write(sesameModel, fos, rdfFormat);
+					Rio.write(sesameModel, os, rdfFormat);
 					
 					cwsInFileCount++;
 					currentTriplesCount += sesameModel.size();											
 					triplesGeneratedSoFar.addAndGet(sesameModel.size());					
 				}
 				
-				flushClose(fos);
+				flushClose(os);
+				if (compress) {
+					CompressionUtil.compressFile(fileName, true);
+				}
 				if (!silent && cwsInFileCount > 0) {
-					System.out.println(Thread.currentThread().getName() + " " + this.getClass().getSimpleName() + " :: Saving file #" + currentFilesCount + " with " + String.format("%,d", cwsInFileCount) + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
+					System.out.println(Thread.currentThread().getName() + " " + this.getClass().getSimpleName() + " :: Saving " + (compress ? "compressed " : "") + "file #" + currentFilesCount + " with " + String.format("%,d", cwsInFileCount) + " Creative Works. Generated triples so far: " + String.format("%,d", triplesGeneratedSoFar.get()) + ". Target: " + String.format("%,d", targetTriples) + " triples");
 				}
 
 				cwsInFileCount = 0;
@@ -104,13 +112,16 @@ public class RandomWorker extends AbstractAsynchronousWorker {
 				currentFilesCount = filesCount.incrementAndGet();
 				fileName = String.format(FILENAME_FORMAT + rdfFormat.getDefaultFileExtension(), destinationPath, File.separator, currentFilesCount);
 			} catch (RDFHandlerException e) {
-				flushClose(fos);
+				flushClose(os);
+				if (compress) {
+					CompressionUtil.compressFile(fileName, true);
+				}
 				throw new IOException("A problem occurred while generating RDF data: " + e.getMessage());
 			}
 		}
 	}
 	
-	protected synchronized void flushClose(FileOutputStream fos) throws IOException {
+	protected synchronized void flushClose(OutputStream fos) throws IOException {
 		if (fos != null) {
 			fos.flush();
 			fos.close();

@@ -78,6 +78,9 @@ public class DataGenerator {
 		//create destination directory
 		FileUtils.makeDirectories(this.destinationPath);
 		
+		//compress output?
+		boolean compress = configuration.getBoolean(Configuration.ENABLE_COMPRESSION_ON_GENERATED_DATA);
+		
 		ExecutorService executorService = null;
 		executorService = Executors.newFixedThreadPool(generatorThreads);
 		
@@ -118,7 +121,7 @@ public class DataGenerator {
 				DataManager.creativeWorksNextId.addAndGet(generatedCWsByWorker - 1);				
 				CorrelationsWorker crw = new CorrelationsWorker(spawnedRu, entityA, entityB, entityC, nextCwId,  totalCorrelationPeriodDays, correlationsMagnitudesList, dataGeneratorPeriodYears, 
 															    correlationsMagnitude, correlationEntityLifespanPercent, correlationDurationPercent, syncLock, 
-															    filesCount, targetedTriplesSize, triplesPerFile, triplesGeneratedSoFar, destinationPath, serializationFormat, silent);
+															    filesCount, targetedTriplesSize, triplesPerFile, triplesGeneratedSoFar, destinationPath, serializationFormat, compress, silent);
 				executorService.execute(crw);
 			}
 		}
@@ -158,7 +161,7 @@ public class DataGenerator {
 			
 				nextCwId = DataManager.creativeWorksNextId.incrementAndGet();
 				DataManager.creativeWorksNextId.addAndGet(edgu.calculateTotal() - 1);
-				ExpDecayWorker edw = new ExpDecayWorker(edgu.produceIterationStepsList(), nextCwId, startDate, e, spawnedRu, syncLock, filesCount, triplesPerFile, targetedTriplesSize, triplesGeneratedSoFar, destinationPath, serializationFormat, silent);
+				ExpDecayWorker edw = new ExpDecayWorker(edgu.produceIterationStepsList(), nextCwId, startDate, e, spawnedRu, syncLock, filesCount, triplesPerFile, targetedTriplesSize, triplesGeneratedSoFar, destinationPath, serializationFormat, compress, silent);
 				executorService.execute(edw);				
 			}
 		}
@@ -175,7 +178,7 @@ public class DataGenerator {
 				
 				nextCwId = DataManager.creativeWorksNextId.incrementAndGet();
 				DataManager.creativeWorksNextId.addAndGet(edgu.calculateTotal() - 1);
-				ExpDecayWorker edw = new ExpDecayWorker(edgu.produceIterationStepsList(), nextCwId, startDate, e, spawnedRu, syncLock, filesCount, triplesPerFile, targetedTriplesSize, triplesGeneratedSoFar, destinationPath, serializationFormat, silent);				
+				ExpDecayWorker edw = new ExpDecayWorker(edgu.produceIterationStepsList(), nextCwId, startDate, e, spawnedRu, syncLock, filesCount, triplesPerFile, targetedTriplesSize, triplesGeneratedSoFar, destinationPath, serializationFormat, compress, silent);				
 				executorService.execute(edw);
 			}
 		}
@@ -189,7 +192,7 @@ public class DataGenerator {
 		}
 		if (produceRandom && (triplesGeneratedSoFar.get() < targetedTriplesSize) && configuration.getBoolean(Configuration.USE_RANDOM_DATA_GENERATORS)) {
 			for (int i = 0; i < generatorThreads; i++) {				
-				RandomWorker rw = new RandomWorker(ru, syncLock, filesCount, targetedTriplesSize, triplesPerFile, triplesGeneratedSoFar, destinationPath, serializationFormat, silent);
+				RandomWorker rw = new RandomWorker(ru, syncLock, filesCount, targetedTriplesSize, triplesPerFile, triplesGeneratedSoFar, destinationPath, serializationFormat, compress, silent);
 				executorService.execute(rw);
 			}
 		}		

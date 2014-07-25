@@ -5,7 +5,7 @@ package eu.ldbc.semanticpublishing.generators.data;
  */
 public abstract class AbstractAsynchronousWorker extends Thread {
 	
-	protected static final String FILENAME_FORMAT = "%s%sgeneratedCreativeWorks-%05d.";
+	protected static final String FILENAME_FORMAT = "%s%sgeneratedCreativeWorks-%06d.";
 	
 	@Override
 	public void run() {
@@ -13,6 +13,7 @@ public abstract class AbstractAsynchronousWorker extends Thread {
 			execute();
 		} catch (Exception e) {
 			System.out.println("Exception caught by : " + Thread.currentThread().getName() + " : " + e.getMessage());
+			e.printStackTrace();
 		}
 	}	
 	
