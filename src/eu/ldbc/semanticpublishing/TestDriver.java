@@ -272,6 +272,13 @@ public class TestDriver {
 				populateRefDataEntitiesLists(true, false, true, "");
 			}
 			
+			//if configuration property creativeWorkNextId > 0, use that value for next generated Creative Work. 
+			//Use-case : starting data generator in several jvms to generate in parallel
+			if (configuration.getLong(Configuration.CREATIVE_WORK_NEXT_ID) > 0) {
+				DataManager.creativeWorksNextId.set(configuration.getLong(Configuration.CREATIVE_WORK_NEXT_ID));
+				System.out.println("\tData generation will start with next Creative Work id : " + DataManager.creativeWorksNextId.get());
+			}
+			
 			long triplesPerFile = configuration.getLong(Configuration.GENERATED_TRIPLES_PER_FILE);
 			long totalTriples = configuration.getLong(Configuration.DATASET_SIZE_TRIPLES);
 			String destinationPath = configuration.getString(Configuration.CREATIVE_WORKS_PATH);
