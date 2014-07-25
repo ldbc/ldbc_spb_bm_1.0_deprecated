@@ -276,7 +276,7 @@ public class TestDriver {
 			//Use-case : starting data generator in several jvms to generate in parallel
 			if (configuration.getLong(Configuration.CREATIVE_WORK_NEXT_ID) > 0) {
 				DataManager.creativeWorksNextId.set(configuration.getLong(Configuration.CREATIVE_WORK_NEXT_ID));
-				System.out.println("\tData generation will start with next Creative Work id : " + DataManager.creativeWorksNextId.get());
+				System.out.println("\tData generation will start with next Creative Work id : " + DataManager.creativeWorksNextId.get() + 1);
 			}
 			
 			long triplesPerFile = configuration.getLong(Configuration.GENERATED_TRIPLES_PER_FILE);
