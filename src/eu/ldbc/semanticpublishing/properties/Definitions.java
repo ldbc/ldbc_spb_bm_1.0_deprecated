@@ -205,8 +205,8 @@ public class Definitions {
 			aggregationOperationsAllocation = new AllocationsUtil(allocationsAsDoubles, random);
 		}
 		
-		if (verbose) {
-			System.out.println(String.format("\t%-33s : {%s}", allocationPorpertyName, allocations));
-		}
+//		if (verbose) {
+//			System.out.println(String.format("\t%-33s : {%s}", allocationPorpertyName, allocations));
+//		}
 	}
 }
