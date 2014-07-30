@@ -188,7 +188,7 @@ public class TestDriver {
 	public void populateRefDataEntitiesLists(boolean showDetails, boolean populateFromDatasetInfoFile, boolean suppressDatasetInfoWarnings, String messagePrefix) throws IOException {
 		
 		if (showDetails) {
-			System.out.println(messagePrefix + "Analyzing reference knowledge in data, it may take a while...");
+			System.out.println(messagePrefix + "Analyzing existing reference knowledge in database, it may take a while...");
 		}
 		
 		//retrieve entity URIs from database
@@ -810,15 +810,7 @@ public class TestDriver {
 	}
 	
 	public void clearDatabase(boolean enable) throws IOException {
-		if (enable) {
-			//assuming that if regularEntitiesList is empty, no entity lists were populated
-			if (DataManager.regularEntitiesList.size() == 0) {
-				populateRefDataEntitiesLists(true, false, true, "");
-				if (DataManager.creativeWorksNextId.get() == 0) {
-					System.err.println("Warmup : Warning : no Creative Works were found stored in the database, initialize it with ontologies and reference and generated data first! Exiting.");
-					System.exit(-1);
-				}
-			}			
+		if (enable) {	
 			System.out.println("Cleaning up database ...");
 			queryExecuteManager.executeQuery("SERVICE-DELETE", " CLEAR ALL ", QueryType.DELETE);
 		}
