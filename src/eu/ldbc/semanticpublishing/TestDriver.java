@@ -833,7 +833,7 @@ public class TestDriver {
 		checkConformance(configuration.getBoolean(Configuration.CHECK_CONFORMANCE));
 		clearDatabase(configuration.getBoolean(Configuration.CLEAR_DATABASE));
 		
-		System.out.println("END OF BENCHMARK RUN, all agents shut down...");
+		System.out.println("END OF RUN, all agents shut down...");
 		System.exit(0);
 	}
 	
