@@ -2,7 +2,7 @@
 "mediums";"faster";1000000
 
 [ExpectedResultsSize]
-88269
+73823
 
 [Results]
 <http://www.bbc.co.uk/things/38977#id>

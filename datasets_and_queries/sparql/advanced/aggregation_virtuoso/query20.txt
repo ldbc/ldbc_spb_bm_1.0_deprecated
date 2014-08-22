@@ -80,4 +80,5 @@ WHERE {
     }
   }
 }
+ORDER BY DESC(?dateModified)
 LIMIT {{{randomLimit}}}
