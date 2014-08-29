@@ -92,4 +92,4 @@ mileStoneQueryPosition = 0.5
 #until all other queries including current one from their pool have been executed. Each query pool is defined by a set of curly braces {}. If empty value has been assigned to the queryPools property, then no query pools are created, all queries are executed according to distributions defined in parameter 'aggregationOperationsAllocation'.
 #e.g. queryPools={1, 2, 5} {3, 4} {6} - if agent starts execution of query 1, next agents will not attempt to execute the same query, but will move to other ones from that or other pools. Query 1 will be available for execution after all other queries from its pool have been executed.
 #Current configuration - all query pools except first one consist of linear queries
-queryPools={1, 2, 3, 5, 8, 11, 12, 17, 18, 24, 25} {4, 6, 7} {9, 10, 13} {14, 15, 16} {19, 20} {21, 22, 23}
+queryPools={1, 2, 3, 5, 8, 11, 12, 17, 18, 24, 25} {4, 6, 7, 9, 10, 13, 14, 15, 16, 19, 20, 21, 22, 23}
