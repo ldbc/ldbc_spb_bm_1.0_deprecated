@@ -168,16 +168,20 @@ How to run the benchmark :
     - majorEvents                       (Defines the maximum number of 'major' events that could happen during data generation period. Each major event will be tagged by a number of Creative Works which will decay exponentially in time.)
     - minorEvents                       (Defines the maximum number of 'minor' events that could happen during data generation period. Each minor event will be tagged by a number of Creative Works which will decay exponentially in time. Value of exponentialDecayUpperLimitOfCWs for minor events will be ten times smaller for them.)
     - seedYear                          (Defines a seed year that will be used for generating the Creative Works. Each Creative Work will have its creation date during that year. All date-range queries will use that value also.)
-    - dataGenerationPeriodYears			    (Defines the period (in years) of the gnerated data, starting from 'seedYear')
-    - correlationsAmount				        (Defines the amount of correlations that data generator will model between entities from reference knowledge data. Default value (50) will produce around 15 million triples.)
-    - correlationsMagnitude				      (Defines maximum amount of Creative Works that will be generated for a particular correlation in a single day.)
-    - correlationDuration				        (Defines the duration of correlation between two entities as a percent of the total data generation period. Default generation period is one year.)
-    - correlationEntityLifespan			    (Defines the life span of each entity that participates in a correlation as a percent of the total data generation period.)
-    - minLat							              (Defines minimum latitude, a geo-spatial property used to configure the geo-spatial search area of queries.)
-    - maxLat							              (Defines maximum latitude, a geo-spatial property.)
-    - minLong							              (Defines minimum longtitude, ,a geo-spatial property.)
-    - maxLong							              (Defines maximum longtitude, a geo-spatial property.)    
+    - dataGenerationPeriodYears         (Defines the period (in years) of the gnerated data, starting from 'seedYear')
+    - correlationsAmount                (Defines the amount of correlations that data generator will model between entities from reference knowledge data. Default value (50) will produce around 15 million triples.)
+    - correlationsMagnitude             (Defines maximum amount of Creative Works that will be generated for a particular correlation in a single day.)
+    - correlationDuration               (Defines the duration of correlation between two entities as a percent of the total data generation period. Default generation period is one year.)
+    - correlationEntityLifespan         (Defines the life span of each entity that participates in a correlation as a percent of the total data generation period.)
+    - minLat                            (Defines minimum latitude, a geo-spatial property used to configure the geo-spatial search area of queries.)
+    - maxLat                            (Defines maximum latitude, a geo-spatial property.)
+    - minLong                           (Defines minimum longtitude, ,a geo-spatial property.)
+    - maxLong                           (Defines maximum longtitude, a geo-spatial property.)    
   	- mileStoneQueryPosition            (Defines the position in terms of percents at which a milestone query is executed (related to Online and Replication Benchmark feature))
+  	- queryPools                        (Defines pools of queries, where each pool contains a unique query set. During query execution, if one query is being executed by an agent, another agent will not attempt to execute the same query until all other queries including current one from their pool have been executed. Each query pool is defined by a set of curly braces {}. If empty value has been assigned to the queryPools property, then no query pools are created, all queries are executed according to distributions defined in parameter 'aggregationOperationsAllocation'. e.g. queryPools={1, 2, 5} {3, 4} {6} - if agent starts execution of query 1, next agents will not attempt to execute the same query, but will move to other ones from that or other pools. Query 1 will be available for execution after all other queries from its pool have been executed.
+  	
+  	
+  	
     
       Sample definitions.properties file can be found in the distribution folder.
 

@@ -25,6 +25,7 @@ import eu.ldbc.semanticpublishing.resultanalyzers.Query22Analyzer;
 import eu.ldbc.semanticpublishing.resultanalyzers.sax.SPARQLResultStatementsCounter;
 import eu.ldbc.semanticpublishing.resultanalyzers.sesame.RDFXMLResultStatementsCounter;
 import eu.ldbc.semanticpublishing.statistics.Statistics;
+import eu.ldbc.semanticpublishing.statistics.querypool.PoolManager;
 import eu.ldbc.semanticpublishing.templates.MustacheTemplate;
 import eu.ldbc.semanticpublishing.templates.aggregation.*;
 import eu.ldbc.semanticpublishing.util.RandomUtil;
@@ -32,6 +33,9 @@ import eu.ldbc.semanticpublishing.util.RandomUtil;
 /**
  * A class that represents an aggregation agent. It executes aggregation queries 
  * in a loop, updates query execution statistics.
+ *
+ * WARNING : after making changes to this class, make sure you've made a copy of it with corresponding .basic / .advanced extension before building, 
+ *           otherwise you will lose your changes!
  */
 public class AggregationAgent extends AbstractAsynchronousAgent {
 	private final SparqlQueryExecuteManager queryExecuteManager;
@@ -43,13 +47,14 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 	private SubstitutionQueryParametersManager substitutionQueryParametersMngr;
 	private RDFXMLResultStatementsCounter rdfxmlResultStatementsCounter;
 	private SPARQLResultStatementsCounter sparqlResultStatementsCounter;
+	private PoolManager queryPoolManager;
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(AggregationAgent.class.getName());
 	private final static Logger BRIEF_LOGGER = LoggerFactory.getLogger(TestDriver.class.getName());
 	private final static int MAX_DRILL_DOWN_ITERATIONS = 5;
 	private final static int MAX_FACETED_SEARCH_ITERATIONS = 5;
 	
-	public AggregationAgent(AtomicBoolean benchmarkingState, SparqlQueryExecuteManager queryExecuteManager, RandomUtil ru, AtomicBoolean runFlag, HashMap<String, String> queryTamplates, Definitions definitions, SubstitutionQueryParametersManager substitutionQueryParametersMngr) {
+	public AggregationAgent(AtomicBoolean benchmarkingState, SparqlQueryExecuteManager queryExecuteManager, RandomUtil ru, AtomicBoolean runFlag, HashMap<String, String> queryTamplates, Definitions definitions, SubstitutionQueryParametersManager substitutionQueryParametersMngr, PoolManager queryPoolManager) {
 		super(runFlag);
 		this.queryExecuteManager = queryExecuteManager;
 		this.ru = ru;
@@ -60,12 +65,18 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 		this.substitutionQueryParametersMngr = substitutionQueryParametersMngr;
 		this.rdfxmlResultStatementsCounter = new RDFXMLResultStatementsCounter();
 		this.sparqlResultStatementsCounter = new SPARQLResultStatementsCounter();
+		this.queryPoolManager = queryPoolManager;		
 	}
 	
 	@Override
 	public boolean executeLoop() {
 		//retrieve next query to be executed from the aggregation query mix
 		int aggregateQueryIndex = Definitions.aggregationOperationsAllocation.getAllocation();
+		
+        //aggregateQueryIndex is ZERO based, while query ids in definitions.properties queryPools are not
+		if (!queryPoolManager.checkAndSetItemUnavailable(aggregateQueryIndex + 1)/* && this.benchmarkingState.get()*/) {
+			return true;
+		}
 		
 		long queryId = 0;
 		MustacheTemplate aggregateQuery = null;
@@ -226,6 +237,9 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 			
 			connection = new SparqlQueryConnection(queryExecuteManager.getEndpointUrl(), queryExecuteManager.getEndpointUpdateUrl(), queryExecuteManager.getTimeoutMilliseconds(), true);
 		}
+		
+		queryPoolManager.releaseItemUnavailable(aggregateQueryIndex + 1);
+		
 		return true;
 	}
 	

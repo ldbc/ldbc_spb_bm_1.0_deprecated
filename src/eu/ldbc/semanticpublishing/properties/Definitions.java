@@ -37,6 +37,7 @@ public class Definitions {
 	public static final String GEO_MIN_LONG = "minLong";
 	public static final String GEO_MAX_LONG = "maxLong";
 	public static final String MILESTONE_QUERY_POSITION = "mileStoneQueryPosition";
+	public static final String QUERY_POOLS = "queryPools";
 	
 	//About tags in Creative Works
 	public static AllocationsUtil aboutsAllocations;
@@ -88,7 +89,7 @@ public class Definitions {
 	 * @param key
 	 * @return
 	 */
-	private String getString( String key) {
+	public String getString( String key) {
 		String value = definitionsProperties.getProperty(key);
 		
 		if(value == null) {

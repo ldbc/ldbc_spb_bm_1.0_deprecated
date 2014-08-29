@@ -32,6 +32,7 @@ import eu.ldbc.semanticpublishing.resultanalyzers.CreativeWorksAnalyzer;
 import eu.ldbc.semanticpublishing.resultanalyzers.GeonamesAnalyzer;
 import eu.ldbc.semanticpublishing.resultanalyzers.ReferenceDataAnalyzer;
 import eu.ldbc.semanticpublishing.statistics.Statistics;
+import eu.ldbc.semanticpublishing.statistics.querypool.PoolManager;
 import eu.ldbc.semanticpublishing.substitutionparameters.SubstitutionParametersGenerator;
 import eu.ldbc.semanticpublishing.substitutionparameters.SubstitutionQueryParametersManager;
 import eu.ldbc.semanticpublishing.templates.MustacheTemplatesHolder;
@@ -64,6 +65,7 @@ public class TestDriver {
 	private final RandomUtil randomGenerator;
 	private final SubstitutionQueryParametersManager substitutionQueryParamtersManager = new SubstitutionQueryParametersManager();
 	private final ValidationValuesManager validationValuesManager = new ValidationValuesManager();
+	private final PoolManager queryPoolManager = new PoolManager();
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(TestDriver.class.getName());
 	private final static Logger RLOGGER = LoggerFactory.getLogger(BenchmarkProcessObserver.class.getName());
@@ -99,6 +101,8 @@ public class TestDriver {
 				configuration.getInt(Configuration.SYSTEM_QUERY_TIMEOUT_SECONDS) * 1000,
 				configuration.getBoolean(Configuration.VERBOSE));
 		
+		queryPoolManager.initialize(definitions.getString(Definitions.QUERY_POOLS));
+		
 		//set the nextId for Creative Works, default 0
 		DataManager.creativeWorksNextId.set(configuration.getLong(Configuration.CREATIVE_WORK_NEXT_ID));
 	}
@@ -115,7 +119,7 @@ public class TestDriver {
 		
 		return new RandomUtil(filePath, seed, yearSeed, generorPeriodYears);
 	}
-
+	
 	private void loadOntologies(boolean enable) throws IOException {
 		if (enable) {
 			System.out.println("Loading ontologies...");
@@ -406,7 +410,7 @@ public class TestDriver {
 	
 	private void setupAsynchronousAgents() {
 		for(int i = 0; i < aggregationAgentsCount; ++i ) {
-			aggregationAgents.add(new AggregationAgent(inBenchmarkState, queryExecuteManager, randomGenerator, runFlag, mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.AGGREGATION), definitions, substitutionQueryParamtersManager));
+			aggregationAgents.add(new AggregationAgent(inBenchmarkState, queryExecuteManager, randomGenerator, runFlag, mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.AGGREGATION), definitions, substitutionQueryParamtersManager, queryPoolManager));
 		}
 
 		for(int i = 0; i < editorialAgentsCount; ++i ) {
@@ -503,6 +507,7 @@ public class TestDriver {
 																 configuration.getInt(Configuration.AGGREGATION_AGENTS_COUNT), 
 																 configuration.getLong(Configuration.BENCHMARK_RUN_PERIOD_SECONDS),
 																 benchmarkByQueryRuns, 
+																 queryPoolManager,
 																 configuration.getBoolean(Configuration.VERBOSE));
 			observerThread.start();
 			
@@ -605,6 +610,7 @@ public class TestDriver {
 																 configuration.getInt(Configuration.AGGREGATION_AGENTS_COUNT), 
 																 configuration.getLong(Configuration.BENCHMARK_RUN_PERIOD_SECONDS),
 																 benchmarkByQueryRuns, 
+																 queryPoolManager,
 																 configuration.getBoolean(Configuration.VERBOSE));
 			observerThread.start();
 			

@@ -350,11 +350,11 @@
 ---------------------------------------------------------------------------------------------------------------------------------------
 To BUILD the LDBC Semantic Publishing Benchmark, you should execute :
       
-	Standard version :
+	SPARQL compliant version :
 		ant build-basic-querymix (builds the benchmark driver with basic query mix, standard SPARQL 1.1 compliance)
 		ant build-advanced-querymix (builds the benchmark driver with advanced query mix, standard SPARQL 1.1 compliance)
     	
-	Virtuoso customized : 
+	Virtuoso customized version :
 		ant build-basic-querymix-virtuoso (builds the benchmark driver with basic query mix and customized query syntax for Virtuoso)
 		ant build-advanced-querymix-virtuoso (builds the benchmark driver with advanced query mix and customized query syntax for Virtuoso)
 ---------------------------------------------------------------------------------------------------------------------------------------

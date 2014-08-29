@@ -7,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.ldbc.semanticpublishing.statistics.Statistics;
+import eu.ldbc.semanticpublishing.statistics.querypool.Pool;
+import eu.ldbc.semanticpublishing.statistics.querypool.PoolManager;
 
 /**
  * This class is used to produce a result summary for the benchmark. The thread is scheduled to start at a fixed
@@ -27,10 +29,11 @@ public class BenchmarkProcessObserver extends Thread {
 	private int aggregationAgentsCount;
 	private int editorialAgentsCount;
 	private int initializedCount;
+	private PoolManager queryPoolManager;
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(BenchmarkProcessObserver.class.getName());
 	
-	public BenchmarkProcessObserver(AtomicLong totalQueryExecutions, AtomicBoolean benchmarkState, AtomicBoolean keepAlive, AtomicBoolean benchmarkResultIsValid, double updateQueryRateFirstReachTimePercent, double requiredUpdateQueriesRateThresholdOps, int editorialAgentsCount, int aggregationAgentsCount, long runPeriodSeconds, long benchmarkByQueryRuns, boolean verbose) {
+	public BenchmarkProcessObserver(AtomicLong totalQueryExecutions, AtomicBoolean benchmarkState, AtomicBoolean keepAlive, AtomicBoolean benchmarkResultIsValid, double updateQueryRateFirstReachTimePercent, double requiredUpdateQueriesRateThresholdOps, int editorialAgentsCount, int aggregationAgentsCount, long runPeriodSeconds, long benchmarkByQueryRuns, PoolManager queryPoolManager, boolean verbose) {
 		this.totalQueryExecutions = totalQueryExecutions;
 		this.benchmarkState = benchmarkState;
 		this.keepAlive = keepAlive;
@@ -45,6 +48,7 @@ public class BenchmarkProcessObserver extends Thread {
 		this.requiredUpdateRateThresholdOps = requiredUpdateQueriesRateThresholdOps;
 		this.requiredUpdateRatePassesCount = 0;
 		this.initializedCount = 0;
+		this.queryPoolManager = queryPoolManager;
 	}
 	
 	/* (non-Javadoc)
@@ -132,6 +136,19 @@ public class BenchmarkProcessObserver extends Thread {
 																											   				  Statistics.aggregateQueriesArray[i].getMaxExecutionTimeMs(), 
 																											   				  Statistics.aggregateQueriesArray[i].getFailuresCount()));
 			}
+			if (queryPoolManager.getPoolsCount() > 0) {
+				sb.append("\n");
+				for (int p = 0; p < queryPoolManager.getPoolsCount(); p++) {
+					Pool pool = queryPoolManager.getPool(p);
+					if (pool != null) {
+						sb.append("\t\t");
+						sb.append(pool.produceStatistics(seconds, Statistics.timeCorrectionsMS.get()));
+					}
+					sb.append("\n");
+				}
+				sb.append("\n");
+			}
+			
 			sb.append(String.format("\n\t\t%d total retrieval queries (%d timed-out)\n", totalAggregateOpsCount, failedTotalAggregateOpsCount));
 		} else {
 			for (int i = 0; i < Statistics.AGGREGATE_QUERIES_COUNT; i++) {
