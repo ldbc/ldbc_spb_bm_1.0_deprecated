@@ -159,7 +159,7 @@ public class InsertTemplate extends MustacheTemplate implements SubstitutionPara
 			return substitutionParameters[parameterIndex++];
 		}
 		
-		return ru.sentenceFromDictionaryWords(this.cwEntity.getLabel(), 10, true, true);
+		return ru.sentenceFromDictionaryWords(this.cwEntity.getLabel(), 10, true, true, 2, true);
 	}
 	
 	/**
@@ -170,7 +170,7 @@ public class InsertTemplate extends MustacheTemplate implements SubstitutionPara
 			return substitutionParameters[parameterIndex++];
 		}
 		
-		return ru.sentenceFromDictionaryWords("", 10, true, true);
+		return ru.sentenceFromDictionaryWords("", 10, true, true, 2, true);
 	}
 	
 	/**
@@ -192,7 +192,7 @@ public class InsertTemplate extends MustacheTemplate implements SubstitutionPara
 			return substitutionParameters[parameterIndex++];
 		}
 		
-		return ru.sentenceFromDictionaryWords("", ru.nextInt(8, 26 + 1), true, true);
+		return ru.sentenceFromDictionaryWords("", ru.nextInt(8, 26 + 1), true, true, 2, true);
 	}
 	
 	/**

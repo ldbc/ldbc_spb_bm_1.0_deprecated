@@ -396,13 +396,9 @@ public class RandomUtil {
 		return sb.toString();
 	}
 
-	public String sentenceFromDictionaryWords(String firstString, int numberOfWords, boolean surroundWithQuotes,
+	public String sentenceFromDictionaryWords(String firstString, int numberOfWords, boolean surroundWithQuotes, boolean escapeQuotes, int numberOfEscapes, 
 			boolean appendDataType) {
 		StringBuilder sb = new StringBuilder();
-
-		if (surroundWithQuotes) {
-			sb.append("\"");
-		}
 
 		sb.append(firstString);
 		sb.append(" ");
@@ -416,7 +412,20 @@ public class RandomUtil {
 			}
 		}
 
+		if (escapeQuotes) {
+			String replacement;
+			StringBuilder escapeSb = new StringBuilder();
+			for (int i = 0; i < numberOfEscapes; i++) {
+				escapeSb.append("\\");
+			}
+			escapeSb.append("\"");
+			replacement = sb.toString().replaceAll("\"", escapeSb.toString());			
+			sb.setLength(0);
+			sb.append(replacement);			
+		}
+		
 		if (surroundWithQuotes) {
+			sb.insert(0, '"');
 			sb.append("\"");
 		}
 

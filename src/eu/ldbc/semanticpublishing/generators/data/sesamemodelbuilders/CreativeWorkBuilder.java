@@ -160,13 +160,13 @@ public class CreativeWorkBuilder implements SesameBuilder {
 		
 		//Set Title
 		predicate = sesameValueFactory.createURI(cworkNamespace + "title");
-		object = sesameValueFactory.createLiteral(ru.sentenceFromDictionaryWords(this.cwEntity.getLabel(), 10, false, false));
+		object = sesameValueFactory.createLiteral(ru.sentenceFromDictionaryWords(this.cwEntity.getLabel(), 10, false, true, 1, false));		
 		
 		model.add(subject, predicate, object, context);
 
 		//Set Short Title
 		predicate = sesameValueFactory.createURI(cworkNamespace + "shortTitle");
-		object = sesameValueFactory.createLiteral(ru.sentenceFromDictionaryWords("", 10, false, false));
+		object = sesameValueFactory.createLiteral(ru.sentenceFromDictionaryWords("", 10, false, true, 1, false));		
 		
 		model.add(subject, predicate, object, context);
 
@@ -178,7 +178,7 @@ public class CreativeWorkBuilder implements SesameBuilder {
 		
 		//Set Description
 		predicate = sesameValueFactory.createURI(cworkNamespace + "description");
-		object = sesameValueFactory.createLiteral(ru.sentenceFromDictionaryWords("", ru.nextInt(8, 26 + 1), false, false));
+		object = sesameValueFactory.createLiteral(ru.sentenceFromDictionaryWords("", ru.nextInt(8, 26 + 1), false, true, 1, false));
 		
 		model.add(subject, predicate, object, context);
 		
