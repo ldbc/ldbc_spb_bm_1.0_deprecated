@@ -31,11 +31,14 @@ public class EditorialAgent extends AbstractAsynchronousAgent {
 	protected final HashMap<String, String> queryTemplates;
 	private SparqlQueryConnection connection;
 	private Definitions definitions;
+	private final AtomicBoolean maxUpdateOperationsReached;
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(EditorialAgent.class.getName());
 	private final static Logger BRIEF_LOGGER = LoggerFactory.getLogger(TestDriver.class.getName());
 	
-	public EditorialAgent(AtomicBoolean benchmarkingState, SparqlQueryExecuteManager queryExecuteManager, RandomUtil ru, AtomicBoolean runFlag, HashMap<String, String> queryTemplates, Definitions definitions) {
+	private final static long SLEEP_TIME_MS = 1000;
+	
+	public EditorialAgent(AtomicBoolean benchmarkingState, SparqlQueryExecuteManager queryExecuteManager, RandomUtil ru, AtomicBoolean runFlag, HashMap<String, String> queryTemplates, Definitions definitions, AtomicBoolean maxUpdateOperationsReached) {
 		super(runFlag);
 		this.queryExecuteManager = queryExecuteManager;
 		this.ru = ru;
@@ -43,6 +46,7 @@ public class EditorialAgent extends AbstractAsynchronousAgent {
 		this.queryTemplates = queryTemplates;
 		this.connection = new SparqlQueryConnection(queryExecuteManager.getEndpointUrl(), queryExecuteManager.getEndpointUpdateUrl(), queryExecuteManager.getTimeoutMilliseconds(), true);
 		this.definitions = definitions;
+		this.maxUpdateOperationsReached = maxUpdateOperationsReached;
 	}
 	
 	@Override
@@ -54,8 +58,14 @@ public class EditorialAgent extends AbstractAsynchronousAgent {
 		String queryString = "";
 		String queryResult = "";
 		QueryType queryType = QueryType.INSERT;
-		
+			
 		try {
+			
+			if (maxUpdateOperationsReached.get()) {
+				LOGGER.info(Thread.currentThread().getName() + " : Max update operations per seconds has been reached, skipping current update until update rate drops below configured maximum.");
+				Thread.sleep(SLEEP_TIME_MS);
+				return true;
+			}
 			
 			switch (queryDistribution) {
 				case 0 :
@@ -98,7 +108,8 @@ public class EditorialAgent extends AbstractAsynchronousAgent {
 			queryResult = queryExecuteManager.executeQuery(connection, queryName, queryString, queryType, true, false);
 			
 			updateQueryStatistics(true, queryType, queryName, queryString, queryResult, queryId, System.currentTimeMillis() - executionTimeMs);
-
+		} catch (InterruptedException ie) {
+			LOGGER.warn("InterruptedException : " + ie.getMessage());
 		} catch (IOException ioe) {
 			String msg = "Warning : EditorialAgent : IOException caught : " + ioe.getMessage() + ", attempting a new connection" + "\n" + "\tfor query : \n" + connection.getQueryString();
 			

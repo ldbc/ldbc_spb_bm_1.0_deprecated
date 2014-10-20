@@ -144,10 +144,11 @@ How to run the benchmark :
     - creativeWorksInfo                 (name of file that contains system info about the generated dataset, e.g. interesting entities, etc. (will be saved in 'creativeWorksPath'))
     - querySubstitutionParameters       (number substitution parameters that will be generated for each query, default value is 100000)
     - benchmarkByQueryRuns				      (sets the amount of aggregate queries which the benchmark phase will execute. If value is greater than zero then parameter 'benchmarkRunPeriodSeconds' is ignored. e.g. if set to 100, benchmark will measure the time to execute 100 aggregate operations.)
-    - updateRateThresholdOps        	  (defines the update rate of editorial operations per second which should be reached during the first 15% of benchmark time and should be kept during the rest of the benchmark run in order to have a valid result. If set to zero, update rate threshold is ignored.
+    - minUpdateRateThresholdOps        	  (defines the minimum rate of editorial operations per second which should be reached during the first 15% of benchmark time and should be kept during the rest of the benchmark run in order to have a valid result. If set to zero, update rate threshold is ignored.
                                          e.g. if required update rate is set to 6.3 update operations per second, then benchmark will consider that value during its benchmark run and will report invalid results if that rate drops below the threshold)
-    - updateRateThresholdReachTimePercent (defines the time frame during which the defined value in property 'updateRateThresholdOps' should be reached. Default value is 0.1 (10%)
+    - minUpdateRateThresholdReachTimePercent (defines the time frame during which the defined value in property 'minUpdateRateThresholdOps' should be reached. Default value is 0.1 (10%)
                                          e.g. if set to 0.1 (i.e. 10%) then the update rate defined in 'updateRateThresholdOps' should be reached during the first 10% of the benchmark run time, if not reached, the result is considered invalid)
+    - maxUpdateRateThresholdOps         (defines the maximum rate of editorial operations per second. If set to zero that threshold is ignored.)
     - enableCompressionOnGeneratedData	(enables gzip compression on generated data, default: false)                   									
                                          
                                          Note : For optimal results the sum of editorial and aggregation agents should be set to be equal to the number of CPU cores.

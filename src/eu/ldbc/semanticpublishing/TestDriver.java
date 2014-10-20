@@ -58,6 +58,7 @@ public class TestDriver {
 	private final AtomicBoolean inBenchmarkState = new AtomicBoolean(false);
 	private final AtomicBoolean keepObserverAlive = new AtomicBoolean(false);
 	private final AtomicBoolean benchmarkResultIsValid = new AtomicBoolean(false);
+	private final AtomicBoolean maxUpdateRateReached = new AtomicBoolean(false);
 	
 	private final Configuration configuration = new Configuration();
 	private final Definitions definitions = new Definitions();
@@ -414,7 +415,7 @@ public class TestDriver {
 		}
 
 		for(int i = 0; i < editorialAgentsCount; ++i ) {
-			editorialAgents.add(new EditorialAgent(inBenchmarkState, queryExecuteManager, randomGenerator, runFlag, mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.EDITORIAL), definitions));
+			editorialAgents.add(new EditorialAgent(inBenchmarkState, queryExecuteManager, randomGenerator, runFlag, mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.EDITORIAL), definitions, maxUpdateRateReached));
 		}
 	}
 	
@@ -501,8 +502,10 @@ public class TestDriver {
 													   		     inBenchmarkState, 
 													   		     keepObserverAlive,
 													   		     benchmarkResultIsValid,
-													   		     configuration.getDouble(Configuration.UPDATE_RATE_THRESHOLD_REACH_TIME_PERCENT),
-													   		     configuration.getDouble(Configuration.UPDATE_RATE_THRESHOLD_OPS),
+													   		     configuration.getDouble(Configuration.MIN_UPDATE_RATE_THRESHOLD_REACH_TIME_PERCENT),
+													   		     configuration.getDouble(Configuration.MIN_UPDATE_RATE_THRESHOLD_OPS),
+																 configuration.getDouble(Configuration.MAX_UPDATE_RATE_THRESHOLD_OPS),
+																 maxUpdateRateReached, 
 																 configuration.getInt(Configuration.EDITORIAL_AGENTS_COUNT),																				
 																 configuration.getInt(Configuration.AGGREGATION_AGENTS_COUNT), 
 																 configuration.getLong(Configuration.BENCHMARK_RUN_PERIOD_SECONDS),
@@ -523,9 +526,9 @@ public class TestDriver {
 			
 			ThreadUtil.join(observerThread);
 			
-			if (configuration.getDouble(Configuration.UPDATE_RATE_THRESHOLD_OPS) > 0.0) {
+			if (configuration.getDouble(Configuration.MIN_UPDATE_RATE_THRESHOLD_OPS) > 0.0) {
 				if (!benchmarkResultIsValid.get()) {
-					message = String.format("Warning : Benchmark results are not valid! Required query rate has not been reached, or has dropped below threshold (%.1f ops) during the benchmark run.", configuration.getDouble(Configuration.UPDATE_RATE_THRESHOLD_OPS));
+					message = String.format("Warning : Benchmark results are not valid! Required query rate has not been reached, or has dropped below threshold (%.1f ops) during the benchmark run.", configuration.getDouble(Configuration.MIN_UPDATE_RATE_THRESHOLD_OPS));
 				} else {
 					message = "Benchmark result is valid!";
 				}
@@ -604,8 +607,10 @@ public class TestDriver {
 													   		     inBenchmarkState,
 													   		     keepObserverAlive, 
 													   		     benchmarkResultIsValid,
-													   		     configuration.getDouble(Configuration.UPDATE_RATE_THRESHOLD_REACH_TIME_PERCENT),
-													   		     0.0,									   		     
+													   		     configuration.getDouble(Configuration.MIN_UPDATE_RATE_THRESHOLD_REACH_TIME_PERCENT),
+													   		     0.0,		
+																 configuration.getDouble(Configuration.MAX_UPDATE_RATE_THRESHOLD_OPS),
+																 maxUpdateRateReached, 
 																 configuration.getInt(Configuration.EDITORIAL_AGENTS_COUNT),																				
 																 configuration.getInt(Configuration.AGGREGATION_AGENTS_COUNT), 
 																 configuration.getLong(Configuration.BENCHMARK_RUN_PERIOD_SECONDS),
@@ -680,9 +685,9 @@ public class TestDriver {
 			
 			ThreadUtil.join(observerThread);
 			
-			if (configuration.getDouble(Configuration.UPDATE_RATE_THRESHOLD_OPS) > 0.0) {
+			if (configuration.getDouble(Configuration.MIN_UPDATE_RATE_THRESHOLD_OPS) > 0.0) {
 				if (!benchmarkResultIsValid.get()) {
-					message = String.format("Warning : Benchmark results are not valid! Required query rate has not been reached, or has dropped below threshold (%.1f ops) during the benchmark run.", configuration.getDouble(Configuration.UPDATE_RATE_THRESHOLD_OPS));
+					message = String.format("Warning : Benchmark results are not valid! Required query rate has not been reached, or has dropped below threshold (%.1f ops) during the benchmark run.", configuration.getDouble(Configuration.MIN_UPDATE_RATE_THRESHOLD_OPS));
 				} else {
 					message = "Benchmark result is valid!";
 				}
