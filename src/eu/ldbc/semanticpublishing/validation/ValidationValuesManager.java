@@ -19,7 +19,7 @@ public class ValidationValuesManager {
 		}
 	}
 	
-	public void intiValidationValues(String location, boolean suppressErrorMessages) throws IOException, InterruptedException {
+	public void initValidationValues(String location, boolean suppressErrorMessages) throws IOException, InterruptedException {
 		for (int i = 0; i < Statistics.AGGREGATE_QUERIES_COUNT; i++) {
 			validationValuesArray[i].initFromFile(buildFilePath(location, validationValuesArray[i].getQueryName()), suppressErrorMessages);
 		}

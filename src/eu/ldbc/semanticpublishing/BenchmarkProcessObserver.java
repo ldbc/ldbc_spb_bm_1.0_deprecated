@@ -1,5 +1,6 @@
 package eu.ldbc.semanticpublishing;
 
+import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import eu.ldbc.semanticpublishing.statistics.Statistics;
 import eu.ldbc.semanticpublishing.statistics.querypool.Pool;
 import eu.ldbc.semanticpublishing.statistics.querypool.PoolManager;
+import eu.ldbc.semanticpublishing.util.FileUtils;
 
 /**
  * This class is used to produce a result summary for the benchmark. The thread is scheduled to start at a fixed
@@ -32,10 +34,15 @@ public class BenchmarkProcessObserver extends Thread {
 	private int editorialAgentsCount;
 	private int initializedCount;
 	private PoolManager queryPoolManager;
+	private String interruptSignalFilePath;
+	private Thread parentThread;
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(BenchmarkProcessObserver.class.getName());
 	
-	public BenchmarkProcessObserver(AtomicLong totalQueryExecutions, AtomicBoolean benchmarkState, AtomicBoolean keepAlive, AtomicBoolean benchmarkResultIsValid, double updateQueryRateFirstReachTimePercent, double minUpdateQueriesRateThresholdOps, double maxUpdateRateThresholdOps, AtomicBoolean maxUpdateRateReached, int editorialAgentsCount, int aggregationAgentsCount, long runPeriodSeconds, long benchmarkByQueryRuns, PoolManager queryPoolManager, boolean verbose) {
+	protected final static String BENCHMARK_INTERRUPT_SIGNAL = "benchmark_run_completed";
+	
+	public BenchmarkProcessObserver(Thread parentThread, AtomicLong totalQueryExecutions, AtomicBoolean benchmarkState, AtomicBoolean keepAlive, AtomicBoolean benchmarkResultIsValid, double updateQueryRateFirstReachTimePercent, double minUpdateQueriesRateThresholdOps, double maxUpdateRateThresholdOps, AtomicBoolean maxUpdateRateReached, int editorialAgentsCount, int aggregationAgentsCount, long runPeriodSeconds, long benchmarkByQueryRuns, PoolManager queryPoolManager, String interruptSignalFilePath, boolean verbose) {
+		this.parentThread = parentThread;
 		this.totalQueryExecutions = totalQueryExecutions;
 		this.benchmarkState = benchmarkState;
 		this.keepAlive = keepAlive;
@@ -53,6 +60,7 @@ public class BenchmarkProcessObserver extends Thread {
 		this.maxUpdateRateReached = maxUpdateRateReached;
 		this.initializedCount = 0;
 		this.queryPoolManager = queryPoolManager;
+		this.interruptSignalFilePath = interruptSignalFilePath;
 	}
 	
 	/* (non-Javadoc)
@@ -109,7 +117,7 @@ public class BenchmarkProcessObserver extends Thread {
 			sb.append(String.format("\t\t%-5d updates (avg : %-7d ms, min : %-7d ms, max : %-7d ms)\n", updateOpsCount ,Statistics.updateCreativeWorksQueryStatistics.getAvgExecutionTimeMs(), Statistics.updateCreativeWorksQueryStatistics.getMinExecutionTimeMs(), Statistics.updateCreativeWorksQueryStatistics.getMaxExecutionTimeMs()));
 			sb.append(String.format("\t\t%-5d deletes (avg : %-7d ms, min : %-7d ms, max : %-7d ms)\n", deleteOpsCount ,Statistics.deleteCreativeWorksQueryStatistics.getAvgExecutionTimeMs(), Statistics.deleteCreativeWorksQueryStatistics.getMinExecutionTimeMs(), Statistics.deleteCreativeWorksQueryStatistics.getMaxExecutionTimeMs()));
 			sb.append("\n");
-			sb.append(String.format("\t\t%d operations (%d CW Inserts (%d timed-out), %d CW Updates (%d timed-out), %d CW Deletions (%d timed-out))\n", ( insertOpsCount + updateOpsCount + deleteOpsCount ),
+			sb.append(String.format("\t\t%d operations (%d CW Inserts (%d errors), %d CW Updates (%d errors), %d CW Deletions (%d errors))\n", ( insertOpsCount + updateOpsCount + deleteOpsCount ),
 																	  																			 insertOpsCount, failedInsertOpsCount,
 																	  																			 updateOpsCount, failedUpdateOpsCount,
 																	  																			 deleteOpsCount, failedDeleteOpsCount) );
@@ -124,7 +132,7 @@ public class BenchmarkProcessObserver extends Thread {
 		double averageOperationsPerSecond = (double)(insertOpsCount + updateOpsCount + deleteOpsCount) / (double)seconds;
 		
 		//keep track of update rate ops
-		updateQueriesRateCheck(averageOperationsPerSecond);
+		updateInternalStatus(averageOperationsPerSecond);
 		
 		sb.append(String.format("\t\t%.4f average operations per second\n", averageOperationsPerSecond));
 
@@ -133,7 +141,7 @@ public class BenchmarkProcessObserver extends Thread {
 		sb.append(String.format("\t\t%s agents\n\n", aggregationAgentsCount));
 		if (verbose) {
 			for (int i = 0; i < Statistics.AGGREGATE_QUERIES_COUNT; i++) {
-				sb.append(String.format("\t\t%-5d Q%-2d  queries (avg : %-7d ms, min : %-7d ms, max : %-7d ms, %d timed-out)\n", Statistics.aggregateQueriesArray[i].getRunsCount(), 
+				sb.append(String.format("\t\t%-5d Q%-2d  queries (avg : %-7d ms, min : %-7d ms, max : %-7d ms, %d errors)\n", Statistics.aggregateQueriesArray[i].getRunsCount(), 
 																											   				  (i + 1),
 																											   				  Statistics.aggregateQueriesArray[i].getAvgExecutionTimeMs(),
 																											   				  Statistics.aggregateQueriesArray[i].getMinExecutionTimeMs(), 
@@ -190,10 +198,18 @@ public class BenchmarkProcessObserver extends Thread {
 		LOGGER.info(sb.toString());
 		System.out.println(sb.toString());
 		
+		if (!interruptSignalFilePath.trim().isEmpty()) {
+			if (FileUtils.fileExists(interruptSignalFilePath + File.separator + BENCHMARK_INTERRUPT_SIGNAL)) {
+				benchmarkState.set(false);
+				System.out.println("Interrupt signal was received (" + interruptSignalFilePath + "), stop the benchmark run...");
+				parentThread.interrupt();
+			}
+		}		
+		
 		return (System.currentTimeMillis() - time);		
 	}	
 	
-	private void updateQueriesRateCheck(double averageOperationsPerSecond) {
+	private void updateInternalStatus(double averageOperationsPerSecond) {
 		
 		//using maxUpdateRate threshold to control the update rate of editorial agents
 		if (maxUpdateRateThresholdOps > 0.0) {

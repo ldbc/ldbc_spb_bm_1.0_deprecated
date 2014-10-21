@@ -83,7 +83,7 @@ public class EditorialOperationsValidator extends Validator {
 		System.out.println("\tvalidating INSERT operation :");
 		for (int i = 0; i < totalValidationIterations; i++) {
 			String[] parameters = sqpm.getSubstitutionParametersFor(SubstitutionQueryParametersManager.QueryType.EDITORIAL, 0).get(i);
-			insertErrors += validateAction(EditorialOperation.INSERT, i, parameters);
+			insertErrors += validateAction(EditorialOperation.INSERT, i, parameters, true);
 		}
 		System.out.println("\t\t" + insertErrors + " errors");
 
@@ -94,7 +94,7 @@ public class EditorialOperationsValidator extends Validator {
 			
 			//modify substitution parameters before validation
 			parameters = modifySubstitutionParameters(i, prepareSubstitutionParametersForValidation(parameters));
-			updateErrors += validateAction(EditorialOperation.UPDATE, i, parameters);
+			updateErrors += validateAction(EditorialOperation.UPDATE, i, parameters, true);
 		}
 		System.out.println("\t\t" + updateErrors + " errors");
 		
@@ -102,12 +102,12 @@ public class EditorialOperationsValidator extends Validator {
 		System.out.println("\tvalidating DELETE operation :");
 		for (int i = 0; i < totalValidationIterations; i++) {
 			String[] parameters = sqpm.getSubstitutionParametersFor(SubstitutionQueryParametersManager.QueryType.EDITORIAL, 0).get(i);
-			deleteErrors += validateAction(EditorialOperation.DELETE, i, parameters);
+			deleteErrors += validateAction(EditorialOperation.DELETE, i, parameters, true);
 		}
 		System.out.println("\t\t" + deleteErrors + " errors");
 	}
 	
-	public int validateAction(EditorialOperation operationType, int iteration, String[] validationParameters) throws IOException {
+	public int validateAction(EditorialOperation operationType, int iteration, String[] validationParameters, boolean closeConnection) throws IOException {
 		int errors = 0;
 		String queryName = "";
 		String queryString = "";
@@ -132,7 +132,7 @@ public class EditorialOperationsValidator extends Validator {
 		queryName = actionQuery.getTemplateFileName();
 		queryString = actionQuery.compileMustacheTemplate();		
 
-		queryResult = queryExecuteManager.executeQuery(connection, queryName, queryString, queryType, false, true);
+		queryResult = queryExecuteManager.executeQuery(connection, queryName, queryString, queryType, false, closeConnection);
 
 		BRIEF_LOGGER.info(String.format("Query [%s] executed, iteration %d", queryName, iteration));
 		LOGGER.info("\n*** Query [" + queryName + "], iteration " + iteration + "\n" + queryString + "\n---------------------------------------------\n*** Result for query [" + queryName + "]" + " : \n" + "Length : " + queryResult.length() + "\n" + queryResult + "\n\n");		
@@ -163,7 +163,7 @@ public class EditorialOperationsValidator extends Validator {
 			queryName = validateQuery.getTemplateFileName();
 			queryString = validateQuery.compileMustacheTemplate();
 
-			queryResult = queryExecuteManager.executeQuery(connection, queryName, queryString, queryType, false, true);
+			queryResult = queryExecuteManager.executeQuery(connection, queryName, queryString, queryType, false, closeConnection);
 		
 			BRIEF_LOGGER.info(String.format("Query [%s] executed, iteration %d", queryName, iteration));
 			LOGGER.info("\n*** Query [" + queryName + "], iteration " + iteration + "\n" + queryString + "\n---------------------------------------------\n*** Result for query [" + queryName + "]" + " : \n" + "Length : " + queryResult.length() + "\n" + queryResult + "\n\n");

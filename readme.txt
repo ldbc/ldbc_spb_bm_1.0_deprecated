@@ -149,7 +149,10 @@ How to run the benchmark :
     - minUpdateRateThresholdReachTimePercent (defines the time frame during which the defined value in property 'minUpdateRateThresholdOps' should be reached. Default value is 0.1 (10%)
                                          e.g. if set to 0.1 (i.e. 10%) then the update rate defined in 'updateRateThresholdOps' should be reached during the first 10% of the benchmark run time, if not reached, the result is considered invalid)
     - maxUpdateRateThresholdOps         (defines the maximum rate of editorial operations per second. If set to zero that threshold is ignored.)
-    - enableCompressionOnGeneratedData	(enables gzip compression on generated data, default: false)                   									
+    - interruptSignalLocation           (defines the location of the interrupt signal (a file) which is used to interrupt current driver's run when such interrupt signal has been set by another driver)
+    - enableEditorialOpeartionsValidation   (enables validation of editorial operations (insert/delete) during benchmark run. Validation is performed on each 'editorialOpsValidationInterval' operation, default : true)
+    - editorialOpsValidationInterval    (sets the validation interval for editorial operations, default : 100)
+    - enableCompressionOnGeneratedData  (enables gzip compression on generated data, default: false)                   									
                                          
                                          Note : For optimal results the sum of editorial and aggregation agents should be set to be equal to the number of CPU cores.
 		

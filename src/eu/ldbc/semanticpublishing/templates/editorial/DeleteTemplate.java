@@ -50,7 +50,9 @@ public class DeleteTemplate extends MustacheTemplate implements SubstitutionPara
 			sb.setLength(0);
 			sb.append(cwGraphUri());
 			sb.append("\n");
-			bw.write(sb.toString());
+			if (bw != null) {
+				bw.write(sb.toString());
+			}
 		}
 		return sb.toString();
 	}

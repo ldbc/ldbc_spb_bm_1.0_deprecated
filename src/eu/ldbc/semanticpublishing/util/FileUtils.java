@@ -101,6 +101,11 @@ public class FileUtils {
 		bw.close();
 	}
 	
+	public static void deleteFile(String filePath) {
+		File f = new File(filePath);
+		f.delete();
+	}
+	
 	/**
 	 * Create a directory structure
 	 * @param path The path to create
@@ -117,6 +122,11 @@ public class FileUtils {
 		else {
 			target.mkdirs();
 		}
+	}
+	
+	public static boolean fileExists(String filePath) {
+		File f = new File(filePath);
+		return (f.exists() && !f.isDirectory());
 	}
 	
 	public static boolean isWindowsOS() {

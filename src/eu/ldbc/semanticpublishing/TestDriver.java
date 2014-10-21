@@ -106,6 +106,9 @@ public class TestDriver {
 		
 		//set the nextId for Creative Works, default 0
 		DataManager.creativeWorksNextId.set(configuration.getLong(Configuration.CREATIVE_WORK_NEXT_ID));
+		
+		//clear traces from previous runs
+		FileUtils.deleteFile(BenchmarkProcessObserver.BENCHMARK_INTERRUPT_SIGNAL);
 	}
 	
 	public SparqlQueryExecuteManager getQueryExecuteManager() { 
@@ -394,7 +397,7 @@ public class TestDriver {
 			if (DataManager.regularEntitiesList.size() == 0 || DataManager.correlatedEntitiesList.size() == 0) {
 				populateRefDataEntitiesLists(false, true, true, "\t");
 			}
-			validationValuesManager.intiValidationValues(configuration.getString(Configuration.VALIDATION_PATH), false);
+			validationValuesManager.initValidationValues(configuration.getString(Configuration.VALIDATION_PATH), false);
 
 			EditorialOperationsValidator eov = new EditorialOperationsValidator(queryExecuteManager, randomGenerator, mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.EDITORIAL), mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.VALIDATION), configuration, definitions);
 			eov.validate();
@@ -415,7 +418,7 @@ public class TestDriver {
 		}
 
 		for(int i = 0; i < editorialAgentsCount; ++i ) {
-			editorialAgents.add(new EditorialAgent(inBenchmarkState, queryExecuteManager, randomGenerator, runFlag, mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.EDITORIAL), definitions, maxUpdateRateReached));
+			editorialAgents.add(new EditorialAgent(inBenchmarkState, queryExecuteManager, randomGenerator, runFlag, mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.EDITORIAL), mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.VALIDATION), configuration, definitions, maxUpdateRateReached));
 		}
 	}
 	
@@ -498,7 +501,8 @@ public class TestDriver {
 				agent.start();
 			}
 
-			Thread observerThread = new BenchmarkProcessObserver(Statistics.totalAggregateQueryStatistics.getRunsCountAtomicLong(), 
+			Thread observerThread = new BenchmarkProcessObserver(Thread.currentThread(),
+																 Statistics.totalAggregateQueryStatistics.getRunsCountAtomicLong(), 
 													   		     inBenchmarkState, 
 													   		     keepObserverAlive,
 													   		     benchmarkResultIsValid,
@@ -511,11 +515,12 @@ public class TestDriver {
 																 configuration.getLong(Configuration.BENCHMARK_RUN_PERIOD_SECONDS),
 																 benchmarkByQueryRuns, 
 																 queryPoolManager,
+																 configuration.getString(Configuration.INTERRUPT_SIGNAL_LOCATION), 
 																 configuration.getBoolean(Configuration.VERBOSE));
 			observerThread.start();
 			
 			if (benchmarkByQueryRuns > 0) {
-				while (Statistics.totalAggregateQueryStatistics.getRunsCount() < benchmarkByQueryRuns) {
+				while ((Statistics.totalAggregateQueryStatistics.getRunsCount() < benchmarkByQueryRuns) && (inBenchmarkState.get() == true)) {
 					ThreadUtil.sleepMilliseconds(50);					
 				}
 			} else {
@@ -535,6 +540,9 @@ public class TestDriver {
 				System.out.println(message);
 				LOGGER.info(message);
 			}
+			
+			//create an empty file for signaling other drivers (if any) that the benchmark has completed 
+			FileUtils.writeToTextFile(BenchmarkProcessObserver.BENCHMARK_INTERRUPT_SIGNAL, "");				
 			
 			message = "Stopping the benchmark...";
 			System.out.println(message);
@@ -603,7 +611,8 @@ public class TestDriver {
 				agent.start();
 			}
 			
-			Thread observerThread = new BenchmarkProcessObserver(Statistics.totalAggregateQueryStatistics.getRunsCountAtomicLong(), 
+			Thread observerThread = new BenchmarkProcessObserver(Thread.currentThread(),
+																 Statistics.totalAggregateQueryStatistics.getRunsCountAtomicLong(), 
 													   		     inBenchmarkState,
 													   		     keepObserverAlive, 
 													   		     benchmarkResultIsValid,
@@ -616,6 +625,7 @@ public class TestDriver {
 																 configuration.getLong(Configuration.BENCHMARK_RUN_PERIOD_SECONDS),
 																 benchmarkByQueryRuns, 
 																 queryPoolManager,
+																 configuration.getString(Configuration.INTERRUPT_SIGNAL_LOCATION), 
 																 configuration.getBoolean(Configuration.VERBOSE));
 			observerThread.start();
 			

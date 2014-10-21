@@ -11,14 +11,17 @@ import eu.ldbc.semanticpublishing.TestDriver;
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection;
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryExecuteManager;
 import eu.ldbc.semanticpublishing.endpoint.SparqlQueryConnection.QueryType;
+import eu.ldbc.semanticpublishing.properties.Configuration;
 import eu.ldbc.semanticpublishing.properties.Definitions;
 import eu.ldbc.semanticpublishing.refdataset.DataManager;
 import eu.ldbc.semanticpublishing.statistics.Statistics;
-import eu.ldbc.semanticpublishing.templates.MustacheTemplate;
+import eu.ldbc.semanticpublishing.substitutionparameters.SubstitutionParametersGenerator;
 import eu.ldbc.semanticpublishing.templates.editorial.DeleteTemplate;
 import eu.ldbc.semanticpublishing.templates.editorial.InsertTemplate;
 import eu.ldbc.semanticpublishing.templates.editorial.UpdateTemplate;
 import eu.ldbc.semanticpublishing.util.RandomUtil;
+import eu.ldbc.semanticpublishing.validation.EditorialOperationsValidator;
+import eu.ldbc.semanticpublishing.validation.EditorialOperationsValidator.EditorialOperation;
 
 /**
  * A class that represents an editorial agent. It executes INSERT, UPDATE, DELETE queries 
@@ -31,14 +34,17 @@ public class EditorialAgent extends AbstractAsynchronousAgent {
 	protected final HashMap<String, String> queryTemplates;
 	private SparqlQueryConnection connection;
 	private Definitions definitions;
+	private boolean enableValidation = true;
+	private int editorialOpsValidationInterval = 100;
 	private final AtomicBoolean maxUpdateOperationsReached;
+	private EditorialOperationsValidator editorialOperationsValidator;
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(EditorialAgent.class.getName());
 	private final static Logger BRIEF_LOGGER = LoggerFactory.getLogger(TestDriver.class.getName());
 	
 	private final static long SLEEP_TIME_MS = 1000;
 	
-	public EditorialAgent(AtomicBoolean benchmarkingState, SparqlQueryExecuteManager queryExecuteManager, RandomUtil ru, AtomicBoolean runFlag, HashMap<String, String> queryTemplates, Definitions definitions, AtomicBoolean maxUpdateOperationsReached) {
+	public EditorialAgent(AtomicBoolean benchmarkingState, SparqlQueryExecuteManager queryExecuteManager, RandomUtil ru, AtomicBoolean runFlag, HashMap<String, String> queryTemplates, HashMap<String, String> validationQueryTemplates, Configuration configuration, Definitions definitions, AtomicBoolean maxUpdateOperationsReached) {
 		super(runFlag);
 		this.queryExecuteManager = queryExecuteManager;
 		this.ru = ru;
@@ -47,6 +53,9 @@ public class EditorialAgent extends AbstractAsynchronousAgent {
 		this.connection = new SparqlQueryConnection(queryExecuteManager.getEndpointUrl(), queryExecuteManager.getEndpointUpdateUrl(), queryExecuteManager.getTimeoutMilliseconds(), true);
 		this.definitions = definitions;
 		this.maxUpdateOperationsReached = maxUpdateOperationsReached;
+		this.enableValidation = configuration.getBoolean(Configuration.ENABLE_EDITORIAL_OPS_VALIDATION);
+		this.editorialOpsValidationInterval = configuration.getInt(Configuration.EDITORIAL_OPS_VALIDATION_INTEVAL);
+		this.editorialOperationsValidator = new EditorialOperationsValidator(queryExecuteManager, ru, queryTemplates, validationQueryTemplates, configuration, definitions);
 	}
 	
 	@Override
@@ -58,6 +67,8 @@ public class EditorialAgent extends AbstractAsynchronousAgent {
 		String queryString = "";
 		String queryResult = "";
 		QueryType queryType = QueryType.INSERT;
+		int validationErrors = 0;
+		String[] validationParameters = null;
 			
 		try {
 			
@@ -69,7 +80,7 @@ public class EditorialAgent extends AbstractAsynchronousAgent {
 			
 			switch (queryDistribution) {
 				case 0 :
-					MustacheTemplate insertQuery = new InsertTemplate("", ru, queryTemplates, definitions);
+					InsertTemplate insertQuery = new InsertTemplate("", ru, queryTemplates, definitions);
 					
 					queryType = insertQuery.getTemplateQueryType();
 					queryName = insertQuery.getTemplateFileName();
@@ -77,12 +88,20 @@ public class EditorialAgent extends AbstractAsynchronousAgent {
 					
 					queryId = Statistics.insertCreativeWorksQueryStatistics.getNewQueryId();
 					
+					if ((queryId > 0) && (queryId % editorialOpsValidationInterval == 0) && enableValidation) {						
+						validationParameters = insertQuery.generateSubstitutionParameters(null, 1).split(SubstitutionParametersGenerator.PARAMS_DELIMITER);
+						validationErrors = editorialOperationsValidator.validateAction(EditorialOperation.INSERT, 0, validationParameters, false);
+						if (validationErrors > 0) {
+							updateQueryStatistics(false, queryType, queryName, "validate insert " + queryId, "", 0, System.currentTimeMillis());				
+						}						
+					}
+					
 					break;
 				case 1 :
 					long cwNextId = ru.nextInt((int)DataManager.creativeWorksNextId.get());
 					String uri = ru.numberURI("context", cwNextId, true, true);
 								
-					MustacheTemplate updateQuery = new UpdateTemplate(uri, ru, queryTemplates, definitions);
+					UpdateTemplate updateQuery = new UpdateTemplate(uri, ru, queryTemplates, definitions);
 					
 					queryType = updateQuery.getTemplateQueryType();
 					queryName = updateQuery.getTemplateFileName();
@@ -92,13 +111,21 @@ public class EditorialAgent extends AbstractAsynchronousAgent {
 					
 					break;
 				case 2 :
-					MustacheTemplate deleteQuery = new DeleteTemplate(ru, queryTemplates);
+					DeleteTemplate deleteQuery = new DeleteTemplate(ru, queryTemplates);
 					
 					queryType = deleteQuery.getTemplateQueryType();
 					queryName = deleteQuery.getTemplateFileName();
 					queryString = deleteQuery.compileMustacheTemplate();
 					
 					queryId = Statistics.deleteCreativeWorksQueryStatistics.getNewQueryId();
+
+					if ((queryId > 0) && (queryId % editorialOpsValidationInterval == 0) && enableValidation) {						
+						validationParameters = deleteQuery.generateSubstitutionParameters(null, 1).split(SubstitutionParametersGenerator.PARAMS_DELIMITER);
+						validationErrors = editorialOperationsValidator.validateAction(EditorialOperation.DELETE, 0, validationParameters, false);
+						if (validationErrors > 0) {
+							updateQueryStatistics(false, queryType, queryName, "validate delete " + queryId, "", 0, System.currentTimeMillis());				
+						}										
+					}										
 					
 					break;
 			}
@@ -107,7 +134,7 @@ public class EditorialAgent extends AbstractAsynchronousAgent {
 			
 			queryResult = queryExecuteManager.executeQuery(connection, queryName, queryString, queryType, true, false);
 			
-			updateQueryStatistics(true, queryType, queryName, queryString, queryResult, queryId, System.currentTimeMillis() - executionTimeMs);
+			updateQueryStatistics(true, queryType, queryName, queryString, queryResult, queryId, System.currentTimeMillis() - executionTimeMs);			
 		} catch (InterruptedException ie) {
 			LOGGER.warn("InterruptedException : " + ie.getMessage());
 		} catch (IOException ioe) {

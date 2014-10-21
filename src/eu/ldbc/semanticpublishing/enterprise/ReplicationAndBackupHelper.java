@@ -92,7 +92,7 @@ public class ReplicationAndBackupHelper {
 	public boolean validateMilestoneQuery(String[] queryParameters) throws IOException {
 
 		EditorialOperationsValidator eov = new EditorialOperationsValidator(queryExecuteManager, ru, mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.EDITORIAL), mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.VALIDATION), configuration, definitions);
-		int errors = eov.validateAction(EditorialOperationsValidator.EditorialOperation.INSERT, 0, queryParameters);
+		int errors = eov.validateAction(EditorialOperationsValidator.EditorialOperation.INSERT, 0, queryParameters, true);
 
 		return (errors == 0);
 	}

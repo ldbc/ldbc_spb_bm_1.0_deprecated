@@ -108,7 +108,10 @@ Optionally, additinal reference datasets can be added - they can be dowloaded fr
   * ***minUpdateRateThresholdOps*** - defines the minimum rate of editorial operations per second which should be reached during the first 15% of benchmark time and should be kept during the rest of the benchmark run in order to have a valid result. If set to zero, update rate threshold is ignored. e.g. if required update rate is set to 6.3 update operations per second, then benchmark will consider that value during its benchmark run and will report invalid results if that rate drops below the threshold
   * ***minUpdateRateThresholdReachTimePercent*** - defines the time frame during which the defined value in property 'minUpdateRateThresholdOps' should be reached. Default value is 0.1 (10%). e.g. if set to 0.1 (i.e. 10%) then the update rate defined in 'updateRateThresholdOps' should be reached during the first 10% of the benchmark run time, if not reached, the result is considered invalid
   * ***maxUpdateRateThresholdOps*** - defines the maximum rate of editorial operations per second. If set to zero that threshold is ignored.
-  * ***enableCompressionOnGeneratedData*** - enables gzip compression on generated data, default: false
+  * ***interruptSignalLocation*** - defines the location of the interrupt signal (a file) which is used to interrupt current driver's run when such interrupt signal has been set by another driver
+  * ***enableEditorialOpeartionsValidation*** - enables validation of editorial operations (insert/delete) during benchmark run. Validation is performed on each 'editorialOpsValidationInterval' operation, default : true
+  * ***editorialOpsValidationInterval*** - sets the validation interval for editorial operations, default : 100
+  * ***enableCompressionOnGeneratedData*** - enables gzip compression on generated data, default: false  
   
   
 ###Run
