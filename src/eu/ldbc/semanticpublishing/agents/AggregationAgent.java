@@ -215,9 +215,7 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 			long executionTimeMs = System.currentTimeMillis();
 			
 			queryResult = queryExecuteManager.executeQuery(connection, aggregateQuery.getTemplateFileName(), queryString, aggregateQuery.getTemplateQueryType(), true, false);			
-						
-			updateQueryStatistics(true, startedDuringBenchmarkPhase, aggregateQuery.getTemplateQueryType(), aggregateQuery.getTemplateFileName(), queryString, queryResult, queryId, System.currentTimeMillis() - executionTimeMs);
-			
+									
 			if (drillDownQuery) {
 				//further loop the drill-down query using results from previous run
 				executeDrillDown(aggregateQuery, aggregateQueryIndex, queryString, queryResult, queryId);
@@ -226,6 +224,8 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 			if (facetedSearchQuery) {
 				executeFacetedSearch(aggregateQuery, aggregateQueryIndex, queryString, queryResult, queryId);
 			}
+			
+			updateQueryStatistics(true, startedDuringBenchmarkPhase, aggregateQuery.getTemplateQueryType(), aggregateQuery.getTemplateFileName(), queryString, queryResult, queryId, System.currentTimeMillis() - executionTimeMs);			
 		} catch (IOException ioe) {
 			String msg = "Warning : AggregationAgent : IOException caught : " + ioe.getMessage() + ", attempting a new connection" + "\n" + "\tfor query : \n" + queryString;
 			
@@ -284,7 +284,7 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 						
 						qResult = queryExecuteManager.executeQuery(connection, aggregateQuery.getTemplateFileName(), qString, aggregateQuery.getTemplateQueryType(), true, false);
 
-						updateQueryStatistics(true, benchmarkingState.get(), aggregateQuery.getTemplateQueryType(), aggregateQuery.getTemplateFileName(), qString, qResult, queryId, System.currentTimeMillis() - executionTimeMs);
+//						updateQueryStatistics(true, benchmarkingState.get(), aggregateQuery.getTemplateQueryType(), aggregateQuery.getTemplateFileName(), qString, qResult, queryId, System.currentTimeMillis() - executionTimeMs);
 					} else {
             return;
           }
@@ -312,7 +312,7 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 					
 					qResult = queryExecuteManager.executeQuery(connection, aggregateQuery.getTemplateFileName(), qString, aggregateQuery.getTemplateQueryType(), true, false);
 
-					updateQueryStatistics(true, benchmarkingState.get(), aggregateQuery.getTemplateQueryType(), aggregateQuery.getTemplateFileName(), qString, qResult, queryId, System.currentTimeMillis() - executionTimeMs);
+//					updateQueryStatistics(true, benchmarkingState.get(), aggregateQuery.getTemplateQueryType(), aggregateQuery.getTemplateFileName(), qString, qResult, queryId, System.currentTimeMillis() - executionTimeMs);
 				} else {
 					return;
 				}
@@ -371,7 +371,7 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 									
 					qResult = queryExecuteManager.executeQuery(connection, aggregateQuery.getTemplateFileName(), qString, aggregateQuery.getTemplateQueryType(), true, false);
 					
-					updateQueryStatistics(true, benchmarkingState.get(), aggregateQuery.getTemplateQueryType(), aggregateQuery.getTemplateFileName(), qString, qResult, queryId, System.currentTimeMillis() - executionTimeMs);
+//					updateQueryStatistics(true, benchmarkingState.get(), aggregateQuery.getTemplateQueryType(), aggregateQuery.getTemplateFileName(), qString, qResult, queryId, System.currentTimeMillis() - executionTimeMs);
 					
 					break;
 					
@@ -405,7 +405,7 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 									
 					qResult = queryExecuteManager.executeQuery(connection, aggregateQuery.getTemplateFileName(), qString, aggregateQuery.getTemplateQueryType(), true, false);
 					
-					updateQueryStatistics(true, benchmarkingState.get(), aggregateQuery.getTemplateQueryType(), aggregateQuery.getTemplateFileName(), qString, qResult, queryId, System.currentTimeMillis() - executionTimeMs);
+//					updateQueryStatistics(true, benchmarkingState.get(), aggregateQuery.getTemplateQueryType(), aggregateQuery.getTemplateFileName(), qString, qResult, queryId, System.currentTimeMillis() - executionTimeMs);
 					
 					break;
 					
@@ -418,7 +418,7 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 									
 					qResult = queryExecuteManager.executeQuery(connection, aggregateQuery.getTemplateFileName(), qString, aggregateQuery.getTemplateQueryType(), true, false);
 					
-					updateQueryStatistics(true, benchmarkingState.get(), aggregateQuery.getTemplateQueryType(), aggregateQuery.getTemplateFileName(), qString, qResult, queryId, System.currentTimeMillis() - executionTimeMs);
+//					updateQueryStatistics(true, benchmarkingState.get(), aggregateQuery.getTemplateQueryType(), aggregateQuery.getTemplateFileName(), qString, qResult, queryId, System.currentTimeMillis() - executionTimeMs);
 					
 					break;					
 			}
