@@ -414,7 +414,7 @@ public class TestDriver {
 	
 	private void setupAsynchronousAgents() {
 		for(int i = 0; i < aggregationAgentsCount; ++i ) {
-			aggregationAgents.add(new AggregationAgent(inBenchmarkState, queryExecuteManager, randomGenerator, runFlag, mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.AGGREGATION), definitions, substitutionQueryParamtersManager, queryPoolManager));
+			aggregationAgents.add(new AggregationAgent(inBenchmarkState, queryExecuteManager, randomGenerator, runFlag, mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.AGGREGATION), definitions, substitutionQueryParamtersManager));
 		}
 
 		for(int i = 0; i < editorialAgentsCount; ++i ) {
@@ -514,8 +514,8 @@ public class TestDriver {
 																 configuration.getInt(Configuration.AGGREGATION_AGENTS_COUNT), 
 																 configuration.getLong(Configuration.BENCHMARK_RUN_PERIOD_SECONDS),
 																 benchmarkByQueryRuns, 
-																 queryPoolManager,
-																 configuration.getString(Configuration.INTERRUPT_SIGNAL_LOCATION), 
+																 definitions.getString(Definitions.QUERY_POOLS),
+																 configuration.getString(Configuration.INTERRUPT_SIGNAL_LOCATION),
 																 configuration.getBoolean(Configuration.VERBOSE));
 			observerThread.start();
 			
@@ -624,7 +624,7 @@ public class TestDriver {
 																 configuration.getInt(Configuration.AGGREGATION_AGENTS_COUNT), 
 																 configuration.getLong(Configuration.BENCHMARK_RUN_PERIOD_SECONDS),
 																 benchmarkByQueryRuns, 
-																 queryPoolManager,
+																 definitions.getString(Definitions.QUERY_POOLS),
 																 configuration.getString(Configuration.INTERRUPT_SIGNAL_LOCATION), 
 																 configuration.getBoolean(Configuration.VERBOSE));
 			observerThread.start();

@@ -42,19 +42,19 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 	private final RandomUtil ru;
 	private final AtomicBoolean benchmarkingState;
 	private final HashMap<String, String> queryTemplates;
+	private final PoolManager queryPoolManager;
 	private SparqlQueryConnection connection;
 	private Definitions definitions;
 	private SubstitutionQueryParametersManager substitutionQueryParametersMngr;
 	private RDFXMLResultStatementsCounter rdfxmlResultStatementsCounter;
 	private SPARQLResultStatementsCounter sparqlResultStatementsCounter;
-	private PoolManager queryPoolManager;
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(AggregationAgent.class.getName());
 	private final static Logger BRIEF_LOGGER = LoggerFactory.getLogger(TestDriver.class.getName());
 	private final static int MAX_DRILL_DOWN_ITERATIONS = 5;
 	private final static int MAX_FACETED_SEARCH_ITERATIONS = 5;
 	
-	public AggregationAgent(AtomicBoolean benchmarkingState, SparqlQueryExecuteManager queryExecuteManager, RandomUtil ru, AtomicBoolean runFlag, HashMap<String, String> queryTamplates, Definitions definitions, SubstitutionQueryParametersManager substitutionQueryParametersMngr, PoolManager queryPoolManager) {
+	public AggregationAgent(AtomicBoolean benchmarkingState, SparqlQueryExecuteManager queryExecuteManager, RandomUtil ru, AtomicBoolean runFlag, HashMap<String, String> queryTamplates, Definitions definitions, SubstitutionQueryParametersManager substitutionQueryParametersMngr) {
 		super(runFlag);
 		this.queryExecuteManager = queryExecuteManager;
 		this.ru = ru;
@@ -65,7 +65,8 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 		this.substitutionQueryParametersMngr = substitutionQueryParametersMngr;
 		this.rdfxmlResultStatementsCounter = new RDFXMLResultStatementsCounter();
 		this.sparqlResultStatementsCounter = new SPARQLResultStatementsCounter();
-		this.queryPoolManager = queryPoolManager;		
+		this.queryPoolManager = new PoolManager();
+		this.queryPoolManager.initialize(definitions.getString(Definitions.QUERY_POOLS));
 	}
 	
 	@Override
@@ -280,7 +281,7 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 
 						qString = aggregateQuery.compileMustacheTemplate();
 						
-						long executionTimeMs = System.currentTimeMillis();
+//						long executionTimeMs = System.currentTimeMillis();
 						
 						qResult = queryExecuteManager.executeQuery(connection, aggregateQuery.getTemplateFileName(), qString, aggregateQuery.getTemplateQueryType(), true, false);
 
@@ -308,7 +309,7 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 
 					qString = aggregateQuery.compileMustacheTemplate();
 					
-					long executionTimeMs = System.currentTimeMillis();
+//					long executionTimeMs = System.currentTimeMillis();
 					
 					qResult = queryExecuteManager.executeQuery(connection, aggregateQuery.getTemplateFileName(), qString, aggregateQuery.getTemplateQueryType(), true, false);
 
@@ -333,7 +334,7 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 		String qString = queryString;
 		String qResult = queryResult;
 		String dateString = "";
-		long executionTimeMs = 0;
+//		long executionTimeMs = 0;
 		ArrayList<String> datesList;
 		
 		//iteration starts from 1, first execution was already completed
@@ -367,7 +368,7 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 					((Query21Template)aggregateQuery).initialize(i, dateString, null);
 					qString = aggregateQuery.compileMustacheTemplate();
 					
-					executionTimeMs = System.currentTimeMillis();
+//					executionTimeMs = System.currentTimeMillis();
 									
 					qResult = queryExecuteManager.executeQuery(connection, aggregateQuery.getTemplateFileName(), qString, aggregateQuery.getTemplateQueryType(), true, false);
 					
@@ -401,7 +402,7 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 					((Query22Template)aggregateQuery).initialize(i, dateString, null);
 					qString = aggregateQuery.compileMustacheTemplate();
 					
-					executionTimeMs = System.currentTimeMillis();
+//					executionTimeMs = System.currentTimeMillis();
 									
 					qResult = queryExecuteManager.executeQuery(connection, aggregateQuery.getTemplateFileName(), qString, aggregateQuery.getTemplateQueryType(), true, false);
 					
@@ -414,7 +415,7 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 					((Query23Template)aggregateQuery).initialize(i, "", null);
 					qString = aggregateQuery.compileMustacheTemplate();
 					
-					executionTimeMs = System.currentTimeMillis();
+//					executionTimeMs = System.currentTimeMillis();
 									
 					qResult = queryExecuteManager.executeQuery(connection, aggregateQuery.getTemplateFileName(), qString, aggregateQuery.getTemplateQueryType(), true, false);
 					
@@ -464,7 +465,7 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 					} else {				
 						Statistics.aggregateQueriesArray[queryNumber - 1].reportFailure();
 						Statistics.totalAggregateQueryStatistics.reportFailure();
-						logBrief(queryNameId, queryType, queryResult, ", query error!", queryExecutionTimeMs, resultsCount);
+						logBrief(queryNameId, queryType, queryResult, ", query has timed out!", queryExecutionTimeMs, resultsCount);
 					}
 				} else {
 					if (queryExecutionTimeMs > 0) {

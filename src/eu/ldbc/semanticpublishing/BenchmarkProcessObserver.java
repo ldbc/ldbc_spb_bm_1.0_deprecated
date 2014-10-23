@@ -23,6 +23,7 @@ public class BenchmarkProcessObserver extends Thread {
 	private final AtomicBoolean benchmarkResultIsValid;
 	private final AtomicBoolean maxUpdateRateReached;	
 	private final double maxUpdateRateThresholdOps;
+	private final PoolManager queryPoolManager;
 	private double minUpdateRateThresholdOps;	
 	private double updateRateReachTimePercent;
 	private boolean verbose;
@@ -33,7 +34,6 @@ public class BenchmarkProcessObserver extends Thread {
 	private int aggregationAgentsCount;
 	private int editorialAgentsCount;
 	private int initializedCount;
-	private PoolManager queryPoolManager;
 	private String interruptSignalFilePath;
 	private Thread parentThread;
 	
@@ -41,7 +41,7 @@ public class BenchmarkProcessObserver extends Thread {
 	
 	protected final static String BENCHMARK_INTERRUPT_SIGNAL = "benchmark_run_completed";
 	
-	public BenchmarkProcessObserver(Thread parentThread, AtomicLong totalQueryExecutions, AtomicBoolean benchmarkState, AtomicBoolean keepAlive, AtomicBoolean benchmarkResultIsValid, double updateQueryRateFirstReachTimePercent, double minUpdateQueriesRateThresholdOps, double maxUpdateRateThresholdOps, AtomicBoolean maxUpdateRateReached, int editorialAgentsCount, int aggregationAgentsCount, long runPeriodSeconds, long benchmarkByQueryRuns, PoolManager queryPoolManager, String interruptSignalFilePath, boolean verbose) {
+	public BenchmarkProcessObserver(Thread parentThread, AtomicLong totalQueryExecutions, AtomicBoolean benchmarkState, AtomicBoolean keepAlive, AtomicBoolean benchmarkResultIsValid, double updateQueryRateFirstReachTimePercent, double minUpdateQueriesRateThresholdOps, double maxUpdateRateThresholdOps, AtomicBoolean maxUpdateRateReached, int editorialAgentsCount, int aggregationAgentsCount, long runPeriodSeconds, long benchmarkByQueryRuns, String queryPoolsDefinitons, String interruptSignalFilePath, boolean verbose) {
 		this.parentThread = parentThread;
 		this.totalQueryExecutions = totalQueryExecutions;
 		this.benchmarkState = benchmarkState;
@@ -59,7 +59,9 @@ public class BenchmarkProcessObserver extends Thread {
 		this.maxUpdateRateThresholdOps = maxUpdateRateThresholdOps;
 		this.maxUpdateRateReached = maxUpdateRateReached;
 		this.initializedCount = 0;
-		this.queryPoolManager = queryPoolManager;
+		//pool manager here is used for producing statistics only
+		this.queryPoolManager = new PoolManager();
+		this.queryPoolManager.initialize(queryPoolsDefinitons);
 		this.interruptSignalFilePath = interruptSignalFilePath;
 	}
 	
