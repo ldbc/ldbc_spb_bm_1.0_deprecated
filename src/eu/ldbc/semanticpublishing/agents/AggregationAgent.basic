@@ -192,7 +192,7 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 					} else {				
 						Statistics.aggregateQueriesArray[queryNumber - 1].reportFailure();
 						Statistics.totalAggregateQueryStatistics.reportFailure();
-						logBrief(queryNameId, queryType, queryResult, ", query has timed out!", queryExecutionTimeMs, resultsCount);
+						logBrief(queryNameId, queryType, queryResult, ", query error!", queryExecutionTimeMs, resultsCount);
 					}
 				} else {
 					if (queryExecutionTimeMs > 0) {

@@ -189,7 +189,7 @@ public class EditorialAgent extends AbstractAsynchronousAgent {
 			} else if (queryType == QueryType.DELETE) {
 				Statistics.deleteCreativeWorksQueryStatistics.reportFailure();
 			}
-			logBrief(queryNameId, queryType, queryResult, ", query has timed out!", queryExecutionTimeMs);
+			logBrief(queryNameId, queryType, queryResult, ", query error!", queryExecutionTimeMs);
 		}
 	}
 	
