@@ -47,6 +47,7 @@ SELECT DISTINCT ?cwork ?geonamesId ?lat ?long ?dateModified {
     ?cwork cwork:mentions ?geonamesId . 
     ?cwork cwork:dateModified ?dateModified .
     ?geonamesId geo:lat ?lat . 
+    ?geonamesId geo:geometry ?geo . 
     ?geonamesId geo:long ?long . 
     FILTER(CONTAINS(STR(?geonamesId), "geonames")) . 
 
@@ -54,11 +55,7 @@ SELECT DISTINCT ?cwork ?geonamesId ?lat ?long ?dateModified {
     BIND({{{refLongtitude}}} AS ?referenceLong) .
     BIND({{{refDeviation}}} AS ?deviation) . 
 
-    FILTER( 
-     (xsd:double(?lat) >= (?referenceLat - ?deviation)) &&
-     (xsd:double(?lat) <= (?referenceLat + ?deviation)) && 
-     (xsd:double(?long) >= (?referenceLong - ?deviation)) && 
-     (xsd:double(?long) <= (?referenceLong + ?deviation)) ) . 
+    FILTER(  bif:st_intersects (?geo, bif:st_get_bounding_box (bif:st_linestring (bif:st_point (?referenceLong - ?deviation, ?referenceLat - ?deviation), bif:st_point (?referenceLong + ?deviation, ?referenceLat + ?deviation))))) . 
 }
 {{{orderBy}}}
 LIMIT {{{randomLimit}}}
