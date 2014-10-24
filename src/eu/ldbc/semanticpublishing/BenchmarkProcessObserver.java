@@ -108,7 +108,7 @@ public class BenchmarkProcessObserver extends Thread {
 		if (secondsOrExecutions) {
 			sb.append("\nSeconds run : " + seconds);
 		} else {
-			sb.append("\nQuery executions : " + totalQueryExecutions.get());
+			sb.append("\nQuery executions : " + totalQueryExecutions.get() + " (seconds : " + seconds + ")");
 		}
 		sb.append("\n");
 		sb.append("\tEditorial:\n");
