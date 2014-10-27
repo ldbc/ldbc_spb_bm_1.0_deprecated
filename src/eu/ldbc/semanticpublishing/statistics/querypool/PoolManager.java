@@ -11,7 +11,7 @@ public class PoolManager {
 	
 	public void initialize(String s) throws IllegalArgumentException, NumberFormatException {
 		if (s.trim().isEmpty()) {
-			System.out.println("No query pools have been detected, continuing with default behaviour...");
+//			System.out.println("No query pools have been detected, continuing with default behaviour...");
 			return;
 		}
 		
