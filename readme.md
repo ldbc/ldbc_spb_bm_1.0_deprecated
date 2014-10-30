@@ -55,7 +55,7 @@ Optionally, additinal reference datasets can be added - they can be dowloaded fr
 * Benchmark Phases (test.properties)
     One, some or all phases can be enabled and will run in the ordered list below. Running first five phases is mandatory with optionally enabling fourth one (*loadCreativeWorks*) - for the case when generated data will not be loaded manually into the database. Description of phases can be found here: https://github.com/ldbc/ldbc_spb_bm/wiki/Benchmark-Phases
 
-* Conifgure the benchmark driver to :
+* Actions:
   * ***Generate Data*** - enable phases : loadOntologies, loadReferenceDatasets, generateCreativeWorks
   * ***Load Generated Data*** - *Generate Data*, enable phase : loadCreativeWorks (generated data can also be loaded manually from folder 'creativeWorksPath/' if database doesn't support automatic loading)
   * ***Generate Query Substitution Parameters*** - *Generate Data* and *Load Generated Data*, enable phase : generateQuerySubstitutionParameters
