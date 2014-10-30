@@ -54,20 +54,10 @@ Optionally, additinal reference datasets can be added - they can be dowloaded fr
 
 * Benchmark Phases (test.properties)
     One, some or all phases can be enabled and will run in the ordered list below. Running first five phases is mandatory with optionally enabling fourth one (*loadCreativeWorks*) - for the case when generated data will not be loaded manually into the database. Description of phases can be found here: https://github.com/ldbc/ldbc_spb_bm/wiki/Benchmark-Phases
-
-* Actions:
-  * ***Generate Data*** - enable phases : loadOntologies, loadReferenceDatasets, generateCreativeWorks
-  * ***Load Generated Data*** - *Generate Data*, enable phase : loadCreativeWorks (generated data can also be loaded manually from folder 'creativeWorksPath/' if database doesn't support automatic loading)
-  * ***Generate Query Substitution Parameters*** - *Generate Data* and *Load Generated Data*, enable phase : generateQuerySubstitutionParameters
-  * ***Validate Query Results*** - to be executed on an empty database, enable phases : loadOntologies, loadDatasets
-  * ***Run The Benchmark*** - *Generate Data*, *Load Generated Data*, *Generate Query Substitution Parameters*, enable phases : warmUp, runBenchmark
-  * ***Run Online Replication and Backup Benchmark*** - *Generate Data*, *Load Generated Data*, *Generate Query Substitution Parameters*, enable phase : runBenchmarkOnlineReplicationAndBackup. Also make a full backup prior to running the benchmark for later restore point and implement all scripts in folder 'data/enterprise/scripts/' specific to each database.
-  * ***Check Conformance to OWL2-RL Rule-Set*** - to be executed on an empty database with OWL2-RL rule-set, enable phase : loadOntologies. No data generation or loading is required.
-  
-* Detailed descriptions of configuration options can be found here: https://github.com/ldbc/ldbc_spb_bm/wiki/Configuration-Options
-* Detailed descriptions of definitions options can befound here: https://github.com/ldbc/ldbc_spb_bm/wiki/Definitions-Properties
-
-  
+    
+* Actions
+    Actions like data generation or running the benchmark are described here: https://github.com/ldbc/ldbc_spb_bm/wiki/Benchmark-Actions
+ 
 ###Run
 
 ```sh
