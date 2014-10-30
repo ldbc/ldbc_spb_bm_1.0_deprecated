@@ -75,7 +75,7 @@ Optionally, additinal reference datasets can be added - they can be dowloaded fr
   * ***Run Online Replication and Backup Benchmark*** - *Generate Data*, *Load Generated Data*, *Generate Query Substitution Parameters*, enable phase : runBenchmarkOnlineReplicationAndBackup. Also make a full backup prior to running the benchmark for later restore point and implement all scripts in folder 'data/enterprise/scripts/' specific to each database.
   * ***Check Conformance to OWL2-RL Rule-Set*** - to be executed on an empty database with OWL2-RL rule-set, enable phase : loadOntologies. No data generation or loading is required.
   
-* Detailed description of configuration properties can be found here: https://github.com/ldbc/ldbc_spb_bm/wiki/Configuration-Options
+* Detailed description of configuration options can be found here: https://github.com/ldbc/ldbc_spb_bm/wiki/Configuration-Options
 
   
 ###Run
