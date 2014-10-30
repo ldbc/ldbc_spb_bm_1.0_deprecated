@@ -55,8 +55,8 @@ Optionally, additinal reference datasets can be added - they can be dowloaded fr
 * Benchmark Phases (test.properties)
     One, some or all phases can be enabled and will run in the ordered list below. Running first five phases is mandatory with optionally enabling fourth one (*loadCreativeWorks*) - for the case when generated data will not be loaded manually into the database. Description of phases can be found here: https://github.com/ldbc/ldbc_spb_bm/wiki/Benchmark-Phases
     
-* Actions
-    Actions like data generation or running the benchmark are described here: https://github.com/ldbc/ldbc_spb_bm/wiki/Benchmark-Actions
+* Actions like data generation or running the benchmark consist of executing a sequence of benchmark phases described here: https://github.com/ldbc/ldbc_spb_bm/wiki/Benchmark-Phases
+  A list of actions that the benchmark can perform given here: https://github.com/ldbc/ldbc_spb_bm/wiki/Benchmark-Actions
  
 ###Run
 
