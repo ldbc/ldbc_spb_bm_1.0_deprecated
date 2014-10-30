@@ -54,6 +54,10 @@ Optionally, additinal reference datasets can be added - they can be dowloaded fr
 
 * Actions like data generation or running the benchmark consist of executing a sequence of operational phases described here: https://github.com/ldbc/ldbc_spb_bm/wiki/Operational-Phases
   List of actions that the benchmark can perform: https://github.com/ldbc/ldbc_spb_bm/wiki/Benchmark-Actions
+  
+* Configuration options are described here: https://github.com/ldbc/ldbc_spb_bm/wiki/Configuration-Options
+* Definition properties are described here: https://github.com/ldbc/ldbc_spb_bm/wiki/Definitions-Properties
+
  
 ###Run
 
