@@ -69,7 +69,7 @@ public class TestDriver {
 	private final PoolManager queryPoolManager = new PoolManager();
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(TestDriver.class.getName());
-	private final static Logger RLOGGER = LoggerFactory.getLogger(BenchmarkProcessObserver.class.getName());
+	private final static Logger RLOGGER = LoggerFactory.getLogger(BenchmarkReporter.class.getName());
 	
 	public TestDriver(String[] args) throws IOException {
 		
@@ -108,7 +108,7 @@ public class TestDriver {
 		DataManager.creativeWorksNextId.set(configuration.getLong(Configuration.CREATIVE_WORK_NEXT_ID));
 		
 		//clear traces from previous runs
-		FileUtils.deleteFile(BenchmarkProcessObserver.BENCHMARK_INTERRUPT_SIGNAL);
+		FileUtils.deleteFile(BenchmarkReporter.BENCHMARK_INTERRUPT_SIGNAL);
 	}
 	
 	public SparqlQueryExecuteManager getQueryExecuteManager() { 
@@ -501,7 +501,7 @@ public class TestDriver {
 				agent.start();
 			}
 
-			Thread observerThread = new BenchmarkProcessObserver(Thread.currentThread(),
+			Thread observerThread = new BenchmarkReporter(Thread.currentThread(),
 																 Statistics.totalAggregateQueryStatistics.getRunsCountAtomicLong(), 
 													   		     inBenchmarkState, 
 													   		     keepObserverAlive,
@@ -542,7 +542,7 @@ public class TestDriver {
 			}
 			
 			//create an empty file for signaling other drivers (if any) that the benchmark has completed 
-			FileUtils.writeToTextFile(BenchmarkProcessObserver.BENCHMARK_INTERRUPT_SIGNAL, "");				
+			FileUtils.writeToTextFile(BenchmarkReporter.BENCHMARK_INTERRUPT_SIGNAL, "");				
 			
 			message = "Stopping the benchmark...";
 			System.out.println(message);
@@ -611,7 +611,7 @@ public class TestDriver {
 				agent.start();
 			}
 			
-			Thread observerThread = new BenchmarkProcessObserver(Thread.currentThread(),
+			Thread observerThread = new BenchmarkReporter(Thread.currentThread(),
 																 Statistics.totalAggregateQueryStatistics.getRunsCountAtomicLong(), 
 													   		     inBenchmarkState,
 													   		     keepObserverAlive, 

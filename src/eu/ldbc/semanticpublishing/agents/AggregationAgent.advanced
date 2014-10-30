@@ -239,7 +239,7 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 			connection = new SparqlQueryConnection(queryExecuteManager.getEndpointUrl(), queryExecuteManager.getEndpointUpdateUrl(), queryExecuteManager.getTimeoutMilliseconds(), true);
 		}
 		
-		queryPoolManager.releaseItemUnavailable(aggregateQueryIndex + 1);
+		queryPoolManager.resetItemUnavailable(aggregateQueryIndex + 1);
 		
 		return true;
 	}

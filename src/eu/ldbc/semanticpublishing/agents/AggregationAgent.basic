@@ -149,7 +149,7 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 			
 		}
 		
-		queryPoolManager.releaseItemUnavailable(aggregateQueryIndex + 1);
+		queryPoolManager.resetItemUnavailable(aggregateQueryIndex + 1);
 		
 		return true;
 	}

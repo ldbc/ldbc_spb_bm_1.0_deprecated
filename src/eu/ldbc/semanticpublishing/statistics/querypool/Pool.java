@@ -10,7 +10,8 @@ import eu.ldbc.semanticpublishing.statistics.Statistics;
  */
 public class Pool {
 	private int id;
-	private int itemsUnavailable = 0;
+	private int unavailableItemsCount = 0;
+	private long resetsCount = 0;
 	private ArrayList<PoolItem> items = new ArrayList<PoolItem>();
 	
 	public Pool(int id) {
@@ -59,15 +60,16 @@ public class Pool {
 		}
 	}	
 	
-	public synchronized void releaseItemUnavailable(int itemId) {
-		itemsUnavailable++;
+	public synchronized void resetItemUnavailable(int itemId) {
+		unavailableItemsCount++;
 		checkAndResetAllItems();
 	}
 	
 	private void checkAndResetAllItems() {
-		if (itemsUnavailable >= items.size()) {
+		if (unavailableItemsCount >= items.size()) {
 			setAllItemsAvailable();
-			itemsUnavailable = 0;
+			resetsCount++;
+			unavailableItemsCount = 0;
 		}		
 	}
 		
@@ -75,6 +77,10 @@ public class Pool {
 		for (PoolItem item : items) {
 			item.setAvailable();
 		}
+	}
+	
+	public long getResetsCount() {
+		return resetsCount;
 	}
 	
 	public String produceStatistics(long timeSeconds, long timeCorrectionsMS) {

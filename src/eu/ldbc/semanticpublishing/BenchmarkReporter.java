@@ -16,7 +16,7 @@ import eu.ldbc.semanticpublishing.util.FileUtils;
  * This class is used to produce a result summary for the benchmark. The thread is scheduled to start at a fixed
  * rate of one second. Results are printed to console and log file.
  */
-public class BenchmarkProcessObserver extends Thread {
+public class BenchmarkReporter extends Thread {
 	private final AtomicLong totalQueryExecutions;
 	private final AtomicBoolean benchmarkState;
 	private final AtomicBoolean keepAlive;
@@ -37,11 +37,11 @@ public class BenchmarkProcessObserver extends Thread {
 	private String interruptSignalFilePath;
 	private Thread parentThread;
 	
-	private final static Logger LOGGER = LoggerFactory.getLogger(BenchmarkProcessObserver.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(BenchmarkReporter.class.getName());
 	
 	protected final static String BENCHMARK_INTERRUPT_SIGNAL = "benchmark_run_completed";
 	
-	public BenchmarkProcessObserver(Thread parentThread, AtomicLong totalQueryExecutions, AtomicBoolean benchmarkState, AtomicBoolean keepAlive, AtomicBoolean benchmarkResultIsValid, double updateQueryRateFirstReachTimePercent, double minUpdateQueriesRateThresholdOps, double maxUpdateRateThresholdOps, AtomicBoolean maxUpdateRateReached, int editorialAgentsCount, int aggregationAgentsCount, long runPeriodSeconds, long benchmarkByQueryRuns, String queryPoolsDefinitons, String interruptSignalFilePath, boolean verbose) {
+	public BenchmarkReporter(Thread parentThread, AtomicLong totalQueryExecutions, AtomicBoolean benchmarkState, AtomicBoolean keepAlive, AtomicBoolean benchmarkResultIsValid, double updateQueryRateFirstReachTimePercent, double minUpdateQueriesRateThresholdOps, double maxUpdateRateThresholdOps, AtomicBoolean maxUpdateRateReached, int editorialAgentsCount, int aggregationAgentsCount, long runPeriodSeconds, long benchmarkByQueryRuns, String queryPoolsDefinitons, String interruptSignalFilePath, boolean verbose) {
 		this.parentThread = parentThread;
 		this.totalQueryExecutions = totalQueryExecutions;
 		this.benchmarkState = benchmarkState;

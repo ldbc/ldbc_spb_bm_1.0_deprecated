@@ -149,10 +149,10 @@ public class PoolManager {
 		}
 	}
 	
-	public synchronized void releaseItemUnavailable(int itemId) {
+	public synchronized void resetItemUnavailable(int itemId) {
 		Pool pool = getPoolByItemId(itemId);
 		if (pool != null) {
-			pool.releaseItemUnavailable(itemId);
+			pool.resetItemUnavailable(itemId);
 		}		
 	}
 
