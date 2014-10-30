@@ -182,7 +182,7 @@ How to run the benchmark :
     - minLong                           (Defines minimum longtitude, ,a geo-spatial property.)
     - maxLong                           (Defines maximum longtitude, a geo-spatial property.)    
   	- mileStoneQueryPosition            (Defines the position in terms of percents at which a milestone query is executed (related to Online and Replication Benchmark feature))
-  	- queryPools                        (Defines pools of queries, where each pool contains a unique query set. During query execution, if one query is being executed by an agent, another agent will not attempt to execute the same query until all other queries including current one from their pool have been executed. Each query pool is defined by a set of curly braces {}. If empty value has been assigned to the queryPools property, then no query pools are created, all queries are executed according to distributions defined in parameter 'aggregationOperationsAllocation'. e.g. queryPools={1, 2, 5} {3, 4} {6} - if agent starts execution of query 1, next agents will not attempt to execute the same query, but will move to other ones from that or other pools. Query 1 will be available for execution after all other queries from its pool have been executed.
+  	- queryPools                        (Defines pools of queries, where each pool contains a unique set of queries. During query execution, each query from a pool gets executed just once until all queries in the pool have been executed. Each query pool is defined by a set of curly braces {}. If empty value has been assigned to the queryPools property, then no query pools are created, all queries are executed according to distributions defined in parameter 'aggregationOperationsAllocation'
   	
   	
   	
