@@ -65,7 +65,7 @@ Optionally, additinal reference datasets can be added - they can be dowloaded fr
   * ***Check Conformance to OWL2-RL Rule-Set*** - to be executed on an empty database with OWL2-RL rule-set, enable phase : loadOntologies. No data generation or loading is required.
   
 * Detailed descriptions of configuration options can be found here: https://github.com/ldbc/ldbc_spb_bm/wiki/Configuration-Options
-* Detailed descriptions of definitions options can befound here: https://github.com/ldbc/ldbc_spb_bm/wiki/Definitions-properties
+* Detailed descriptions of definitions options can befound here: https://github.com/ldbc/ldbc_spb_bm/wiki/Definitions-Properties
 
   
 ###Run
