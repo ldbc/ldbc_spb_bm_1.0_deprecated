@@ -2,12 +2,12 @@
 Semantic Publishing Benchmark
 -----------------------------
 
-###Description
+###Introduction
 
 Semantic Publishing Benchmark is an LDBC benchmark for testing the performance of RDF databases inspired by the Media/Publishing industry.
 Performance is measured by producing a workload of CRUD (Create, Read, Update, Delete) operations which are executed simultaneously.
 
-The benchmark offers a data generator that uses real reference data to produce datasets of various sizes and tests the scalability aspect
+The benchmark offers a data generator that uses real reference data to produce synthetic datasets of various sizes and tests the scalability aspect
 of RDF systems. The benchmark workload consists of editorial operations that add new, update or delete existing data and aggregation
 operations that retrieve content according to various criteria. The aggregation queries define different "choke points", that is technical 
 challenges that a standard RDF database must overcome thus giving opportunities for improvement regarding query optimization.

@@ -2,7 +2,7 @@ LDBC Semantic Publishing Benchmark
 
 
 
-Description : 
+Introduction : 
 ------------------------------------------------------------------------------
 
 LDBC Semantic Publishing Benchmark (SPB) measures the performance RDF Stores by simulating a workload scenario of a publishing/media organisation. SPB starts a number of editorial and 
