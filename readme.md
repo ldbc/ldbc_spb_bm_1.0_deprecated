@@ -52,7 +52,7 @@ Optionally, additinal reference datasets can be added - they can be dowloaded fr
   * Enable text indexing (if available)
   * Enable geo-spatial indexing (if available)
 
-* Actions like data generation or running the benchmark consist of executing a sequence of benchmark phases described here: https://github.com/ldbc/ldbc_spb_bm/wiki/Benchmark-Phases
+* Actions like data generation or running the benchmark consist of executing a sequence of operational phases described here: https://github.com/ldbc/ldbc_spb_bm/wiki/Operational-Phases
   List of actions that the benchmark can perform: https://github.com/ldbc/ldbc_spb_bm/wiki/Benchmark-Actions
  
 ###Run
