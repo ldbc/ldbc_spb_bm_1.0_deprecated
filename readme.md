@@ -16,7 +16,7 @@ The benchmark also tests conformance for various rules inside the OWL2-RL rule-s
 
 ###Build
 
-Apache Ant build tool is required. Start one of the following tasks : 
+Apache Ant build tool is required. Start one of following ant-targets: 
 
 ```
 #to build a standard version of the benchmark, compliant to SPARQL 1.1 standard
