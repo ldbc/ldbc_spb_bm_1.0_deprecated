@@ -32,7 +32,7 @@ $ ant build-basic-querymix-virtuoso
 $ ant build-advanced-querymix-virtuoso
 ```
 
-Result of the build process is saved to the distribution folder (dist/) : 
+Result of the build process is saved to a distribution folder _'dist/'_ : 
 * semantic_publishing_benchmark-*.jar - the benchmark driver
 * data/ - folder containing all necessary data to run the benchmark
 * test.properties - a configuration file with parameters for configuring the benchmark driver
