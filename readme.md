@@ -16,7 +16,7 @@ Aggregation operations consist of a wide range of queries, e.g. _search, aggrega
 
 ###Build
 
-Apache Ant build tool is required. Start one of following ant-targets: 
+Apache Ant build tool is required.
 
 ```
 #to build a standard version of the benchmark, compliant to SPARQL 1.1 standard
@@ -32,8 +32,8 @@ $ ant build-basic-querymix-virtuoso
 $ ant build-advanced-querymix-virtuoso
 ```
 
-Result of the build process is saved to a distribution folder _'dist/'_ : 
-* ***semantic_publishing_benchmark-*.jar*** - the benchmark driver
+Result of the build process is saved to a distribution folder: _'dist/'_ : 
+* ***semantic_publishing_benchmark-*.jar*** - the benchmark test driver
 * ***data/*** - folder containing all necessary data to run the benchmark
 * ***test.properties*** - a configuration file with parameters for configuring the benchmark driver
 * ***definitions.properties*** - a configuration file with pre-allocated values used by the benchmark. Not to be modified by the regular benchmark user.
@@ -41,7 +41,7 @@ Result of the build process is saved to a distribution folder _'dist/'_ :
 
 ###Install
 
-All necessary files required to run the benchmark are saved to the 'dist/' folder. The benchmark can be started from there or can be moved to a new location.
+All necessary files required to run the benchmark are saved to folder: 'dist/'. The benchmark can be started from there or can be moved to a new location.
 Optionally, additinal reference datasets can be added - they can be dowloaded from https://github.com/ldbc/ldbc_spb_optional_datasets. All files should be unzipped in folder 'data/datasets/'
 
 ###Configure
