@@ -13,11 +13,11 @@ public class Validator {
 	 * @throws UnsupportedEncodingException 
 	 */
 	protected int validateEditorial(String result, String validateOperation, boolean resultIsFromAskQuery, int iteration, String[] parameterValues, boolean strict) throws UnsupportedEncodingException {
-		int errors = 0;
+		int totalErrors = 0;
 	
 		if (resultIsFromAskQuery) {
 			if (!result.toLowerCase().contains(">false<") && !result.toLowerCase().contains(">no<")) {
-				errors++;
+				totalErrors++;
 			}
 		} else {		
 			if (parameterValues == null) {
@@ -25,60 +25,73 @@ public class Validator {
 			}
 			
 			for (int i = 0; i < parameterValues.length; i++) {
-				String parameterValue = parameterValues[i];
+				int validationErrorsCount = 0;
+				
+				String value = parameterValues[i];
 				
 				//skip validation of context
-				if (parameterValue.contains("/context/")) {
+				if (value.contains("/context/")) {
 					continue;
 				}
 				
-				parameterValue = transformString(parameterValue, strict, false);
+				value = transformString(value, strict, false);
 				
-				if (!result.contains(parameterValue)) {
-					System.out.println(validateOperation + " validation failed on iteration : " + iteration + ", query result is missing value : " + parameterValue);
-					errors++;
+				if (!result.contains(value)) {
+					validationErrorsCount++;
+				}
+				
+				//give it one more try, in case there are encodings in results which are not URLDecoded
+				if (validationErrorsCount > 0) {
+					value = transformString(value, strict, true);
+					
+					if (result.contains(value)) {
+						validationErrorsCount--;						
+					}
+				}				
+				
+				if (validationErrorsCount > 0) {
+					System.out.println(validateOperation + " validation failed on iteration : " + iteration + ", query result is missing value : " + value);
+					totalErrors++;
 				}
 			}
 		}
-		return errors;
+		return totalErrors;
 	}
 	
 	protected int validateAggregate(String result, long actualResultsSize, long expectedResultSize, String validateOperation, int iteration, List<String> validationList, boolean strict) {
-		int errors = 0;
+		int totalErrors = 0;
 		String value;
 				
 		for (String v : validationList) {
-			int errorsCount = 0;
+			int validationErrorsCount = 0;
 			
 			value = transformString(v, strict, false);
 			
 			if (!result.contains(value)) {
-				errorsCount++;
+				validationErrorsCount++;
 			}
 			
 			//give it one more try, in case there are encodings in results which are not URLDecoded
-			if (errorsCount > 0) {
+			if (validationErrorsCount > 0) {
 				value = transformString(v, strict, true);
 
-				if (!result.contains(value)) {
-					errorsCount++;
-				} else {
-					errorsCount--;
+				if (result.contains(value)) {
+					validationErrorsCount--;
 				}
 			}
 			
-			if (errorsCount > 0) {
+			if (validationErrorsCount > 0) {
 				System.out.println("\t\t" + /*validateOperation +*/ "validation failed on query : " + iteration + ", query result is missing value : " + value);
-				errors++;
+				totalErrors++;
 			}
 		}
 		
 		if (actualResultsSize != expectedResultSize) {
 			System.out.println("\t\tWarning : " + /*validateOperation +*/ "validation failed on query : " + iteration + ", expected amount of results : " + expectedResultSize + ",  actual value : " + actualResultsSize);
-			errors++;
+			totalErrors++;
 		}
 		
-		return errors;
+		return totalErrors;
 	}
 	
 	private String transformString(String str, boolean strict, boolean forceOptionalEncodings) {
