@@ -4,15 +4,15 @@ Semantic Publishing Benchmark
 
 ###Introduction
 
-Semantic Publishing Benchmark is an LDBC benchmark for testing the performance of RDF databases inspired by the Media/Publishing industry.
-Performance is measured by producing a workload of CRUD (Create, Read, Update, Delete) operations which are executed simultaneously.
+The Semantic Publishing Benchmark is an LDBC benchmark which measures the performance of RDF databases. Creation of that benchmark has been inspired 
+by the Media/Publishing industry where requirements like: constant update of content or various requests for data extraction and aggregation are present.
 
-The benchmark offers a data generator that uses real reference data to produce synthetic datasets of various sizes and tests the scalability aspect
-of RDF systems. The benchmark workload consists of editorial operations that add new, update or delete existing data and aggregation
-operations that retrieve content according to various criteria. The aggregation queries define different "choke points", that is technical 
-challenges that a standard RDF database must overcome thus giving opportunities for improvement regarding query optimization.
-
-The benchmark also tests conformance for various rules inside the OWL2-RL rule-set.
+Features of the benchmark:
+* Provides a Data Generator using real reference datasets and producing synthetic data of various scales. 
+* Workload consists of editorial operations (adding new, updating or deleting existing data) and aggregation operations (retrieve content, aggregate results, etc.). 
+Aggregation operations consist of a wide range of queries, e.g. _search, aggregation, FTS, Faceted Search, Geo-spatial, Drill-down_ which define various types of _choke points_ (i.e. technical challenges) that an RDF database must successfully overcome.
+* Provides validation of results
+* Tests the conformance of the RDF Database to various rules inside the OWL2-RL rule-set.
 
 ###Build
 
@@ -33,11 +33,11 @@ $ ant build-advanced-querymix-virtuoso
 ```
 
 Result of the build process is saved to a distribution folder _'dist/'_ : 
-* semantic_publishing_benchmark-*.jar - the benchmark driver
-* data/ - folder containing all necessary data to run the benchmark
-* test.properties - a configuration file with parameters for configuring the benchmark driver
-* definitions.properties - a configuration file with pre-allocated values used by the benchmark. Not to be modified by the regular benchmark user.
-* readme.txt
+* ***semantic_publishing_benchmark-*.jar*** - the benchmark driver
+* ***data/*** - folder containing all necessary data to run the benchmark
+* ***test.properties*** - a configuration file with parameters for configuring the benchmark driver
+* ***definitions.properties*** - a configuration file with pre-allocated values used by the benchmark. Not to be modified by the regular benchmark user.
+* ***readme.txt***
 
 ###Install
 
