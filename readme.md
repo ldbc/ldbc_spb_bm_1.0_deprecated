@@ -46,7 +46,7 @@ Optionally, additinal reference datasets can be added - they can be dowloaded fr
 
 ###Configure
 
-* RDF Repository configuration
+* ***RDF Repository configuration***
   * Use RDFS rule-set
   * Enable context indexing (if available)
   * Enable text indexing (if available)
@@ -59,8 +59,8 @@ Each action consists of a sequence of operational phases that are executed
 List of operational phases: https://github.com/ldbc/ldbc_spb_bm/wiki/Operational-Phases
 
   
-* Configuration options are described here: https://github.com/ldbc/ldbc_spb_bm/wiki/Configuration-Options
-* Definition properties are described here: https://github.com/ldbc/ldbc_spb_bm/wiki/Definitions-Properties
+* ***Configuration options:*** https://github.com/ldbc/ldbc_spb_bm/wiki/Configuration-Options
+* ***Definition properties:*** https://github.com/ldbc/ldbc_spb_bm/wiki/Definitions-Properties
 
  
 ###Run
