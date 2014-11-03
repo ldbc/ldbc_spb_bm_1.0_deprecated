@@ -53,9 +53,7 @@ Optionally, additinal reference datasets can be added - they can be dowloaded fr
   * Enable geo-spatial indexing (if available)
 
 * ***Actions*** are the essential tasks that the benchmark driver can perform e.g. Data generation, Validation or Measure performance.
-List of actions: https://github.com/ldbc/ldbc_spb_bm/wiki/Benchmark-Actions
-
-Each action consists of a set of operational phases that are executed sequentially. 
+List of actions: https://github.com/ldbc/ldbc_spb_bm/wiki/Benchmark-Actions Each action consists of a set of operational phases that are executed sequentially. 
 List of operational phases: https://github.com/ldbc/ldbc_spb_bm/wiki/Operational-Phases
 
   
