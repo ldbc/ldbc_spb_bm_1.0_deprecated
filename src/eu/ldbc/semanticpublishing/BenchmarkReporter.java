@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import eu.ldbc.semanticpublishing.statistics.Statistics;
 import eu.ldbc.semanticpublishing.statistics.querypool.Pool;
-import eu.ldbc.semanticpublishing.statistics.querypool.PoolManager;
 import eu.ldbc.semanticpublishing.util.FileUtils;
 
 /**
@@ -18,18 +17,20 @@ import eu.ldbc.semanticpublishing.util.FileUtils;
  */
 public class BenchmarkReporter extends Thread {
 	private final AtomicLong totalQueryExecutions;
+	private final AtomicLong totalCompletedQueryMixRuns;
 	private final AtomicBoolean benchmarkState;
 	private final AtomicBoolean keepAlive;
 	private final AtomicBoolean benchmarkResultIsValid;
 	private final AtomicBoolean maxUpdateRateReached;	
 	private final double maxUpdateRateThresholdOps;
-	private final PoolManager queryPoolManager;
+	private final Pool queryMixPool;
 	private double minUpdateRateThresholdOps;	
 	private double updateRateReachTimePercent;
 	private boolean verbose;
 	private long seconds;
 	private long runPeriodSeconds;
 	private long benchmarkByQueryRuns;
+	private long benchmarkByQueryMixRuns;	
 	private int minUpdateRatePassesCount;
 	private int aggregationAgentsCount;
 	private int editorialAgentsCount;
@@ -41,15 +42,17 @@ public class BenchmarkReporter extends Thread {
 	
 	protected final static String BENCHMARK_INTERRUPT_SIGNAL = "benchmark_run_completed";
 	
-	public BenchmarkReporter(Thread parentThread, AtomicLong totalQueryExecutions, AtomicBoolean benchmarkState, AtomicBoolean keepAlive, AtomicBoolean benchmarkResultIsValid, double updateQueryRateFirstReachTimePercent, double minUpdateQueriesRateThresholdOps, double maxUpdateRateThresholdOps, AtomicBoolean maxUpdateRateReached, int editorialAgentsCount, int aggregationAgentsCount, long runPeriodSeconds, long benchmarkByQueryRuns, String queryPoolsDefinitons, String interruptSignalFilePath, boolean verbose) {
+	public BenchmarkReporter(Thread parentThread, AtomicLong totalQueryExecutions, AtomicLong totalCompletedQueryMixRuns, AtomicBoolean benchmarkState, AtomicBoolean keepAlive, AtomicBoolean benchmarkResultIsValid, double updateQueryRateFirstReachTimePercent, double minUpdateQueriesRateThresholdOps, double maxUpdateRateThresholdOps, AtomicBoolean maxUpdateRateReached, int editorialAgentsCount, int aggregationAgentsCount, long runPeriodSeconds, long benchmarkByQueryMixRuns, long benchmarkByQueryRuns, String queryPoolsDefinitons, String interruptSignalFilePath, boolean verbose) {
 		this.parentThread = parentThread;
 		this.totalQueryExecutions = totalQueryExecutions;
+		this.totalCompletedQueryMixRuns = totalCompletedQueryMixRuns;
 		this.benchmarkState = benchmarkState;
 		this.keepAlive = keepAlive;
 		this.benchmarkResultIsValid = benchmarkResultIsValid;
 		this.updateRateReachTimePercent = updateQueryRateFirstReachTimePercent;
 		this.seconds = 0;
 		this.runPeriodSeconds = runPeriodSeconds;
+		this.benchmarkByQueryMixRuns = benchmarkByQueryMixRuns;
 		this.benchmarkByQueryRuns = benchmarkByQueryRuns;
 		this.verbose = verbose;
 		this.aggregationAgentsCount = aggregationAgentsCount;
@@ -59,9 +62,7 @@ public class BenchmarkReporter extends Thread {
 		this.maxUpdateRateThresholdOps = maxUpdateRateThresholdOps;
 		this.maxUpdateRateReached = maxUpdateRateReached;
 		this.initializedCount = 0;
-		//pool manager here is used for producing statistics only
-		this.queryPoolManager = new PoolManager();
-		this.queryPoolManager.initialize(queryPoolsDefinitons);
+		this.queryMixPool = new Pool(queryPoolsDefinitons, Statistics.totalStartedQueryMixRuns, Statistics.totalCompletedQueryMixRuns);//pool used here for producing statistics only
 		this.interruptSignalFilePath = interruptSignalFilePath;
 	}
 	
@@ -78,7 +79,7 @@ public class BenchmarkReporter extends Thread {
 			while (benchmarkState.get() || keepAlive.get()) {
 				seconds++;
 				Thread.sleep(Math.abs(1000 - timeCorrection));
-				timeCorrection = collectAndShowResults((benchmarkByQueryRuns == 0));
+				timeCorrection = collectAndShowResults((benchmarkByQueryRuns == 0) && (benchmarkByQueryMixRuns == 0));
 			}
 		} catch (Throwable t) {
 			System.out.println("BenchmarkProcessObserver :: encountered a problem : " + t.getMessage());
@@ -106,9 +107,13 @@ public class BenchmarkReporter extends Thread {
 		
 		sb.append("\n");
 		if (secondsOrExecutions) {
-			sb.append("\nSeconds run : " + seconds);
+			sb.append("\nSeconds : " + seconds);
 		} else {
-			sb.append("\nQuery executions : " + totalQueryExecutions.get() + " (seconds : " + seconds + ")");
+			if (benchmarkByQueryMixRuns > 0) {
+				sb.append("\nQueryMix runs : " + totalCompletedQueryMixRuns.get() + " (seconds : " + seconds + ")");
+			} else {
+				sb.append("\nQuery executions : " + totalQueryExecutions.get() + " (seconds : " + seconds + ")");
+			}
 		}
 		sb.append("\n");
 		sb.append("\tEditorial:\n");
@@ -150,18 +155,13 @@ public class BenchmarkReporter extends Thread {
 																											   				  Statistics.aggregateQueriesArray[i].getMaxExecutionTimeMs(), 
 																											   				  Statistics.aggregateQueriesArray[i].getFailuresCount()));
 			}
-			if (queryPoolManager.getPoolsCount() > 0) {
+			
+			if (queryMixPool.getItemsCount() > 0) {
 				sb.append("\n");
-				for (int p = 0; p < queryPoolManager.getPoolsCount(); p++) {
-					Pool pool = queryPoolManager.getPool(p);
-					if (pool != null) {
-						sb.append("\t\t");
-						sb.append(pool.produceStatistics(seconds, Statistics.timeCorrectionsMS.get()));
-					}
-					sb.append("\n");
-				}
-				sb.append("\n");
+				sb.append("\t\t");
+				sb.append(queryMixPool.produceStatistics(seconds, Statistics.timeCorrectionsMS.get()));
 			}
+			sb.append("\n");
 			
 			sb.append(String.format("\n\t\t%d total retrieval queries (%d timed-out)\n", totalAggregateOpsCount, failedTotalAggregateOpsCount));
 		} else {

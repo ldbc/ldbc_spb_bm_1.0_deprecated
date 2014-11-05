@@ -32,7 +32,6 @@ import eu.ldbc.semanticpublishing.resultanalyzers.CreativeWorksAnalyzer;
 import eu.ldbc.semanticpublishing.resultanalyzers.GeonamesAnalyzer;
 import eu.ldbc.semanticpublishing.resultanalyzers.ReferenceDataAnalyzer;
 import eu.ldbc.semanticpublishing.statistics.Statistics;
-import eu.ldbc.semanticpublishing.statistics.querypool.PoolManager;
 import eu.ldbc.semanticpublishing.substitutionparameters.SubstitutionParametersGenerator;
 import eu.ldbc.semanticpublishing.substitutionparameters.SubstitutionQueryParametersManager;
 import eu.ldbc.semanticpublishing.templates.MustacheTemplatesHolder;
@@ -66,7 +65,6 @@ public class TestDriver {
 	private final RandomUtil randomGenerator;
 	private final SubstitutionQueryParametersManager substitutionQueryParamtersManager = new SubstitutionQueryParametersManager();
 	private final ValidationValuesManager validationValuesManager = new ValidationValuesManager();
-	private final PoolManager queryPoolManager = new PoolManager();
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(TestDriver.class.getName());
 	private final static Logger RLOGGER = LoggerFactory.getLogger(BenchmarkReporter.class.getName());
@@ -101,9 +99,7 @@ public class TestDriver {
 				configuration.getInt(Configuration.QUERY_TIMEOUT_SECONDS) * 1000,
 				configuration.getInt(Configuration.SYSTEM_QUERY_TIMEOUT_SECONDS) * 1000,
 				configuration.getBoolean(Configuration.VERBOSE));
-		
-		queryPoolManager.initialize(definitions.getString(Definitions.QUERY_POOLS));
-		
+			
 		//set the nextId for Creative Works, default 0
 		DataManager.creativeWorksNextId.set(configuration.getLong(Configuration.CREATIVE_WORK_NEXT_ID));
 		
@@ -414,7 +410,7 @@ public class TestDriver {
 	
 	private void setupAsynchronousAgents() {
 		for(int i = 0; i < aggregationAgentsCount; ++i ) {
-			aggregationAgents.add(new AggregationAgent(inBenchmarkState, queryExecuteManager, randomGenerator, runFlag, mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.AGGREGATION), definitions, substitutionQueryParamtersManager));
+			aggregationAgents.add(new AggregationAgent(inBenchmarkState, queryExecuteManager, randomGenerator, runFlag, mustacheTemplatesHolder.getQueryTemplates(MustacheTemplatesHolder.AGGREGATION), definitions, substitutionQueryParamtersManager, configuration.getLong(Configuration.BENCHMARK_BY_QUERY_MIX_RUNS)));
 		}
 
 		for(int i = 0; i < editorialAgentsCount; ++i ) {
@@ -453,7 +449,7 @@ public class TestDriver {
 		}
 	}
 	
-	private void benchmark(boolean enable, long benchmarkByQueryRuns, double mileStonePosition) throws IOException {
+	private void benchmark(boolean enable, long benchmarkByQueryMixRuns, long benchmarkByQueryRuns, double mileStonePosition) throws IOException {
 		if (enable) {
 			//assuming that if regularEntitiesList is empty, no entity lists were populated
 			if (DataManager.regularEntitiesList.size() == 0 || DataManager.correlatedEntitiesList.size() == 0) {
@@ -465,18 +461,25 @@ public class TestDriver {
 			}
 			
 			if (configuration.getBoolean(Configuration.RUN_BENCHMARK_ONLINE_REPlICATION_AND_BACKUP)) {
-				System.out.println("Warning : runBenchmark and runBenchmarkWithOnlineReplication phases are both enabled, disable one first!");
+				System.out.println("Error : runBenchmark and runBenchmarkWithOnlineReplication phases are both enabled, disable one first!");
 				System.exit(-1);
 			}			
 			
+			if (benchmarkByQueryMixRuns > 0 && (definitions.getString(Definitions.QUERY_POOLS).trim().isEmpty() || aggregationAgentsCount <= 0)) {
+				System.out.println("Error : incorrect configuration of parameters: 'queryPools' (in definition.properties) and benchmarkByQueryMixRuns, aggregationAgents (in test.properties), exiting...");
+				System.exit(-1);				
+			}
+			
 			if (benchmarkByQueryRuns > 0 && aggregationAgentsCount <= 0) {
-				System.out.println(String.format("Warning : aggregation agents amount : %d is not acceptable for execution of the benchmark in that mode, exiting...", aggregationAgentsCount));
+				System.out.println(String.format("Error : aggregation agents amount : %d is not acceptable for execution of the benchmark in that mode, exiting...", aggregationAgentsCount));
 				System.exit(-1);
 			}
 			
 			String message;
 			
-			if (benchmarkByQueryRuns > 0) {
+			if (benchmarkByQueryMixRuns > 0) {
+				message = String.format("Starting the benchmark... (will run until %d query mixes have been executed)", benchmarkByQueryMixRuns);
+			} else if (benchmarkByQueryRuns > 0) {
 				message = String.format("Starting the benchmark... (will run until %d aggregate executions have been completed)", benchmarkByQueryRuns);
 			} else {				
 				message = "Starting the benchmark...";
@@ -502,7 +505,8 @@ public class TestDriver {
 			}
 
 			Thread observerThread = new BenchmarkReporter(Thread.currentThread(),
-																 Statistics.totalAggregateQueryStatistics.getRunsCountAtomicLong(), 
+																 Statistics.totalAggregateQueryStatistics.getRunsCountAtomicLong(),
+																 Statistics.totalCompletedQueryMixRuns,
 													   		     inBenchmarkState, 
 													   		     keepObserverAlive,
 													   		     benchmarkResultIsValid,
@@ -513,13 +517,18 @@ public class TestDriver {
 																 configuration.getInt(Configuration.EDITORIAL_AGENTS_COUNT),																				
 																 configuration.getInt(Configuration.AGGREGATION_AGENTS_COUNT), 
 																 configuration.getLong(Configuration.BENCHMARK_RUN_PERIOD_SECONDS),
+																 benchmarkByQueryMixRuns,
 																 benchmarkByQueryRuns, 
 																 definitions.getString(Definitions.QUERY_POOLS),
 																 configuration.getString(Configuration.INTERRUPT_SIGNAL_LOCATION),
 																 configuration.getBoolean(Configuration.VERBOSE));
 			observerThread.start();
 			
-			if (benchmarkByQueryRuns > 0) {
+			if (benchmarkByQueryMixRuns > 0) {
+				while ((Statistics.totalCompletedQueryMixRuns.get() < benchmarkByQueryMixRuns) && (inBenchmarkState.get() == true)) {
+					ThreadUtil.sleepMilliseconds(50);					
+				}				
+			} else if (benchmarkByQueryRuns > 0) {
 				while ((Statistics.totalAggregateQueryStatistics.getRunsCount() < benchmarkByQueryRuns) && (inBenchmarkState.get() == true)) {
 					ThreadUtil.sleepMilliseconds(50);					
 				}
@@ -552,7 +561,7 @@ public class TestDriver {
 	
 	/**
 	 * @param enable 				 - enable the phase
-	 * @param benchmarkByQueryRuns   - if set to zero, then time interval set by parameter 'benchmarkRunPeriodSeconds' will be used for completing the phase.
+	 * @param benchmarkByQueryRuns   - if zero, then time interval set by parameter 'benchmarkRunPeriodSeconds' will be used for completing the phase.
 	 * 								   if greater than zero, then its value the amount of aggregate queries that will be executed for completing the phase.
 	 * @param mileStonePosition - defines after the position of execution of a 'mileStone' query ( the query that will verify that certain milestone has been reached). 
 	 * 								   This parameter is considered only if benchmarkByQueryRuns > 0. 
@@ -560,7 +569,7 @@ public class TestDriver {
 	 * @throws IOException
 	 * @throws InterruptedException 
 	 */
-	private void benchmarkOnlineReplicationAndBackup(boolean enable, long benchmarkByQueryRuns, double milestonePosition) throws IOException, InterruptedException {
+	private void benchmarkOnlineReplicationAndBackup(boolean enable, long benchmarkByQuryMixRuns, long benchmarkByQueryRuns, double milestonePosition) throws IOException, InterruptedException {
 		if (enable) {
 			//assuming that if regularEntitiesList is empty, no entity lists were populated
 			if (DataManager.regularEntitiesList.size() == 0 || DataManager.correlatedEntitiesList.size() == 0) {
@@ -572,12 +581,17 @@ public class TestDriver {
 			}
 
 			if (configuration.getBoolean(Configuration.RUN_BENCHMARK)) {
-				System.out.println("Warning : runBenchmark and runBenchmarkWithOnlineReplication phases are both enabled, disable one first!");
+				System.out.println("Error : runBenchmark and runBenchmarkWithOnlineReplication phases are both enabled, disable one first!");
 				System.exit(-1);
 			}			
 			
+			if (benchmarkByQuryMixRuns > 0) {
+				System.out.println("Error : running the benchmark with parameter benchmarkByQuryMixExecutions > 0 is not supported in this phase, run it with benchmarkByQueryRuns > 0 instead...");
+				System.exit(-1);
+			}
+			
 			if (benchmarkByQueryRuns > 0 && aggregationAgentsCount <= 0) {
-				System.out.println(String.format("Warning : aggregation agents amount : %d is not acceptable for execution of the benchmark in that mode, exiting...", aggregationAgentsCount));
+				System.out.println(String.format("Error : aggregation agents amount : %d is not acceptable for execution of the benchmark in that mode, exiting...", aggregationAgentsCount));
 				System.exit(-1);
 			}
 			
@@ -613,6 +627,7 @@ public class TestDriver {
 			
 			Thread observerThread = new BenchmarkReporter(Thread.currentThread(),
 																 Statistics.totalAggregateQueryStatistics.getRunsCountAtomicLong(), 
+																 Statistics.totalCompletedQueryMixRuns,
 													   		     inBenchmarkState,
 													   		     keepObserverAlive, 
 													   		     benchmarkResultIsValid,
@@ -623,6 +638,7 @@ public class TestDriver {
 																 configuration.getInt(Configuration.EDITORIAL_AGENTS_COUNT),																				
 																 configuration.getInt(Configuration.AGGREGATION_AGENTS_COUNT), 
 																 configuration.getLong(Configuration.BENCHMARK_RUN_PERIOD_SECONDS),
+																 0 /*benchmarkByQuryRuns*/,  
 																 benchmarkByQueryRuns, 
 																 definitions.getString(Definitions.QUERY_POOLS),
 																 configuration.getString(Configuration.INTERRUPT_SIGNAL_LOCATION), 
@@ -848,8 +864,8 @@ public class TestDriver {
 		validateQueryResults(configuration.getBoolean(Configuration.VALIDATE_QUERY_RESULTS));
 		setupAsynchronousAgents();
 		warmUp(configuration.getBoolean(Configuration.WARM_UP));
-		benchmark(configuration.getBoolean(Configuration.RUN_BENCHMARK), configuration.getLong(Configuration.BENCHMARK_BY_QUERY_RUNS), definitions.getDouble(Definitions.MILESTONE_QUERY_POSITION));
-		benchmarkOnlineReplicationAndBackup(configuration.getBoolean(Configuration.RUN_BENCHMARK_ONLINE_REPlICATION_AND_BACKUP), configuration.getLong(Configuration.BENCHMARK_BY_QUERY_RUNS), definitions.getDouble(Definitions.MILESTONE_QUERY_POSITION));
+		benchmark(configuration.getBoolean(Configuration.RUN_BENCHMARK), configuration.getLong(Configuration.BENCHMARK_BY_QUERY_MIX_RUNS), configuration.getLong(Configuration.BENCHMARK_BY_QUERY_RUNS), definitions.getDouble(Definitions.MILESTONE_QUERY_POSITION));
+		benchmarkOnlineReplicationAndBackup(configuration.getBoolean(Configuration.RUN_BENCHMARK_ONLINE_REPlICATION_AND_BACKUP), configuration.getLong(Configuration.BENCHMARK_BY_QUERY_MIX_RUNS), configuration.getLong(Configuration.BENCHMARK_BY_QUERY_RUNS), definitions.getDouble(Definitions.MILESTONE_QUERY_POSITION));
 		stopAynchronousAgents();
 		checkConformance(configuration.getBoolean(Configuration.CHECK_CONFORMANCE));
 		clearDatabase(configuration.getBoolean(Configuration.CLEAR_DATABASE));

@@ -144,6 +144,7 @@ How to run the benchmark :
     - creativeWorksInfo                 (name of file that contains system info about the generated dataset, e.g. interesting entities, etc. (will be saved in 'creativeWorksPath'))
     - querySubstitutionParameters       (number substitution parameters that will be generated for each query, default value is 100000)
     - benchmarkByQueryRuns				      (sets the amount of aggregate queries which the benchmark phase will execute. If value is greater than zero then parameter 'benchmarkRunPeriodSeconds' is ignored. e.g. if set to 100, benchmark will measure the time to execute 100 aggregate operations.)
+    - benchmarkByQueryMixRuns           (sets the count of query mixes that will be executed by the benchmark. If value is zero, then execution of query mixes will not be controlled by this parameter, default:0)    
     - minUpdateRateThresholdOps        	  (defines the minimum rate of editorial operations per second which should be reached during the first 15% of benchmark time and should be kept during the rest of the benchmark run in order to have a valid result. If set to zero, update rate threshold is ignored.
                                          e.g. if required update rate is set to 6.3 update operations per second, then benchmark will consider that value during its benchmark run and will report invalid results if that rate drops below the threshold)
     - minUpdateRateThresholdReachTimePercent (defines the time frame during which the defined value in property 'minUpdateRateThresholdOps' should be reached. Default value is 0.1 (10%)
@@ -153,7 +154,7 @@ How to run the benchmark :
     - enableEditorialOpeartionsValidation   (enables validation of editorial operations (insert/delete) during benchmark run. Validation is performed on each 'editorialOpsValidationInterval' operation, default : true)
     - editorialOpsValidationInterval    (sets the validation interval for editorial operations, default : 100)
     - enableCompressionOnGeneratedData  (enables gzip compression on generated data, default: false)                   									
-                                         
+                                             
                                          Note : For optimal results the sum of editorial and aggregation agents should be set to be equal to the number of CPU cores.
 		
   * definitions.properties - currently pre-configured and no need to modify. Can be edited to tune various allocations, used in -generateCreativeWorks and -runBenchmark phases.

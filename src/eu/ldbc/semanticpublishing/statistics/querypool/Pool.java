@@ -1,6 +1,7 @@
 package eu.ldbc.semanticpublishing.statistics.querypool;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicLong;
 
 import eu.ldbc.semanticpublishing.statistics.Statistics;
 
@@ -9,18 +10,96 @@ import eu.ldbc.semanticpublishing.statistics.Statistics;
  * availability status of all other items is tested, and if all items are 'unavailable', their status is reset to 'available'.
  */
 public class Pool {
-	private int id;
 	private int unavailableItemsCount = 0;
-	private long resetsCount = 0;
 	private ArrayList<PoolItem> items = new ArrayList<PoolItem>();
+	private boolean inProgress;
+	private final AtomicLong totalStartsCount;
+	private final AtomicLong totalResetsCount;
 	
-	public Pool(int id) {
-		this.id = id;
+	public Pool(String poolDefinition, AtomicLong totalStartsCount, AtomicLong totalResetsCount) {
+		this.inProgress = false;
+		this.totalStartsCount = totalStartsCount;
+		this.totalResetsCount = totalResetsCount;
+		initialize(poolDefinition);
 	}
 	
-	public int getId() {
-		return id;
+	public void initialize(String s) throws IllegalArgumentException, NumberFormatException {
+		if (s.trim().isEmpty()) {
+//			System.out.println("No query pools have been detected, continuing with default behavior...");
+			return;
+		}
+		
+		if (!validateInitString(s)) {
+			throw new IllegalArgumentException(s + ", check definitions.properties parameter : queryPools...");
+		}
+		
+		String[] tokens = s.split("\\}");
+				
+		for (int i = 0; i < tokens.length; i++) {
+			String token = tokens[i].trim();
+			
+			if (token.length() == 0) {
+				continue;
+			}
+				
+			token = token.replace("{", "");
+
+			String[] tokens2 = token.split(",");
+			for (int j = 0; j < tokens2.length; j++) {
+				int itemId = Integer.parseInt(tokens2[j].trim());
+				addItem(new PoolItem(itemId));
+			}
+		}	
 	}
+	
+	private boolean validateInitString(String s) {
+		int poolDefinitionStart = 0;
+		int poolDefinitionEnd = 0;
+		int digits = 0;
+		for (int i = 0; i < s.length(); i++) {
+			if (s.charAt(i) == '{') {
+				poolDefinitionStart++;
+			}
+			if (s.charAt(i) == '}') {
+				poolDefinitionEnd++;
+			}
+			
+			if (poolDefinitionStart > poolDefinitionEnd) {
+				if (s.charAt(i) == ' ' || s.charAt(i) == ',' || s.charAt(i) == '{' || s.charAt(i) == '}') {
+					continue;
+				}
+				if (!isNumeric(s.charAt(i))) {
+					return false;
+				} else {
+					digits++;
+				}
+			}
+		}
+		
+		if ((poolDefinitionStart == 0) || (poolDefinitionEnd == 0)) {
+			return false;
+		}
+		
+		if (poolDefinitionStart > 1 || poolDefinitionEnd > 1) {
+			return false;
+		}
+		
+		//empty pools are not allowed
+		if (digits == 0) {
+			return false;
+		}
+		
+		return (poolDefinitionStart == poolDefinitionEnd);
+	}
+	
+	private boolean isNumeric(char ch) {
+		if (ch != '0' && ch != '1' && ch != '2' && 
+			ch != '3' && ch != '4' && ch != '5' && 
+			ch != '6' && ch != '7' && ch != '8' && ch != '9') {
+			return false;
+		}
+		return true;
+	}	
 	
 	public void addItem(PoolItem item) {
 		items.add(item);
@@ -56,31 +135,64 @@ public class Pool {
 	public synchronized void setItemUnavailable(int itemId) {
 		PoolItem item = getItem(itemId);
 		if (item != null) {
+			if (unavailableItemsCount == 0) {
+				this.inProgress = true;
+				totalStartsCount.incrementAndGet();				
+			}
 			item.setUnavailable();
 		}
 	}	
 	
-	public synchronized void resetItemUnavailable(int itemId) {
+	public synchronized void incrementUnavailableItemsCount() {
 		unavailableItemsCount++;
 		checkAndResetAllItems();
 	}
 	
 	private void checkAndResetAllItems() {
-		if (unavailableItemsCount >= items.size()) {
+		if (unavailableItemsCount >= items.size()) {		
 			setAllItemsAvailable();
-			resetsCount++;
 			unavailableItemsCount = 0;
 		}		
 	}
 		
 	private void setAllItemsAvailable() {
+		this.inProgress = false;
+		totalResetsCount.incrementAndGet();
 		for (PoolItem item : items) {
 			item.setAvailable();
 		}
 	}
 	
-	public long getResetsCount() {
-		return resetsCount;
+	/**
+	 * @param itemId - id of the item to be set unavailable
+	 * @return - true if operation succeeded. false - if item was not available 
+	 */
+	public synchronized boolean checkAndSetItemUnavailable(int itemId) {
+		if (items.size() > 0) {
+			if (itemIsAvailable(itemId)) {
+				setItemUnavailable(itemId);
+				return true;
+			} else {
+				return false;
+			}
+		}
+		
+		//assuming no pool is configured, skipping pool execution			
+		return true;
+	}
+	
+	public synchronized void releaseUnavailableItem(int itemId) {
+		if (items.size() > 0) {
+			incrementUnavailableItemsCount();
+		}	
+	}	
+
+	public int getItemsCount() {
+		return items.size();
+	}
+	
+	public boolean getInProgress() {
+		return inProgress;
 	}
 	
 	public String produceStatistics(long timeSeconds, long timeCorrectionsMS) {
@@ -98,13 +210,15 @@ public class Pool {
 		
 		sb.append(String.format("%.4f average queries per second.", averageQueriesPerSecond));
 		
-		sb.append(" Pool " + id + ", queries [ ");
+		sb.append(" Query Mix [ ");
 		for (PoolItem item : items) {
 			sb.append("Q");
 			sb.append(item.getId());
 			sb.append(" ");
 		}
-		sb.append("]");		
+		sb.append("]");
+		sb.append(", ");
+		sb.append(String.format("executions : %d", Statistics.totalCompletedQueryMixRuns.get()));
 		
 		return sb.toString();
 	}

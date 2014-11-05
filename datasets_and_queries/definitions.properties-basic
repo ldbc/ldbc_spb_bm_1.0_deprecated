@@ -88,5 +88,5 @@ maxLong = 0.25
 #Defines the position in terms of percents at which a milestone query is executed (see Online and Replication Benchmark feature)
 mileStoneQueryPosition = 0.5
 
-#Defines pools of queries, where each pool contains unique set of queries. During query execution, each query from a pool gets executed just once until all queries in the pool have been #executed. Each query pool is defined by a set of curly braces {}. If empty value has been assigned to the queryPools property, then no query pools are created and all queries are #executed according to distributions defined in parameter 'aggregationOperationsAllocation'
+#Defines a pool of queries, where each pool contains unique set of queries. During query execution, each query from the pool gets executed just once until all queries have been executed. The query pool is defined by a set of curly braces {}. If empty value is used, then query pool is not created and all queries are executed according to distributions defined in parameter 'aggregationOperationsAllocation'
 queryPools={1, 2, 3, 4, 5, 6, 7, 8, 9} 

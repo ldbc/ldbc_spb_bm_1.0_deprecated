@@ -25,7 +25,7 @@ import eu.ldbc.semanticpublishing.resultanalyzers.Query22Analyzer;
 import eu.ldbc.semanticpublishing.resultanalyzers.sax.SPARQLResultStatementsCounter;
 import eu.ldbc.semanticpublishing.resultanalyzers.sesame.RDFXMLResultStatementsCounter;
 import eu.ldbc.semanticpublishing.statistics.Statistics;
-import eu.ldbc.semanticpublishing.statistics.querypool.PoolManager;
+import eu.ldbc.semanticpublishing.statistics.querypool.Pool;
 import eu.ldbc.semanticpublishing.templates.MustacheTemplate;
 import eu.ldbc.semanticpublishing.templates.aggregation.*;
 import eu.ldbc.semanticpublishing.util.RandomUtil;
@@ -42,7 +42,8 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 	private final RandomUtil ru;
 	private final AtomicBoolean benchmarkingState;
 	private final HashMap<String, String> queryTemplates;
-	private final PoolManager queryPoolManager;
+	private final Pool queryMixPool;
+	private final long queryMixRunsLimit;
 	private SparqlQueryConnection connection;
 	private Definitions definitions;
 	private SubstitutionQueryParametersManager substitutionQueryParametersMngr;
@@ -54,7 +55,7 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 	private final static int MAX_DRILL_DOWN_ITERATIONS = 5;
 	private final static int MAX_FACETED_SEARCH_ITERATIONS = 5;
 	
-	public AggregationAgent(AtomicBoolean benchmarkingState, SparqlQueryExecuteManager queryExecuteManager, RandomUtil ru, AtomicBoolean runFlag, HashMap<String, String> queryTamplates, Definitions definitions, SubstitutionQueryParametersManager substitutionQueryParametersMngr) {
+	public AggregationAgent(AtomicBoolean benchmarkingState, SparqlQueryExecuteManager queryExecuteManager, RandomUtil ru, AtomicBoolean runFlag, HashMap<String, String> queryTamplates, Definitions definitions, SubstitutionQueryParametersManager substitutionQueryParametersMngr, long queryMixRunsLimit) {
 		super(runFlag);
 		this.queryExecuteManager = queryExecuteManager;
 		this.ru = ru;
@@ -65,8 +66,8 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 		this.substitutionQueryParametersMngr = substitutionQueryParametersMngr;
 		this.rdfxmlResultStatementsCounter = new RDFXMLResultStatementsCounter();
 		this.sparqlResultStatementsCounter = new SPARQLResultStatementsCounter();
-		this.queryPoolManager = new PoolManager();
-		this.queryPoolManager.initialize(definitions.getString(Definitions.QUERY_POOLS));
+		this.queryMixPool = new Pool(definitions.getString(Definitions.QUERY_POOLS), Statistics.totalStartedQueryMixRuns, Statistics.totalCompletedQueryMixRuns);
+		this.queryMixRunsLimit = queryMixRunsLimit;
 	}
 	
 	@Override
@@ -74,11 +75,17 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 		//retrieve next query to be executed from the aggregation query mix
 		int aggregateQueryIndex = Definitions.aggregationOperationsAllocation.getAllocation();
 		
-        //aggregateQueryIndex is ZERO based, while query ids in definitions.properties queryPools are not
-		if (!queryPoolManager.checkAndSetItemUnavailable(aggregateQueryIndex + 1)/* && this.benchmarkingState.get()*/) {
-			return true;
-		}
+		if (this.benchmarkingState.get() && queryMixRunsLimit > 0) {
+            if (!queryMixPool.getInProgress() && Statistics.totalStartedQueryMixRuns.get() >= queryMixRunsLimit) {
+                return true;
+            }
 		
+            //aggregateQueryIndex is ZERO based, while query ids in definitions.properties (parameter queryPools) are not
+            if (!queryMixPool.checkAndSetItemUnavailable(aggregateQueryIndex + 1)) {
+                return true;
+            }            
+        }
+
 		long queryId = 0;
 		MustacheTemplate aggregateQuery = null;
 		String queryString = "";
@@ -239,7 +246,9 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 			connection = new SparqlQueryConnection(queryExecuteManager.getEndpointUrl(), queryExecuteManager.getEndpointUpdateUrl(), queryExecuteManager.getTimeoutMilliseconds(), true);
 		}
 		
-		queryPoolManager.resetItemUnavailable(aggregateQueryIndex + 1);
+		if (this.benchmarkingState.get()) {
+            queryMixPool.releaseUnavailableItem(aggregateQueryIndex + 1);
+        }
 		
 		return true;
 	}

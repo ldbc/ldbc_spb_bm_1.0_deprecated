@@ -15,6 +15,8 @@ public class Statistics {
 	public static final QueryStatistics[] aggregateQueriesArray;
 	
 	public static final AtomicLong timeCorrectionsMS = new AtomicLong(0);
+	public static final AtomicLong totalStartedQueryMixRuns = new AtomicLong(0);
+	public static final AtomicLong totalCompletedQueryMixRuns = new AtomicLong(0);
 	
 	static {
 		aggregateQueriesArray = new QueryStatistics[AGGREGATE_QUERIES_COUNT];

@@ -56,6 +56,7 @@ public class Configuration {
 	public static final String VALIDATION_PATH = "validationPath";
 	public static final String VALIDATION_ITERATIONS = "validationIterations";
 	public static final String BENCHMARK_BY_QUERY_RUNS = "benchmarkByQueryRuns";
+	public static final String BENCHMARK_BY_QUERY_MIX_RUNS = "benchmarkByQueryMixRuns";
 	public static final String RUN_BENCHMARK_ONLINE_REPlICATION_AND_BACKUP = "runBenchmarkOnlineReplicationAndBackup";
 	public static final String ENTERPRISE_FEATURES_PATH = "enterpriseFeaturesPath";
 	public static final String MIN_UPDATE_RATE_THRESHOLD_OPS = "minUpdateRateThresholdOps";
@@ -118,6 +119,7 @@ public class Configuration {
 		properties.setProperty(ENABLE_COMPRESSION_ON_GENERATED_DATA, "false");
 		properties.setProperty(MAX_UPDATE_RATE_THRESHOLD_OPS, "0.0");
 		properties.setProperty(INTERRUPT_SIGNAL_LOCATION, "");
+		properties.setProperty(BENCHMARK_BY_QUERY_MIX_RUNS, "0");
 	}
 	
 	/**
