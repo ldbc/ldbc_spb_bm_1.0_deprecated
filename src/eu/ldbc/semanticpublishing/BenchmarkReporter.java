@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.ldbc.semanticpublishing.statistics.Statistics;
-import eu.ldbc.semanticpublishing.statistics.querypool.Pool;
 import eu.ldbc.semanticpublishing.util.FileUtils;
 
 /**
@@ -23,7 +22,6 @@ public class BenchmarkReporter extends Thread {
 	private final AtomicBoolean benchmarkResultIsValid;
 	private final AtomicBoolean maxUpdateRateReached;	
 	private final double maxUpdateRateThresholdOps;
-	private final Pool queryMixPool;
 	private double minUpdateRateThresholdOps;	
 	private double updateRateReachTimePercent;
 	private boolean verbose;
@@ -62,7 +60,6 @@ public class BenchmarkReporter extends Thread {
 		this.maxUpdateRateThresholdOps = maxUpdateRateThresholdOps;
 		this.maxUpdateRateReached = maxUpdateRateReached;
 		this.initializedCount = 0;
-		this.queryMixPool = new Pool(queryPoolsDefinitons, Statistics.totalStartedQueryMixRuns, Statistics.totalCompletedQueryMixRuns);//pool used here for producing statistics only
 		this.interruptSignalFilePath = interruptSignalFilePath;
 	}
 	
@@ -110,9 +107,9 @@ public class BenchmarkReporter extends Thread {
 			sb.append("\nSeconds : " + seconds);
 		} else {
 			if (benchmarkByQueryMixRuns > 0) {
-				sb.append("\nQueryMix runs : " + totalCompletedQueryMixRuns.get() + " (seconds : " + seconds + ")");
+				sb.append("\nQuery-mix runs : " + totalCompletedQueryMixRuns.get() + " (Time : " + seconds + " seconds)");
 			} else {
-				sb.append("\nQuery executions : " + totalQueryExecutions.get() + " (seconds : " + seconds + ")");
+				sb.append("\nQuery runs : " + totalQueryExecutions.get() + " (Time : " + seconds + " seconds)");
 			}
 		}
 		sb.append("\n");
@@ -155,13 +152,6 @@ public class BenchmarkReporter extends Thread {
 																											   				  Statistics.aggregateQueriesArray[i].getMaxExecutionTimeMs(), 
 																											   				  Statistics.aggregateQueriesArray[i].getFailuresCount()));
 			}
-			
-			if (queryMixPool.getItemsCount() > 0) {
-				sb.append("\n");
-				sb.append("\t\t");
-				sb.append(queryMixPool.produceStatistics(seconds, Statistics.timeCorrectionsMS.get()));
-			}
-			sb.append("\n");
 			
 			sb.append(String.format("\n\t\t%d total retrieval queries (%d timed-out)\n", totalAggregateOpsCount, failedTotalAggregateOpsCount));
 		} else {
