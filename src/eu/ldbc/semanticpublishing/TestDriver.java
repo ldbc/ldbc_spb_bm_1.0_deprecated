@@ -207,10 +207,16 @@ public class TestDriver {
 			}
 		}
 
-		//retrieve the greatest id of creative works from database
-		CreativeWorksAnalyzer cwk = new CreativeWorksAnalyzer(queryExecuteManager, mustacheTemplatesHolder);
-		long count = cwk.getResult();		
-		DataManager.creativeWorksNextId.set(count);
+		//retrieve the greatest id of creative works from database if not set explicitly in test.properties
+		long creativeWorksCount = configuration.getLong(Configuration.CREATIVE_WORK_NEXT_ID);
+		if (creativeWorksCount > 0) {
+			DataManager.creativeWorksNextId.set(creativeWorksCount);
+			System.out.println("\tNext id for Creative Works : " + creativeWorksCount);
+		} else {		
+			CreativeWorksAnalyzer cwk = new CreativeWorksAnalyzer(queryExecuteManager, mustacheTemplatesHolder);
+			creativeWorksCount = cwk.getResult();		
+			DataManager.creativeWorksNextId.set(creativeWorksCount);
+		}
 		
 		//retrieve geonames IDs from database
 		GeonamesAnalyzer gna = new GeonamesAnalyzer(queryExecuteManager, mustacheTemplatesHolder);
@@ -230,7 +236,7 @@ public class TestDriver {
 		}
 		
 		if (configuration.getBoolean(Configuration.VERBOSE) && showDetails) {
-			System.out.println(messagePrefix + "\t(reference data entities size : " + entitiesList.size() + ", max Creative Work id : " + count + ", geonames entities size : " + geonamesIds.size() + ")");
+			System.out.println(messagePrefix + "\t(reference data entities size : " + entitiesList.size() + ", greatest Creative Work id : " + creativeWorksCount + ", geonames entities size : " + geonamesIds.size() + ")");
 		}
 	}
 	
@@ -277,10 +283,10 @@ public class TestDriver {
 			}
 			
 			//if configuration property creativeWorkNextId > 0, use that value for next generated Creative Work. 
-			//Use-case : starting data generator in several jvms to generate in parallel
+			//Use-case : starting data generator in several JVMs to generate data in parallel
 			if (configuration.getLong(Configuration.CREATIVE_WORK_NEXT_ID) > 0) {
 				DataManager.creativeWorksNextId.set(configuration.getLong(Configuration.CREATIVE_WORK_NEXT_ID));
-				System.out.println("\tData generation will start with next Creative Work id : " + DataManager.creativeWorksNextId.get() + 1);
+				System.out.println("\tData generation will start with next Creative Work id : " + DataManager.creativeWorksNextId.get());
 			}
 			
 			long triplesPerFile = configuration.getLong(Configuration.GENERATED_TRIPLES_PER_FILE);
