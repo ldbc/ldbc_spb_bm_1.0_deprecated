@@ -68,7 +68,7 @@ java -jar semantic_publishing_benchmark-*.jar test.properties
 ```
 *Note: appropriate value for java maximum heap size may be required, e.g. -Xmx8G*
 
-###Results
+###Benchmark Results
 Logging details can be controlled by a configuration file: log4j.xml saved in the distributed benchmark driver (semantic_publishing_benchmark.jar). After modifying log4j.xml, benchmark driver must be updated with contents of the new xml file.
 Results of the benchmark are saved to three types of log files :
 
