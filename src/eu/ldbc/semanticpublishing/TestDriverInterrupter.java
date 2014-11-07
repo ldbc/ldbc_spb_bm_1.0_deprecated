@@ -35,7 +35,7 @@ public class TestDriverInterrupter extends Thread {
 				if (!interruptSignalFilePath.trim().isEmpty()) {
 					if (FileUtils.fileExists(interruptSignalFilePath + File.separator + BENCHMARK_INTERRUPT_SIGNAL)) {
 						benchmarkState.set(false);
-						System.out.println("Interrupt signal has been received (" + interruptSignalFilePath + "), stopping the benchmark run...");
+						System.out.println("\t*** Interrupt signal has been received (" + interruptSignalFilePath + "), stopping the benchmark run...");
 						parentThread.interrupt();
 						return;
 					}
