@@ -64,7 +64,7 @@
   </logger>  
 
   <!-- LOGGERS RESULT -->
-  <logger name="eu.ldbc.semanticpublishing.BenchmarkReporter" additivity="false">  
+  <logger name="eu.ldbc.semanticpublishing.TestDriverReporter" additivity="false">  
     <param name="level" value="INFO"/>  
     <appender-ref ref="results.file.appender"/>
   </logger>  

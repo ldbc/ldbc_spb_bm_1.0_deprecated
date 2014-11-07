@@ -10,13 +10,15 @@ import eu.ldbc.semanticpublishing.statistics.Statistics;
  * availability status of all other items is tested, and if all items are 'unavailable', their status is reset to 'available'.
  */
 public class Pool {
-	private int unavailableItemsCount = 0;
-	private ArrayList<PoolItem> items = new ArrayList<PoolItem>();
+	private int unavailableItemsCount;
+	private ArrayList<PoolItem> items;
 	private boolean inProgress;
 	private final AtomicLong totalStartsCount;
 	private final AtomicLong totalResetsCount;
 	
 	public Pool(String poolDefinition, AtomicLong totalStartsCount, AtomicLong totalResetsCount) {
+		this.unavailableItemsCount = 0;
+		this.items = new ArrayList<PoolItem>();
 		this.inProgress = false;
 		this.totalStartsCount = totalStartsCount;
 		this.totalResetsCount = totalResetsCount;

@@ -1,6 +1,5 @@
 package eu.ldbc.semanticpublishing;
 
-import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -8,40 +7,33 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.ldbc.semanticpublishing.statistics.Statistics;
-import eu.ldbc.semanticpublishing.util.FileUtils;
 
 /**
  * This class is used to produce a result summary for the benchmark. The thread is scheduled to start at a fixed
  * rate of one second. Results are printed to console and log file.
  */
-public class BenchmarkReporter extends Thread {
+public class TestDriverReporter extends Thread {
 	private final AtomicLong totalQueryExecutions;
 	private final AtomicLong totalCompletedQueryMixRuns;
 	private final AtomicBoolean benchmarkState;
 	private final AtomicBoolean keepAlive;
 	private final AtomicBoolean benchmarkResultIsValid;
-	private final AtomicBoolean maxUpdateRateReached;	
+	private final AtomicBoolean maxUpdateRateReached;
+	private final String queryPoolsDefinitions;
 	private final double maxUpdateRateThresholdOps;
 	private double minUpdateRateThresholdOps;	
 	private double updateRateReachTimePercent;
 	private boolean verbose;
 	private long seconds;
 	private long runPeriodSeconds;
-	private long benchmarkByQueryRuns;
-	private long benchmarkByQueryMixRuns;	
 	private int minUpdateRatePassesCount;
 	private int aggregationAgentsCount;
 	private int editorialAgentsCount;
 	private int initializedCount;
-	private String interruptSignalFilePath;
-	private Thread parentThread;
 	
-	private final static Logger LOGGER = LoggerFactory.getLogger(BenchmarkReporter.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(TestDriverReporter.class.getName());
 	
-	protected final static String BENCHMARK_INTERRUPT_SIGNAL = "benchmark_run_completed";
-	
-	public BenchmarkReporter(Thread parentThread, AtomicLong totalQueryExecutions, AtomicLong totalCompletedQueryMixRuns, AtomicBoolean benchmarkState, AtomicBoolean keepAlive, AtomicBoolean benchmarkResultIsValid, double updateQueryRateFirstReachTimePercent, double minUpdateQueriesRateThresholdOps, double maxUpdateRateThresholdOps, AtomicBoolean maxUpdateRateReached, int editorialAgentsCount, int aggregationAgentsCount, long runPeriodSeconds, long benchmarkByQueryMixRuns, long benchmarkByQueryRuns, String queryPoolsDefinitons, String interruptSignalFilePath, boolean verbose) {
-		this.parentThread = parentThread;
+	public TestDriverReporter(AtomicLong totalQueryExecutions, AtomicLong totalCompletedQueryMixRuns, AtomicBoolean benchmarkState, AtomicBoolean keepAlive, AtomicBoolean benchmarkResultIsValid, double updateQueryRateFirstReachTimePercent, double minUpdateQueriesRateThresholdOps, double maxUpdateRateThresholdOps, AtomicBoolean maxUpdateRateReached, int editorialAgentsCount, int aggregationAgentsCount, long runPeriodSeconds, /*long benchmarkByQueryMixRuns, long benchmarkByQueryRuns, */String queryPoolsDefinitons, boolean verbose) {
 		this.totalQueryExecutions = totalQueryExecutions;
 		this.totalCompletedQueryMixRuns = totalCompletedQueryMixRuns;
 		this.benchmarkState = benchmarkState;
@@ -50,8 +42,6 @@ public class BenchmarkReporter extends Thread {
 		this.updateRateReachTimePercent = updateQueryRateFirstReachTimePercent;
 		this.seconds = 0;
 		this.runPeriodSeconds = runPeriodSeconds;
-		this.benchmarkByQueryMixRuns = benchmarkByQueryMixRuns;
-		this.benchmarkByQueryRuns = benchmarkByQueryRuns;
 		this.verbose = verbose;
 		this.aggregationAgentsCount = aggregationAgentsCount;
 		this.editorialAgentsCount = editorialAgentsCount;
@@ -60,7 +50,7 @@ public class BenchmarkReporter extends Thread {
 		this.maxUpdateRateThresholdOps = maxUpdateRateThresholdOps;
 		this.maxUpdateRateReached = maxUpdateRateReached;
 		this.initializedCount = 0;
-		this.interruptSignalFilePath = interruptSignalFilePath;
+		this.queryPoolsDefinitions = queryPoolsDefinitons;
 	}
 	
 	/* (non-Javadoc)
@@ -76,7 +66,7 @@ public class BenchmarkReporter extends Thread {
 			while (benchmarkState.get() || keepAlive.get()) {
 				seconds++;
 				Thread.sleep(Math.abs(1000 - timeCorrection));
-				timeCorrection = collectAndShowResults((benchmarkByQueryRuns == 0) && (benchmarkByQueryMixRuns == 0));
+				timeCorrection = collectAndShowResults(/*(benchmarkByQueryRuns == 0) && (benchmarkByQueryMixRuns == 0)*/);
 			}
 		} catch (Throwable t) {
 			System.out.println("BenchmarkProcessObserver :: encountered a problem : " + t.getMessage());
@@ -88,7 +78,7 @@ public class BenchmarkReporter extends Thread {
 	 * Displays to console and writes to log file a result summary of the benchmark.
 	 * Editorial and Aggregation operations per second.
 	 */
-	private long collectAndShowResults(boolean secondsOrExecutions) {
+	private long collectAndShowResults(/*boolean secondsOrExecutions*/) {
 		long time = System.currentTimeMillis();		
 		StringBuilder sb = new StringBuilder();
 		
@@ -103,15 +93,14 @@ public class BenchmarkReporter extends Thread {
 		long failedTotalAggregateOpsCount = Statistics.totalAggregateQueryStatistics.getFailuresCount();
 		
 		sb.append("\n");
-		if (secondsOrExecutions) {
-			sb.append("\nSeconds : " + seconds);
+		
+		sb.append("\nSeconds : " + seconds);
+		if (!queryPoolsDefinitions.isEmpty()) {
+			sb.append(" (completed query mixes : " + totalCompletedQueryMixRuns.get() + ")");
 		} else {
-			if (benchmarkByQueryMixRuns > 0) {
-				sb.append("\nQuery-mix runs : " + totalCompletedQueryMixRuns.get() + " (Time : " + seconds + " seconds)");
-			} else {
-				sb.append("\nQuery runs : " + totalQueryExecutions.get() + " (Time : " + seconds + " seconds)");
-			}
+			sb.append(" (completed query runs : " + totalQueryExecutions.get() + ")");
 		}
+
 		sb.append("\n");
 		sb.append("\tEditorial:\n");
 		sb.append(String.format("\t\t%s agents\n\n", editorialAgentsCount));
@@ -188,15 +177,7 @@ public class BenchmarkReporter extends Thread {
 		}
 		
 		LOGGER.info(sb.toString());
-		System.out.println(sb.toString());
-		
-		if (!interruptSignalFilePath.trim().isEmpty()) {
-			if (FileUtils.fileExists(interruptSignalFilePath + File.separator + BENCHMARK_INTERRUPT_SIGNAL)) {
-				benchmarkState.set(false);
-				System.out.println("Interrupt signal was received (" + interruptSignalFilePath + "), stop the benchmark run...");
-				parentThread.interrupt();
-			}
-		}		
+		System.out.println(sb.toString());	
 		
 		return (System.currentTimeMillis() - time);		
 	}	

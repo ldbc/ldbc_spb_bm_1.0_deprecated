@@ -67,7 +67,7 @@ public class TestDriver {
 	private final ValidationValuesManager validationValuesManager = new ValidationValuesManager();
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(TestDriver.class.getName());
-	private final static Logger RLOGGER = LoggerFactory.getLogger(BenchmarkReporter.class.getName());
+	private final static Logger RLOGGER = LoggerFactory.getLogger(TestDriverReporter.class.getName());
 	
 	public TestDriver(String[] args) throws IOException {
 		
@@ -101,10 +101,7 @@ public class TestDriver {
 				configuration.getBoolean(Configuration.VERBOSE));
 			
 		//set the nextId for Creative Works, default 0
-		DataManager.creativeWorksNextId.set(configuration.getLong(Configuration.CREATIVE_WORK_NEXT_ID));
-		
-		//clear traces from previous runs
-		FileUtils.deleteFile(BenchmarkReporter.BENCHMARK_INTERRUPT_SIGNAL);
+		DataManager.creativeWorksNextId.set(configuration.getLong(Configuration.CREATIVE_WORK_NEXT_ID));		
 	}
 	
 	public SparqlQueryExecuteManager getQueryExecuteManager() { 
@@ -431,6 +428,16 @@ public class TestDriver {
 	
 	private void warmUp(boolean enable) throws IOException {
 		if (enable) {
+			if (configuration.getBoolean(Configuration.RUN_BENCHMARK) || configuration.getBoolean(Configuration.RUN_BENCHMARK_ONLINE_REPlICATION_AND_BACKUP)) {
+				System.out.println("Error : warm-up action should be run independently of the benchmark run, exit...");
+				System.exit(-1);
+			}			
+
+			if (configuration.getBoolean(Configuration.RUN_BENCHMARK_ONLINE_REPlICATION_AND_BACKUP)) {
+				System.out.println("Error : runBenchmark and runBenchmarkWithOnlineReplication phases are both enabled, disable one first!");
+				System.exit(-1);
+			}			
+
 			//assuming that if regularEntitiesList is empty, no entity lists were populated
 			if (DataManager.regularEntitiesList.size() == 0) {
 				populateRefDataEntitiesLists(true, true, false, "");
@@ -456,15 +463,11 @@ public class TestDriver {
 	}
 	
 	private void benchmark(boolean enable, long benchmarkByQueryMixRuns, long benchmarkByQueryRuns, double mileStonePosition) throws IOException {
-		if (enable) {
-			//assuming that if regularEntitiesList is empty, no entity lists were populated
-			if (DataManager.regularEntitiesList.size() == 0 || DataManager.correlatedEntitiesList.size() == 0) {
-				populateRefDataEntitiesLists(true, true, false, "");
-				if (DataManager.creativeWorksNextId.get() == 0) {
-					System.err.println("Warning : no Creative Works were found stored in the database, initialize it with ontologies and reference and generated data first! Exiting.");
-					System.exit(-1);
-				}
-			}
+		if (enable) {					
+			if (configuration.getBoolean(Configuration.WARM_UP)) {
+				System.out.println("Error : benchmark action should be run independently of the warm-up, exit...");
+				System.exit(-1);
+			}			
 			
 			if (configuration.getBoolean(Configuration.RUN_BENCHMARK_ONLINE_REPlICATION_AND_BACKUP)) {
 				System.out.println("Error : runBenchmark and runBenchmarkWithOnlineReplication phases are both enabled, disable one first!");
@@ -479,6 +482,15 @@ public class TestDriver {
 			if (benchmarkByQueryRuns > 0 && aggregationAgentsCount <= 0) {
 				System.out.println(String.format("Error : aggregation agents amount : %d is not acceptable for execution of the benchmark in that mode, exiting...", aggregationAgentsCount));
 				System.exit(-1);
+			}
+			
+			//assuming that if regularEntitiesList is empty, no entity lists were populated
+			if (DataManager.regularEntitiesList.size() == 0 || DataManager.correlatedEntitiesList.size() == 0) {
+				populateRefDataEntitiesLists(true, true, false, "");
+				if (DataManager.creativeWorksNextId.get() == 0) {
+					System.err.println("Warning : no Creative Works were found stored in the database, initialize it with ontologies and reference and generated data first! Exiting.");
+					System.exit(-1);
+				}
 			}
 			
 			String message;
@@ -510,24 +522,24 @@ public class TestDriver {
 				agent.start();
 			}
 
-			Thread observerThread = new BenchmarkReporter(Thread.currentThread(),
-																 Statistics.totalAggregateQueryStatistics.getRunsCountAtomicLong(),
-																 Statistics.totalCompletedQueryMixRuns,
-													   		     inBenchmarkState, 
-													   		     keepObserverAlive,
-													   		     benchmarkResultIsValid,
-													   		     configuration.getDouble(Configuration.MIN_UPDATE_RATE_THRESHOLD_REACH_TIME_PERCENT),
-													   		     configuration.getDouble(Configuration.MIN_UPDATE_RATE_THRESHOLD_OPS),
-																 configuration.getDouble(Configuration.MAX_UPDATE_RATE_THRESHOLD_OPS),
-																 maxUpdateRateReached, 
-																 configuration.getInt(Configuration.EDITORIAL_AGENTS_COUNT),																				
-																 configuration.getInt(Configuration.AGGREGATION_AGENTS_COUNT), 
-																 configuration.getLong(Configuration.BENCHMARK_RUN_PERIOD_SECONDS),
-																 benchmarkByQueryMixRuns,
-																 benchmarkByQueryRuns, 
-																 definitions.getString(Definitions.QUERY_POOLS),
-																 configuration.getString(Configuration.INTERRUPT_SIGNAL_LOCATION),
-																 configuration.getBoolean(Configuration.VERBOSE));
+			Thread interrupterThread = new TestDriverInterrupter(Thread.currentThread(), inBenchmarkState, configuration.getString(Configuration.INTERRUPT_SIGNAL_LOCATION));
+			interrupterThread.setDaemon(true);
+			interrupterThread.start();
+			
+			Thread observerThread = new TestDriverReporter(Statistics.totalAggregateQueryStatistics.getRunsCountAtomicLong(),
+														   Statistics.totalCompletedQueryMixRuns,
+													       inBenchmarkState, 
+													       keepObserverAlive,
+													       benchmarkResultIsValid,
+													       configuration.getDouble(Configuration.MIN_UPDATE_RATE_THRESHOLD_REACH_TIME_PERCENT),
+													       configuration.getDouble(Configuration.MIN_UPDATE_RATE_THRESHOLD_OPS),
+														   configuration.getDouble(Configuration.MAX_UPDATE_RATE_THRESHOLD_OPS),
+													       maxUpdateRateReached, 
+													       configuration.getInt(Configuration.EDITORIAL_AGENTS_COUNT),																				
+														   configuration.getInt(Configuration.AGGREGATION_AGENTS_COUNT), 
+													       configuration.getLong(Configuration.BENCHMARK_RUN_PERIOD_SECONDS),
+														   definitions.getString(Definitions.QUERY_POOLS),
+														   configuration.getBoolean(Configuration.VERBOSE));
 			observerThread.start();
 			
 			if (benchmarkByQueryMixRuns > 0) {
@@ -557,7 +569,7 @@ public class TestDriver {
 			}
 			
 			//create an empty file for signaling other drivers (if any) that the benchmark has completed 
-			FileUtils.writeToTextFile(BenchmarkReporter.BENCHMARK_INTERRUPT_SIGNAL, "");				
+			FileUtils.writeToTextFile(TestDriverInterrupter.BENCHMARK_INTERRUPT_SIGNAL, "");				
 			
 			message = "Stopping the benchmark...";
 			System.out.println(message);
@@ -577,15 +589,11 @@ public class TestDriver {
 	 */
 	private void benchmarkOnlineReplicationAndBackup(boolean enable, long benchmarkByQuryMixRuns, long benchmarkByQueryRuns, double milestonePosition) throws IOException, InterruptedException {
 		if (enable) {
-			//assuming that if regularEntitiesList is empty, no entity lists were populated
-			if (DataManager.regularEntitiesList.size() == 0 || DataManager.correlatedEntitiesList.size() == 0) {
-				populateRefDataEntitiesLists(true, true, false, "");
-				if (DataManager.creativeWorksNextId.get() == 0) {
-					System.err.println("Warning : no Creative Works were found stored in the database, initialize it with ontologies and reference and generated data first! Exiting.");
-					System.exit(-1);
-				}
-			}
-
+			if (configuration.getBoolean(Configuration.WARM_UP)) {
+				System.out.println("Error : benchmark action should be run independently of the warm-up, exit...");
+				System.exit(-1);
+			}			
+			
 			if (configuration.getBoolean(Configuration.RUN_BENCHMARK)) {
 				System.out.println("Error : runBenchmark and runBenchmarkWithOnlineReplication phases are both enabled, disable one first!");
 				System.exit(-1);
@@ -600,6 +608,15 @@ public class TestDriver {
 				System.out.println(String.format("Error : aggregation agents amount : %d is not acceptable for execution of the benchmark in that mode, exiting...", aggregationAgentsCount));
 				System.exit(-1);
 			}
+			
+			//assuming that if regularEntitiesList is empty, no entity lists were populated
+			if (DataManager.regularEntitiesList.size() == 0 || DataManager.correlatedEntitiesList.size() == 0) {
+				populateRefDataEntitiesLists(true, true, false, "");
+				if (DataManager.creativeWorksNextId.get() == 0) {
+					System.err.println("Warning : no Creative Works were found stored in the database, initialize it with ontologies and reference and generated data first! Exiting.");
+					System.exit(-1);
+				}
+			}			
 			
 			String message;
 			
@@ -631,24 +648,24 @@ public class TestDriver {
 				agent.start();
 			}
 			
-			Thread observerThread = new BenchmarkReporter(Thread.currentThread(),
-																 Statistics.totalAggregateQueryStatistics.getRunsCountAtomicLong(), 
-																 Statistics.totalCompletedQueryMixRuns,
-													   		     inBenchmarkState,
-													   		     keepObserverAlive, 
-													   		     benchmarkResultIsValid,
-													   		     configuration.getDouble(Configuration.MIN_UPDATE_RATE_THRESHOLD_REACH_TIME_PERCENT),
-													   		     0.0,		
-																 configuration.getDouble(Configuration.MAX_UPDATE_RATE_THRESHOLD_OPS),
-																 maxUpdateRateReached, 
-																 configuration.getInt(Configuration.EDITORIAL_AGENTS_COUNT),																				
-																 configuration.getInt(Configuration.AGGREGATION_AGENTS_COUNT), 
-																 configuration.getLong(Configuration.BENCHMARK_RUN_PERIOD_SECONDS),
-																 0 /*benchmarkByQuryRuns*/,  
-																 benchmarkByQueryRuns, 
-																 definitions.getString(Definitions.QUERY_POOLS),
-																 configuration.getString(Configuration.INTERRUPT_SIGNAL_LOCATION), 
-																 configuration.getBoolean(Configuration.VERBOSE));
+			Thread interrupterThread = new TestDriverInterrupter(Thread.currentThread(), inBenchmarkState, configuration.getString(Configuration.INTERRUPT_SIGNAL_LOCATION));
+			interrupterThread.setDaemon(true);
+			interrupterThread.start();
+			
+			Thread observerThread = new TestDriverReporter(Statistics.totalAggregateQueryStatistics.getRunsCountAtomicLong(), 
+														   Statistics.totalCompletedQueryMixRuns,
+													       inBenchmarkState,
+													       keepObserverAlive, 
+													       benchmarkResultIsValid,
+													       configuration.getDouble(Configuration.MIN_UPDATE_RATE_THRESHOLD_REACH_TIME_PERCENT),
+													       0.0,		
+														   configuration.getDouble(Configuration.MAX_UPDATE_RATE_THRESHOLD_OPS),
+														   maxUpdateRateReached, 
+														   configuration.getInt(Configuration.EDITORIAL_AGENTS_COUNT),																				
+														   configuration.getInt(Configuration.AGGREGATION_AGENTS_COUNT), 
+														   configuration.getLong(Configuration.BENCHMARK_RUN_PERIOD_SECONDS),
+													       definitions.getString(Definitions.QUERY_POOLS), 
+														   configuration.getBoolean(Configuration.VERBOSE));
 			observerThread.start();
 			
 			String[] milestoneSubstitutionParameters = null;

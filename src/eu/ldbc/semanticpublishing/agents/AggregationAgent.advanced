@@ -43,7 +43,7 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 	private final AtomicBoolean benchmarkingState;
 	private final HashMap<String, String> queryTemplates;
 	private final Pool queryMixPool;
-	private final long queryMixRunsLimit;
+	private final long benchmarkByQueryMixRuns;
 	private SparqlQueryConnection connection;
 	private Definitions definitions;
 	private SubstitutionQueryParametersManager substitutionQueryParametersMngr;
@@ -55,7 +55,7 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 	private final static int MAX_DRILL_DOWN_ITERATIONS = 5;
 	private final static int MAX_FACETED_SEARCH_ITERATIONS = 5;
 	
-	public AggregationAgent(AtomicBoolean benchmarkingState, SparqlQueryExecuteManager queryExecuteManager, RandomUtil ru, AtomicBoolean runFlag, HashMap<String, String> queryTamplates, Definitions definitions, SubstitutionQueryParametersManager substitutionQueryParametersMngr, long queryMixRunsLimit) {
+	public AggregationAgent(AtomicBoolean benchmarkingState, SparqlQueryExecuteManager queryExecuteManager, RandomUtil ru, AtomicBoolean runFlag, HashMap<String, String> queryTamplates, Definitions definitions, SubstitutionQueryParametersManager substitutionQueryParametersMngr, long benchmarkByQueryMixRuns) {
 		super(runFlag);
 		this.queryExecuteManager = queryExecuteManager;
 		this.ru = ru;
@@ -67,7 +67,7 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 		this.rdfxmlResultStatementsCounter = new RDFXMLResultStatementsCounter();
 		this.sparqlResultStatementsCounter = new SPARQLResultStatementsCounter();
 		this.queryMixPool = new Pool(definitions.getString(Definitions.QUERY_POOLS), Statistics.totalStartedQueryMixRuns, Statistics.totalCompletedQueryMixRuns);
-		this.queryMixRunsLimit = queryMixRunsLimit;
+		this.benchmarkByQueryMixRuns = benchmarkByQueryMixRuns;
 	}
 	
 	@Override
@@ -75,8 +75,8 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 		//retrieve next query to be executed from the aggregation query mix
 		int aggregateQueryIndex = Definitions.aggregationOperationsAllocation.getAllocation();
 		
-		if (this.benchmarkingState.get() && queryMixRunsLimit > 0) {
-            if (!queryMixPool.getInProgress() && Statistics.totalStartedQueryMixRuns.get() >= queryMixRunsLimit) {
+		if (queryMixPool.getItemsCount() > 0) {
+            if (benchmarkByQueryMixRuns > 0 && !queryMixPool.getInProgress() && Statistics.totalStartedQueryMixRuns.get() >= benchmarkByQueryMixRuns) {
                 return true;
             }
 		
@@ -246,9 +246,7 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 			connection = new SparqlQueryConnection(queryExecuteManager.getEndpointUrl(), queryExecuteManager.getEndpointUpdateUrl(), queryExecuteManager.getTimeoutMilliseconds(), true);
 		}
 		
-		if (this.benchmarkingState.get()) {
-            queryMixPool.releaseUnavailableItem(aggregateQueryIndex + 1);
-        }
+		queryMixPool.releaseUnavailableItem(aggregateQueryIndex + 1);
 		
 		return true;
 	}

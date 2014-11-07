@@ -91,7 +91,8 @@ How to run the benchmark :
      - Load Generated Data - *Generate Data*, enable phase : loadCreativeWorks (generated data can also be loaded manually from folder 'creativeWorksPath/' if database doesn't support automatic loading)
      - Generate Query Substitution Parameters - *Generate Data* and *Load Generated Data*, enable phase : generateQuerySubstitutionParameters
      - Validate Query Results - to be executed on an empty database, enable phases : loadOntologies, loadDatasets
-     - Run The Benchmark - *Generate Data*, *Load Generated Data*, *Generate Query Substitution Parameters*, enable phases : warmUp, runBenchmark
+     - Warm-up - *Generate Data*, *Load Generated Data*, *Generate Query Substitution Parameters*, enable phases : warmUp
+     - Run The Benchmark - *Generate Data*, *Load Generated Data*, *Generate Query Substitution Parameters*, enable phases : runBenchmark
      - Run Online Replication and Backup Benchmark - *Generate Data*, *Load Generated Data*, *Generate Query Substitution Parameters*, enable phase : runBenchmarkOnlineReplicationAndBackup. Also make a full backup prior to running the benchmark for later restore point and implement all scripts in folder 'data/enterprise/scripts/' specific to each database.
      - Check Conformance to OWL2-RL Rule-Set - to be executed on an empty database with OWL2-RL rule-set, enable phase : loadOntologies. No data generation or loading is required.    
   
