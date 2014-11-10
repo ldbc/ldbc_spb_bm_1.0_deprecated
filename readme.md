@@ -19,16 +19,16 @@ Aggregation operations consist of a wide range of queries, e.g. _search, aggrega
 Apache Ant build tool is required.
 
 ```
-#to build a standard version of the benchmark, compliant to SPARQL 1.1 standard
+# build a standard version of the benchmark, compliant to SPARQL 1.1 standard
 $ ant build-basic-querymix
 
-#to build a standard version of the benchmark, compliant to SPARQL 1.1 standard with extended query mix
+# build a standard version of the benchmark, compliant to SPARQL 1.1 standard with extended query mix
 $ ant build-advanced-querymix
 
-#to build a version of the benchmark customized for Virtuoso Database
+# build a version of the benchmark customized for Virtuoso Database
 $ ant build-basic-querymix-virtuoso
 
-#to build a version of the benchmark customized for Virtuoso Database with extended query mix
+# build a version of the benchmark customized for Virtuoso Database with extended query mix
 $ ant build-advanced-querymix-virtuoso
 ```
 
