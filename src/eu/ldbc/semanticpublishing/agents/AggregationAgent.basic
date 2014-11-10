@@ -155,8 +155,8 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 		}
 
 		if (startedDuringBenchmarkPhase) {
-        		queryMixPool.releaseUnavailableItem(aggregateQueryIndex + 1);
-        	}
+        	queryMixPool.releaseUnavailableItem(aggregateQueryIndex + 1);
+        }
 		
 		return true;
 	}
