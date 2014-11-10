@@ -3,8 +3,6 @@ package eu.ldbc.semanticpublishing.statistics.querypool;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 
-import eu.ldbc.semanticpublishing.statistics.Statistics;
-
 /**
  * A class storing collection of items. On each invocation of setItemUnavailable() for a specific item,
  * availability status of all other items is tested, and if all items are 'unavailable', their status is reset to 'available'.
@@ -195,34 +193,6 @@ public class Pool {
 	
 	public boolean getInProgress() {
 		return inProgress;
-	}
-	
-	public String produceStatistics(long timeSeconds, long timeCorrectionsMS) {
-		long totalPoolOperationsCount = 0;
-		StringBuilder sb = new StringBuilder();
-		
-		for (int i = 0; i < items.size(); i++) {
-			totalPoolOperationsCount += Statistics.aggregateQueriesArray[items.get(i).getId() - 1].getRunsCount();
-		}
-		
-		double averageQueriesPerSecond = (double)totalPoolOperationsCount / ((double)timeSeconds - (double)(timeCorrectionsMS / 1000));
-		if ((double)(Statistics.timeCorrectionsMS.get() / 1000) >= (double)timeSeconds) {
-			averageQueriesPerSecond = (double)totalPoolOperationsCount / ((double)timeSeconds);
-		}
-		
-		sb.append(String.format("%.4f average queries per second.", averageQueriesPerSecond));
-		
-		sb.append(" Query Mix [ ");
-		for (PoolItem item : items) {
-			sb.append("Q");
-			sb.append(item.getId());
-			sb.append(" ");
-		}
-		sb.append("]");
-		sb.append(", ");
-		sb.append(String.format("executions : %d", Statistics.totalCompletedQueryMixRuns.get()));
-		
-		return sb.toString();
 	}
 	
 	public void showPoolItems() {
