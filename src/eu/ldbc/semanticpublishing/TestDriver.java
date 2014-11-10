@@ -428,16 +428,6 @@ public class TestDriver {
 	
 	private void warmUp(boolean enable) throws IOException {
 		if (enable) {
-			if (configuration.getBoolean(Configuration.RUN_BENCHMARK) || configuration.getBoolean(Configuration.RUN_BENCHMARK_ONLINE_REPlICATION_AND_BACKUP)) {
-				System.out.println("Error : warm-up action should be run independently of the benchmark run, exit...");
-				System.exit(-1);
-			}			
-
-			if (configuration.getBoolean(Configuration.RUN_BENCHMARK_ONLINE_REPlICATION_AND_BACKUP)) {
-				System.out.println("Error : runBenchmark and runBenchmarkWithOnlineReplication phases are both enabled, disable one first!");
-				System.exit(-1);
-			}			
-
 			//assuming that if regularEntitiesList is empty, no entity lists were populated
 			if (DataManager.regularEntitiesList.size() == 0) {
 				populateRefDataEntitiesLists(true, true, false, "");
@@ -463,12 +453,7 @@ public class TestDriver {
 	}
 	
 	private void benchmark(boolean enable, long benchmarkByQueryMixRuns, long benchmarkByQueryRuns, double mileStonePosition) throws IOException {
-		if (enable) {					
-			if (configuration.getBoolean(Configuration.WARM_UP)) {
-				System.out.println("Error : benchmark action should be run independently of the warm-up, exit...");
-				System.exit(-1);
-			}			
-			
+		if (enable) {
 			if (configuration.getBoolean(Configuration.RUN_BENCHMARK_ONLINE_REPlICATION_AND_BACKUP)) {
 				System.out.println("Error : runBenchmark and runBenchmarkWithOnlineReplication phases are both enabled, disable one first!");
 				System.exit(-1);
@@ -589,11 +574,6 @@ public class TestDriver {
 	 */
 	private void benchmarkOnlineReplicationAndBackup(boolean enable, long benchmarkByQuryMixRuns, long benchmarkByQueryRuns, double milestonePosition) throws IOException, InterruptedException {
 		if (enable) {
-			if (configuration.getBoolean(Configuration.WARM_UP)) {
-				System.out.println("Error : benchmark action should be run independently of the warm-up, exit...");
-				System.exit(-1);
-			}			
-			
 			if (configuration.getBoolean(Configuration.RUN_BENCHMARK)) {
 				System.out.println("Error : runBenchmark and runBenchmarkWithOnlineReplication phases are both enabled, disable one first!");
 				System.exit(-1);

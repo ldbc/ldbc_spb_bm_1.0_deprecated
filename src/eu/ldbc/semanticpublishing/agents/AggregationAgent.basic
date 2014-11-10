@@ -65,26 +65,27 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 	
 	@Override
 	public boolean executeLoop() {
+		//remember if query was executed before benchmark phase start to skip it later when updating query statistics. No need to do that for Editorial Agents.
+		boolean startedDuringBenchmarkPhase = benchmarkingState.get();
+
 		//retrieve next query to be executed from the aggregation query mix
 		int aggregateQueryIndex = Definitions.aggregationOperationsAllocation.getAllocation();
 		
-		if (queryMixPool.getItemsCount() > 0) {
-            if (benchmarkByQueryMixRuns > 0 && !queryMixPool.getInProgress() && Statistics.totalStartedQueryMixRuns.get() >= benchmarkByQueryMixRuns) {
-                return true;
-            }
+		if (startedDuringBenchmarkPhase && queryMixPool.getItemsCount() > 0) {
+		    if (benchmarkByQueryMixRuns > 0 && !queryMixPool.getInProgress() && Statistics.totalStartedQueryMixRuns.get() >= benchmarkByQueryMixRuns) {
+		        return true;
+		    }
 		
-            //aggregateQueryIndex is ZERO based, while query ids in definitions.properties (parameter queryPools) are not
-            if (!queryMixPool.checkAndSetItemUnavailable(aggregateQueryIndex + 1)) {
-                return true;
-            }		
-        }
+		    //aggregateQueryIndex is ZERO based, while query ids in definitions.properties (parameter queryPools) are not
+		    if (!queryMixPool.checkAndSetItemUnavailable(aggregateQueryIndex + 1)) {
+		        return true;
+		    }		
+		}
 		
 		long queryId = 0;
 		MustacheTemplate aggregateQuery = null;
 		String queryString = "";
 		String queryResult = "";
-		
-		boolean startedDuringBenchmarkPhase = false;
 
 		try {
 //			boolean drillDownQuery = false;
@@ -134,9 +135,6 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 			
 			queryString = aggregateQuery.compileMustacheTemplate();
 			
-			//remember if query was executed before benchmark phase start to skip it later when updating query statistics. No need to do that for Editorial Agents.
-			startedDuringBenchmarkPhase = benchmarkingState.get();
-			
 			long executionTimeMs = System.currentTimeMillis();
 			
 			queryResult = queryExecuteManager.executeQuery(connection, aggregateQuery.getTemplateFileName(), queryString, aggregateQuery.getTemplateQueryType(), true, false);			
@@ -155,8 +153,10 @@ public class AggregationAgent extends AbstractAsynchronousAgent {
 			connection = new SparqlQueryConnection(queryExecuteManager.getEndpointUrl(), queryExecuteManager.getEndpointUpdateUrl(), queryExecuteManager.getTimeoutMilliseconds(), true);
 			
 		}
-		
-        queryMixPool.releaseUnavailableItem(aggregateQueryIndex + 1);
+
+		if (startedDuringBenchmarkPhase) {
+        		queryMixPool.releaseUnavailableItem(aggregateQueryIndex + 1);
+        	}
 		
 		return true;
 	}
