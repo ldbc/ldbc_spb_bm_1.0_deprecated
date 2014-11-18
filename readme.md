@@ -46,6 +46,8 @@ Optionally, additinal reference datasets can be added - they can be dowloaded fr
 
 ###Configure
 
+Various proeprties are used to configure the behaviour of the SPB Test Driver or Data Generator. All properties are saved in files: _test.properties_ and _definitions.properties_. All properties saved to file: _definitions.proeprties_ are not to be modified by the regular benchmark user, their default values have been set.
+
 * ***RDF Repository configuration***
   * Use RDFS rule-set
   * Enable context indexing (if available)
