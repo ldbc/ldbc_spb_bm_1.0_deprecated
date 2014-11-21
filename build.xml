@@ -39,41 +39,41 @@
 	</target>
 	
 	<target name="clear-conformance-queries">
-    <delete>
-      <fileset dir="./data/sparql/conformance/cardinalities/" includes="*.txt"/>
-      <fileset dir="./data/sparql/conformance/disjointness/" includes="*.txt"/>
-      <fileset dir="./data/sparql/conformance/inverseOf/" includes="*.txt"/>
-      <fileset dir="./data/sparql/conformance/keys/" includes="*.txt"/>
-      <fileset dir="./data/sparql/conformance/oneOf/" includes="*.txt"/>
-      <fileset dir="./data/sparql/conformance/pchain/" includes="*.txt"/>
-      <fileset dir="./data/sparql/conformance/property-constraints/" includes="*.txt"/>
-      <fileset dir="./data/sparql/conformance/rng-dom/" includes="*.txt"/>
-      <fileset dir="./data/sparql/conformance/same-as/" includes="*.txt"/>
-      <fileset dir="./data/sparql/conformance/subsumption/" includes="*.txt"/>
-      <fileset dir="./data/sparql/conformance/uni-int/" includes="*.txt"/>
-		</delete>
+        <delete>
+            <fileset dir="./data/sparql/conformance/cardinalities/" includes="*.txt"/>
+            <fileset dir="./data/sparql/conformance/disjointness/" includes="*.txt"/>
+            <fileset dir="./data/sparql/conformance/inverseOf/" includes="*.txt"/>
+            <fileset dir="./data/sparql/conformance/keys/" includes="*.txt"/>
+            <fileset dir="./data/sparql/conformance/oneOf/" includes="*.txt"/>
+            <fileset dir="./data/sparql/conformance/pchain/" includes="*.txt"/>
+            <fileset dir="./data/sparql/conformance/property-constraints/" includes="*.txt"/>
+            <fileset dir="./data/sparql/conformance/rng-dom/" includes="*.txt"/>
+            <fileset dir="./data/sparql/conformance/same-as/" includes="*.txt"/>
+            <fileset dir="./data/sparql/conformance/subsumption/" includes="*.txt"/>
+            <fileset dir="./data/sparql/conformance/uni-int/" includes="*.txt"/>
+        </delete>
 	</target>
 	
 	<target name="unzip-conformance-queries">
-    <unzip src="./data/sparql/conformance/cardinalities/${conformance_archive_name}.zip" dest="./data/sparql/conformance/cardinalities/"/>
-    <unzip src="./data/sparql/conformance/disjointness/${conformance_archive_name}.zip" dest="./data/sparql/conformance/disjointness/"/>
-    <unzip src="./data/sparql/conformance/inverseOf/${conformance_archive_name}.zip" dest="./data/sparql/conformance/inverseOf/"/>
-    <unzip src="./data/sparql/conformance/keys/${conformance_archive_name}.zip" dest="./data/sparql/conformance/keys/"/>
-    <unzip src="./data/sparql/conformance/oneOf/${conformance_archive_name}.zip" dest="./data/sparql/conformance/oneOf/"/>
-    <unzip src="./data/sparql/conformance/pchain/${conformance_archive_name}.zip" dest="./data/sparql/conformance/pchain/"/>
-    <unzip src="./data/sparql/conformance/property-constraints/${conformance_archive_name}.zip" dest="./data/sparql/conformance/property-constraints/"/>
-    <unzip src="./data/sparql/conformance/rng-dom/${conformance_archive_name}.zip" dest="./data/sparql/conformance/rng-dom/"/>
-    <unzip src="./data/sparql/conformance/same-as/${conformance_archive_name}.zip" dest="./data/sparql/conformance/same-as/"/>
-    <unzip src="./data/sparql/conformance/subsumption/${conformance_archive_name}.zip" dest="./data/sparql/conformance/subsumption/"/>
-    <unzip src="./data/sparql/conformance/uni-int/${conformance_archive_name}.zip" dest="./data/sparql/conformance/uni-int/"/>
+        <unzip src="./data/sparql/conformance/cardinalities/${conformance_archive_name}.zip" dest="./data/sparql/conformance/cardinalities/"/>
+        <unzip src="./data/sparql/conformance/disjointness/${conformance_archive_name}.zip" dest="./data/sparql/conformance/disjointness/"/>
+        <unzip src="./data/sparql/conformance/inverseOf/${conformance_archive_name}.zip" dest="./data/sparql/conformance/inverseOf/"/>
+        <unzip src="./data/sparql/conformance/keys/${conformance_archive_name}.zip" dest="./data/sparql/conformance/keys/"/>
+        <unzip src="./data/sparql/conformance/oneOf/${conformance_archive_name}.zip" dest="./data/sparql/conformance/oneOf/"/>
+        <unzip src="./data/sparql/conformance/pchain/${conformance_archive_name}.zip" dest="./data/sparql/conformance/pchain/"/>
+        <unzip src="./data/sparql/conformance/property-constraints/${conformance_archive_name}.zip" dest="./data/sparql/conformance/property-constraints/"/>
+        <unzip src="./data/sparql/conformance/rng-dom/${conformance_archive_name}.zip" dest="./data/sparql/conformance/rng-dom/"/>
+        <unzip src="./data/sparql/conformance/same-as/${conformance_archive_name}.zip" dest="./data/sparql/conformance/same-as/"/>
+        <unzip src="./data/sparql/conformance/subsumption/${conformance_archive_name}.zip" dest="./data/sparql/conformance/subsumption/"/>
+        <unzip src="./data/sparql/conformance/uni-int/${conformance_archive_name}.zip" dest="./data/sparql/conformance/uni-int/"/>
 	</target>
 	
-  <target name="setup-query-mix">
+    <target name="setup-querymix">
 		<delete file="${dir.src}/eu/ldbc/semanticpublishing/agents/AggregationAgent.java"/>
-		<copy file="${dir.src}/eu/ldbc/semanticpublishing/agents/AggregationAgent.${query_mix}" tofile="${dir.src}/eu/ldbc/semanticpublishing/agents/AggregationAgent.java"/>
+		<copy file="${dir.src}/eu/ldbc/semanticpublishing/agents/AggregationAgent.${querymix}" tofile="${dir.src}/eu/ldbc/semanticpublishing/agents/AggregationAgent.java"/>
 		
 		<delete file="${dir.src}/eu/ldbc/semanticpublishing/statistics/Statistics.java"/>
-		<copy file="${dir.src}/eu/ldbc/semanticpublishing/statistics/Statistics.${query_mix}" tofile="${dir.src}/eu/ldbc/semanticpublishing/statistics/Statistics.java"/>
+		<copy file="${dir.src}/eu/ldbc/semanticpublishing/statistics/Statistics.${querymix}" tofile="${dir.src}/eu/ldbc/semanticpublishing/statistics/Statistics.java"/>
 		
 		<delete dir="${dir.data}"/>
 		
@@ -88,11 +88,11 @@
 		</copy>		
 		<mkdir dir="./data-temp/sparql"/>
 		<copy todir="./data-temp/sparql">
-      		<fileset dir="datasets_and_queries/sparql/${query_mix}"/>
+      		<fileset dir="datasets_and_queries/sparql/${querymix}"/>
 		</copy>
 		<mkdir dir="./data-temp/validation"/>
 		<copy todir="./data-temp/validation">
-  			<fileset dir="datasets_and_queries/validation/${query_mix}/${customization}"/>
+  			<fileset dir="datasets_and_queries/validation/${querymix}/${customization}"/>
 		</copy>
 		<unzip src="./datasets_and_queries/validation/data/${validation.data.archive.name}.zip" dest="./data-temp/validation/"/>
   	
@@ -121,21 +121,25 @@
 		<copy todir="./data-temp/sparql/validation">
 			<fileset dir="./data-temp/sparql/validation_${customization}"/>
 		</copy>
-  	
- 		<delete dir="./data-temp/sparql/aggregation_standard"/>
- 		<delete dir="./data-temp/sparql/aggregation_virtuoso"/>
-		<delete dir="./data-temp/sparql/system_standard"/>
-		<delete dir="./data-temp/sparql/system_virtuoso"/>
-		<delete dir="./data-temp/sparql/validation_standard"/>
-		<delete dir="./data-temp/sparql/validation_virtuoso"/>  		
-  	
+
+        <!-- Clean all combinations -->
+        <delete dir="./data-temp/sparql/aggregation_standard"/>
+        <delete dir="./data-temp/sparql/aggregation_graphdb"/>
+        <delete dir="./data-temp/sparql/aggregation_virtuoso"/>
+        <delete dir="./data-temp/sparql/system_standard"/>
+        <delete dir="./data-temp/sparql/system_graphdb"/>
+        <delete dir="./data-temp/sparql/system_virtuoso"/>
+        <delete dir="./data-temp/sparql/validation_standard"/>
+        <delete dir="./data-temp/sparql/validation_graphdb"/>
+        <delete dir="./data-temp/sparql/validation_virtuoso"/>
+
 		<move file="./data-temp" toFile="./data"/>
 		<delete dir="./data-temp"/>
 		
 		<delete>
 			<fileset dir="./src/eu/ldbc/semanticpublishing/templates/aggregation" includes="*.java"/>
 		</delete>
-		<unzip src="./src/eu/ldbc/semanticpublishing/templates/aggregation/${query_mix}.zip" dest="./src/eu/ldbc/semanticpublishing/templates/aggregation/" />
+		<unzip src="./src/eu/ldbc/semanticpublishing/templates/aggregation/${querymix}.zip" dest="./src/eu/ldbc/semanticpublishing/templates/aggregation/" />
   		<move toDir="${dir.src}/eu/ldbc/semanticpublishing/templates/aggregation/" includeemptydirs="false">
   			<fileset dir="${dir.src}/eu/ldbc/semanticpublishing/templates/aggregation/"/>
   			<mapper type="glob" from="Query*Template.${customization}" to="Query*Template.java"/>
@@ -150,41 +154,9 @@
     	</antcall>
 	
 		<delete file="./definitions.properties"/>
-		<copy file="datasets_and_queries/definitions.properties-${query_mix}" tofile="./definitions.properties"/>
+		<copy file="datasets_and_queries/definitions.properties-${querymix}" tofile="./definitions.properties"/>
 	</target>
-	
-	<!--  Use this target to setup benchmark driver with standard SPARQL 1.1 query syntax and reduced query mix -->
-	<target name="setup-basic-sparql-standard">
-    <antcall target="setup-query-mix">
-      <param name="query_mix" value="basic"/>
-      <param name="customization" value="standard"/>
-    </antcall>
-	</target>
-
-	<!--  Use this target to setup benchmark driver with Virtuoso's custom SPARQL query syntax and reduced query mix -->
-	<target name="setup-basic-virtuoso">
-    <antcall target="setup-query-mix">
-      <param name="query_mix" value="basic"/>
-      <param name="customization" value="virtuoso"/>
-    </antcall>	
-	</target>
-
-	<!--  Use this target to setup benchmark driver with standard SPARQL 1.1 query syntax and advanced query mix -->
-	<target name="setup-advanced-sparql-standard">
-    <antcall target="setup-query-mix">
-      <param name="query_mix" value="advanced"/>
-      <param name="customization" value="standard"/>
-    </antcall>
-	</target>	
-	
-	<!--  Use this target to setup benchmark driver with Virtuoso's custom SPARQL 1.1 query syntax and advanced query mix -->
-	<target name="setup-advanced-virtuoso">
-    <antcall target="setup-query-mix">
-      <param name="query_mix" value="advanced"/>
-      <param name="customization" value="virtuoso"/>
-    </antcall>
-	</target>		
-	
+		
 	<target name="copy-config-files-to-dist" >
 		<copy todir="${dir.dist}">
 			<fileset file="readme.txt" />
@@ -193,12 +165,12 @@
 		</copy>
 	</target>
 	
-	<target name="build-basic-querymix" depends="build.release.version, setup-basic-sparql-standard, rebuild">	
-		<jar destfile="${dir.dist}\${jar.file.name}-basic.jar" basedir="${dir.bin}">
+	<target name="build-jar">
+		<jar destfile="${dir.dist}\${jar.file.name}-${querymix}.jar" basedir="${dir.bin}">
 			<manifest>
 				<attribute name="Main-Class" value="eu.ldbc.semanticpublishing.TestDriver"/>
 				<attribute name="Benchmark-Release-Version" value="${version.number.major}.${version.number.minor}.${revision.number}"/>
-				<attribute name="Benchmark-Release-Type" value="basic qierymix, standard SPARQL 1.1"/>
+				<attribute name="Benchmark-Release-Type" value="${querymix} qierymix, ${customization}"/>
 			</manifest>
 			<zipgroupfileset dir="${dir.lib}" includes="*.jar"/>
 			<fileset file="readme.txt" />
@@ -210,77 +182,90 @@
 		<antcall target="unzip-all-compressed-datasets"/>
 		<antcall target="move-reference-knowledge-and-queries"/>
 		<delete dir="./data"/>
-		<delete file="./definitions.properties" />
+		<delete file="./definitions.properties" />	
 	</target>
-	
-	<target name="build-basic-querymix-virtuoso" depends="build.release.version, setup-basic-virtuoso, rebuild">
-		<jar destfile="${dir.dist}\${jar.file.name}-basic-virtuoso.jar" basedir="${dir.bin}">
-			<manifest>
-				<attribute name="Main-Class" value="eu.ldbc.semanticpublishing.TestDriver"/>
-				<attribute name="Benchmark-Release-Version" value="${version.number.major}.${version.number.minor}.${revision.number}"/>
-				<attribute name="Benchmark-Release-Type" value="basic qierymix, Virtuoso"/>
-			</manifest>
-			<zipgroupfileset dir="${dir.lib}" includes="*.jar"/>
-			<fileset file="readme.txt" />
-			<fileset file="test.properties" />
-			<fileset file="definitions.properties" />
-			<fileset file="log4j.xml" />
-		</jar>
-		<antcall target="copy-config-files-to-dist"/>
-		<antcall target="unzip-all-compressed-datasets"/>
-		<antcall target="move-reference-knowledge-and-queries"/>		
-		<delete dir="./data"/>
-		<delete file="./definitions.properties" />
+
+	<target name="build-basic-querymix" depends="build.release.version">
+	    <antcall target="setup-querymix">
+            <param name="querymix" value="basic"/>
+            <param name="customization" value="standard"/>
+	    </antcall>
+	    <antcall target="rebuild"/>		
+	    <antcall target="build-jar">
+            <param name="querymix" value="basic"/>
+            <param name="customization" value="standard"/>
+        </antcall>
+	</target>
+
+	<target name="build-basic-querymix-graphdb" depends="build.release.version">
+	    <antcall target="setup-querymix">
+            <param name="querymix" value="basic"/>
+            <param name="customization" value="graphdb"/>
+	    </antcall>
+	    <antcall target="rebuild"/>
+	    <antcall target="build-jar">
+            <param name="querymix" value="basic"/>
+            <param name="customization" value="graphdb"/>
+        </antcall>
 	</target>	
 	
-	<target name="build-advanced-querymix" depends="build.release.version, setup-advanced-sparql-standard, rebuild">
-		<jar destfile="${dir.dist}\${jar.file.name}-advanced.jar" basedir="${dir.bin}">
-			<manifest>
-				<attribute name="Main-Class" value="eu.ldbc.semanticpublishing.TestDriver"/>
-				<attribute name="Benchmark-Release-Version" value="${version.number.major}.${version.number.minor}.${revision.number}"/>
-				<attribute name="Benchmark-Release-Type" value="advanced qierymix, standard SPARQL 1.1"/>
-			</manifest>
-			<zipgroupfileset dir="${dir.lib}" includes="*.jar"/>
-			<fileset file="readme.txt" />
-			<fileset file="test.properties" />
-			<fileset file="definitions.properties" />
-			<fileset file="log4j.xml" />
-		</jar>
-		<antcall target="copy-config-files-to-dist"/>
-		<antcall target="unzip-all-compressed-datasets"/>
-		<antcall target="move-reference-knowledge-and-queries"/>		
-		<delete dir="./data"/>
-		<delete file="./definitions.properties" />
-	</target>
+	<target name="build-basic-querymix-virtuoso" depends="build.release.version">
+	    <antcall target="setup-querymix">
+            <param name="querymix" value="basic"/>
+            <param name="customization" value="virtuoso"/>
+	    </antcall>
+	    <antcall target="rebuild"/>		
+	    <antcall target="build-jar">
+            <param name="querymix" value="basic"/>
+            <param name="customization" value="virtuoso"/>
+        </antcall>
+	</target>	
 	
-	<target name="build-advanced-querymix-virtuoso" depends="build.release.version, setup-advanced-virtuoso, rebuild">	
-		<jar destfile="${dir.dist}\${jar.file.name}-advanced-virtuoso.jar" basedir="${dir.bin}">
-			<manifest>
-				<attribute name="Main-Class" value="eu.ldbc.semanticpublishing.TestDriver"/>
-				<attribute name="Benchmark-Release-Version" value="${version.number.major}.${version.number.minor}.${revision.number}"/>
-				<attribute name="Benchmark-Release-Type" value="advanced qierymix, Virtuoso"/>
-			</manifest>
-			<zipgroupfileset dir="${dir.lib}" includes="*.jar"/>
-			<fileset file="readme.txt" />
-			<fileset file="test.properties" />
-			<fileset file="definitions.properties" />
-			<fileset file="log4j.xml" />
-		</jar>
-		<antcall target="copy-config-files-to-dist"/>
-		<antcall target="unzip-all-compressed-datasets"/>
-		<antcall target="move-reference-knowledge-and-queries"/>
-		<delete dir="./data"/>
-		<delete file="./definitions.properties" />
+	<target name="build-advanced-querymix" depends="build.release.version">
+	    <antcall target="setup-querymix">
+            <param name="querymix" value="advanced"/>
+            <param name="customization" value="standard"/>
+	    </antcall>
+	    <antcall target="rebuild"/>		
+	    <antcall target="build-jar">
+            <param name="querymix" value="advanced"/>
+            <param name="customization" value="standard"/>
+        </antcall>	
+	</target>
+
+	<target name="build-advanced-querymix-graphdb" depends="build.release.version">
+	    <antcall target="setup-querymix">
+            <param name="querymix" value="advanced"/>
+            <param name="customization" value="graphdb"/>
+	    </antcall>
+	    <antcall target="rebuild"/>			
+	    <antcall target="build-jar">
+            <param name="querymix" value="advanced"/>
+            <param name="customization" value="graphdb"/>
+        </antcall>	
+	</target>
+
+	
+	<target name="build-advanced-querymix-virtuoso" depends="build.release.version">	
+	    <antcall target="setup-querymix">
+            <param name="querymix" value="advanced"/>
+            <param name="customization" value="virtuoso"/>
+	    </antcall>
+	    <antcall target="rebuild"/>		
+	    <antcall target="build-jar">
+            <param name="querymix" value="advanced"/>
+            <param name="customization" value="virtuoso"/>
+        </antcall>			
 	</target>	
 
 	<!-- Zip reference knowledge (ontologies and reference datasets) -->
 	<target name="zip-reference-knowledge-and-queries">
-		<zip destfile="${dir.dist}/${ref.knowledge.and.queries.archive.name}-${query_mix}.zip">
+		<zip destfile="${dir.dist}/${ref.knowledge.and.queries.archive.name}-${querymix}.zip">
 			<zipfileset dir="." includes="data/**" excludes="data/datasets/*.zip"/>
 		</zip>
 	</target>
 	
-	<!-- Move reference knowledge (ontologies and reference datasets) to distribution folder -->
+	<!-- Move reference knowledge (ontologies and reference datasets) to the distribution folder -->
 	<target name="move-reference-knowledge-and-queries">
 		<move todir="${dir.dist}/data">
 			<fileset dir="data/">
@@ -300,7 +285,6 @@
 	
 	<!-- SVN -->
 	<!-- This target requires that an svn client is installed -->
-	<!--	
 	<target name="build.release.version">
 		<exec executable="svn" outputproperty="revision.number">
 			<arg line="info"/>
@@ -317,16 +301,16 @@
 		</exec>
 		<echo>Benchmark Release Version : ${version.number.major}.${version.number.minor}.${revision.number}</echo>
 	</target>
-	-->
 	
 	<!-- Git -->
+	<!--
   <available file=".git" type="dir" property="git.present"/>	
   
   <target name="build.release.version" description="Store git revision in ${revision.number}" if="git.present">
     <exec executable="git" outputproperty="git.revision" failifexecutionfails="false" errorproperty="">
         <arg value="describe"/>
-        <arg value="--tags"/>
-        <arg value="--always"/>
+        <arg value="- -tags"/>
+        <arg value="- -always"/>
         <arg value="HEAD"/>
     </exec>
     <condition property="revision.number" value="${git.revision}" else="unknown">
@@ -337,6 +321,7 @@
     </condition>
     <echo>Benchmark Release Version : ${version.number.major}.${version.number.minor}.${revision.number}</echo>
   </target>
+	-->
 	
 	<target name="deploy">
 		<move todir="${dir.deploy}">
@@ -347,17 +332,21 @@
 	
 	<target name="show-usage">
     <echo>
----------------------------------------------------------------------------------------------------------------------------------------
-To BUILD the LDBC Semantic Publishing Benchmark, you should execute :
-      
-	SPARQL compliant version :
-		ant build-basic-querymix (builds the benchmark driver with basic query mix, standard SPARQL 1.1 compliance)
-		ant build-advanced-querymix (builds the benchmark driver with advanced query mix, standard SPARQL 1.1 compliance)
+-------------------------------------------------------------------------------------------------------------------------------------
+To build the LDBC Semantic Publishing Benchmark, execute :
+
+	SPARQL compliant version:
+		ant build-basic-querymix             - builds the benchmark driver with basic query mix, standard SPARQL 1.1 compliance
+		ant build-advanced-querymix          - builds the benchmark driver with advanced query mix, standard SPARQL 1.1 compliance
+		
+    GraphDB:
+		ant build-basic-querymix-graphdb     - builds the benchmark driver with basic query mix and optimized queries for GraphDB
+		ant build-advanced-querymix-graphdb  - builds the benchmark driver with advanced query mix and optimized queries for GraphDB
     	
-	Virtuoso customized version :
-		ant build-basic-querymix-virtuoso (builds the benchmark driver with basic query mix and customized query syntax for Virtuoso)
-		ant build-advanced-querymix-virtuoso (builds the benchmark driver with advanced query mix and customized query syntax for Virtuoso)
----------------------------------------------------------------------------------------------------------------------------------------
+	Virtuoso: 
+		ant build-basic-querymix-virtuoso    - builds the benchmark driver with basic query mix and optimized queries for Virtuoso
+		ant build-advanced-querymix-virtuoso - builds the benchmark driver with advanced query mix and optimized queries for Virtuoso
+-------------------------------------------------------------------------------------------------------------------------------------
     </echo>
 	</target>
 </project>

@@ -73,4 +73,5 @@ WHERE {
   } 
   FILTER (CONTAINS(?title, {{{word}}}) || CONTAINS(?description, {{{word}}})) .
 }
+ORDER BY DESC(?dateModified)
 LIMIT {{{randomLimit}}}

@@ -86,8 +86,8 @@ public class Validator {
 			}
 		}
 		
-		if (actualResultsSize != expectedResultSize) {
-			System.out.println("\t\tWarning : " + /*validateOperation +*/ "validation failed on query : " + iteration + ", expected amount of results : " + expectedResultSize + ",  actual value : " + actualResultsSize);
+		if (actualResultsSize < expectedResultSize) {
+			System.out.println("\t\tWarning : " + /*validateOperation +*/ "validation failed on query : " + iteration + ", minimum expected amount of results : " + expectedResultSize + ",  actual : " + actualResultsSize);
 			totalErrors++;
 		}
 		

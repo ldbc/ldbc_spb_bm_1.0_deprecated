@@ -106,7 +106,7 @@ public class AggregateOperationsValidator extends Validator {
 		
 				System.out.println(String.format("\tQuery %-1d : ", (i + 1)));
 				int errorsForQuery = validateAggregate(queryResult, actualResultsSize, validationValues.getExpectedResultsSize(), "AGGREGATE", (i + 1), validationValues.getValidationResultsList(), false);
-				System.out.print(String.format("\t\t%d errors found in %d validation values, %d expected results, %d returned results\n", errorsForQuery, validationValues.getValidationResultsList().size(), validationValues.getExpectedResultsSize(), actualResultsSize));
+				System.out.print(String.format("\t\t%d errors found in %d validation values, at least %d expected results, %d returned results\n", errorsForQuery, validationValues.getValidationResultsList().size(), validationValues.getExpectedResultsSize(), actualResultsSize));
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}			
