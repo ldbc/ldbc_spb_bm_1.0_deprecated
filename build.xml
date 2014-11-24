@@ -285,6 +285,7 @@
 	
 	<!-- SVN -->
 	<!-- This target requires that an svn client is installed -->
+	<!--
 	<target name="build.release.version">
 		<exec executable="svn" outputproperty="revision.number">
 			<arg line="info"/>
@@ -301,27 +302,26 @@
 		</exec>
 		<echo>Benchmark Release Version : ${version.number.major}.${version.number.minor}.${revision.number}</echo>
 	</target>
+	-->
 	
 	<!-- Git -->
-	<!--
-  <available file=".git" type="dir" property="git.present"/>	
+    <available file=".git" type="dir" property="git.present"/>	
   
-  <target name="build.release.version" description="Store git revision in ${revision.number}" if="git.present">
-    <exec executable="git" outputproperty="git.revision" failifexecutionfails="false" errorproperty="">
-        <arg value="describe"/>
-        <arg value="- -tags"/>
-        <arg value="- -always"/>
-        <arg value="HEAD"/>
-    </exec>
-    <condition property="revision.number" value="${git.revision}" else="unknown">
-        <and>
-            <isset property="git.revision"/>
-            <length string="${git.revision}" trim="yes" length="0" when="greater"/>
-        </and>
-    </condition>
-    <echo>Benchmark Release Version : ${version.number.major}.${version.number.minor}.${revision.number}</echo>
-  </target>
-	-->
+    <target name="build.release.version" description="Store git revision in ${revision.number}" if="git.present">
+        <exec executable="git" outputproperty="git.revision" failifexecutionfails="false" errorproperty="">
+            <arg value="describe"/>
+            <arg value="- -tags"/>
+            <arg value="- -always"/>
+            <arg value="HEAD"/>
+        </exec>
+        <condition property="revision.number" value="${git.revision}" else="unknown">
+            <and>
+                <isset property="git.revision"/>
+                <length string="${git.revision}" trim="yes" length="0" when="greater"/>
+            </and>
+        </condition>
+        <echo>Benchmark Release Version : ${version.number.major}.${version.number.minor}.${revision.number}</echo>
+    </target>
 	
 	<target name="deploy">
 		<move todir="${dir.deploy}">
