@@ -64,8 +64,8 @@ public class TestDriverReporter extends Thread {
 			long timeCorreciton = 0;
 			long startTime = System.currentTimeMillis();
 			while (benchmarkState.get() || keepAlive.get()) {
+				Thread.sleep(Math.abs(1000 - timeCorreciton));
 				seconds = (long) ((System.currentTimeMillis() - startTime) / 1000);
-				Thread.sleep(Math.abs(1000 - timeCorreciton));				
 				timeCorreciton = collectAndShowResults(/*(benchmarkByQueryRuns == 0) && (benchmarkByQueryMixRuns == 0)*/);
 			}
 		} catch (Throwable t) {
