@@ -55,7 +55,7 @@ public class TestDriver {
 	private int benchmarkRunPeriodSeconds;
 	private SparqlQueryExecuteManager queryExecuteManager;
 	private final AtomicBoolean inBenchmarkState = new AtomicBoolean(false);
-	private final AtomicBoolean keepObserverAlive = new AtomicBoolean(false);
+	private final AtomicBoolean keepReporterAlive = new AtomicBoolean(false);
 	private final AtomicBoolean benchmarkResultIsValid = new AtomicBoolean(false);
 	private final AtomicBoolean maxUpdateRateReached = new AtomicBoolean(false);
 	
@@ -511,10 +511,10 @@ public class TestDriver {
 			interrupterThread.setDaemon(true);
 			interrupterThread.start();
 			
-			Thread observerThread = new TestDriverReporter(Statistics.totalAggregateQueryStatistics.getRunsCountAtomicLong(),
+			Thread reporterThread = new TestDriverReporter(Statistics.totalAggregateQueryStatistics.getRunsCountAtomicLong(),
 														   Statistics.totalCompletedQueryMixRuns,
 													       inBenchmarkState, 
-													       keepObserverAlive,
+													       keepReporterAlive,
 													       benchmarkResultIsValid,
 													       configuration.getDouble(Configuration.MIN_UPDATE_RATE_THRESHOLD_REACH_TIME_PERCENT),
 													       configuration.getDouble(Configuration.MIN_UPDATE_RATE_THRESHOLD_OPS),
@@ -525,7 +525,8 @@ public class TestDriver {
 													       configuration.getLong(Configuration.BENCHMARK_RUN_PERIOD_SECONDS),
 														   definitions.getString(Definitions.QUERY_POOLS),
 														   configuration.getBoolean(Configuration.VERBOSE));
-			observerThread.start();
+			reporterThread.setDaemon(true);
+			reporterThread.start();
 			
 			if (benchmarkByQueryMixRuns > 0) {
 				while ((Statistics.totalCompletedQueryMixRuns.get() < benchmarkByQueryMixRuns) && (inBenchmarkState.get() == true)) {
@@ -541,7 +542,7 @@ public class TestDriver {
 			
 			inBenchmarkState.set(false);
 			
-			ThreadUtil.join(observerThread);
+			ThreadUtil.join(reporterThread);
 			
 			if (configuration.getDouble(Configuration.MIN_UPDATE_RATE_THRESHOLD_OPS) > 0.0) {
 				if (!benchmarkResultIsValid.get()) {
@@ -612,7 +613,7 @@ public class TestDriver {
 			}
 			
 			inBenchmarkState.set(true);
-			keepObserverAlive.set(true);
+			keepReporterAlive.set(true);
 			
 			if(!aggregationAgentsStarted) {
 				aggregationAgentsStarted = true;
@@ -632,10 +633,10 @@ public class TestDriver {
 			interrupterThread.setDaemon(true);
 			interrupterThread.start();
 			
-			Thread observerThread = new TestDriverReporter(Statistics.totalAggregateQueryStatistics.getRunsCountAtomicLong(), 
+			Thread reporterThread = new TestDriverReporter(Statistics.totalAggregateQueryStatistics.getRunsCountAtomicLong(), 
 														   Statistics.totalCompletedQueryMixRuns,
 													       inBenchmarkState,
-													       keepObserverAlive, 
+													       keepReporterAlive, 
 													       benchmarkResultIsValid,
 													       configuration.getDouble(Configuration.MIN_UPDATE_RATE_THRESHOLD_REACH_TIME_PERCENT),
 													       0.0,		
@@ -646,7 +647,8 @@ public class TestDriver {
 														   configuration.getLong(Configuration.BENCHMARK_RUN_PERIOD_SECONDS),
 													       definitions.getString(Definitions.QUERY_POOLS), 
 														   configuration.getBoolean(Configuration.VERBOSE));
-			observerThread.start();
+			reporterThread.setDaemon(true);
+			reporterThread.start();
 			
 			String[] milestoneSubstitutionParameters = null;
 			ReplicationAndBackupHelper replicationHelper = new ReplicationAndBackupHelper(queryExecuteManager, randomGenerator, configuration, definitions, mustacheTemplatesHolder);
@@ -706,13 +708,13 @@ public class TestDriver {
 			System.out.println(message);
 			LOGGER.info(message);
 
-			keepObserverAlive.set(false);
+			keepReporterAlive.set(false);
 			
 			message = "Stopping the benchmark...";
 			System.out.println(message);
 			LOGGER.info(message);
 			
-			ThreadUtil.join(observerThread);
+			ThreadUtil.join(reporterThread);
 			
 			if (configuration.getDouble(Configuration.MIN_UPDATE_RATE_THRESHOLD_OPS) > 0.0) {
 				if (!benchmarkResultIsValid.get()) {
