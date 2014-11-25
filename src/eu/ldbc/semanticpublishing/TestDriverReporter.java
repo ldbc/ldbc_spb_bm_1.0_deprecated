@@ -61,12 +61,12 @@ public class TestDriverReporter extends Thread {
 	@Override
 	public void run() {
 		try {
-			//time correction for collectAndShowResults()
-			long timeCorrection = 0;
+			long timeCorreciton = 0;
+			long startTime = System.currentTimeMillis();
 			while (benchmarkState.get() || keepAlive.get()) {
-				seconds++;
-				Thread.sleep(Math.abs(1000 - timeCorrection));
-				timeCorrection = collectAndShowResults(/*(benchmarkByQueryRuns == 0) && (benchmarkByQueryMixRuns == 0)*/);
+				seconds = (long) ((System.currentTimeMillis() - startTime) / 1000);
+				Thread.sleep(Math.abs(1000 - timeCorreciton));				
+				timeCorreciton = collectAndShowResults(/*(benchmarkByQueryRuns == 0) && (benchmarkByQueryMixRuns == 0)*/);
 			}
 		} catch (Throwable t) {
 			System.out.println("BenchmarkProcessObserver :: encountered a problem : " + t.getMessage());
