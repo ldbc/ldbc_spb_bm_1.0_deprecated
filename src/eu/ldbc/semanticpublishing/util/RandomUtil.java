@@ -16,6 +16,7 @@ import java.util.Random;
 public class RandomUtil {
 	private static final String baseURI = "http://www.bbc.co.uk/";
 	private static final char[] symbols = new char[62];
+	private static final Calendar CALENDAR;
 	
 	private Random randomGenerator;
 	private List<String> wordsList = new ArrayList<String>();
@@ -37,6 +38,8 @@ public class RandomUtil {
 		for (int index = 36; index < 62; ++index) {
 			symbols[index] = (char) ('A' + index - 10 - 26);
 		}
+		
+		CALENDAR = Calendar.getInstance();
 	}
 	
 	public RandomUtil(String wordsFilePath, long seed, int seedYear, int dataGenerationPeriodYears) {
@@ -142,14 +145,14 @@ public class RandomUtil {
 	 * Produces a xsd:dateTime literal for current time and date
 	 */
 	public String currentDateTimeString() {
-		Calendar calendar = Calendar.getInstance();
+		CALENDAR.setTimeInMillis(System.currentTimeMillis());
 
-		int year = calendar.get(Calendar.YEAR);
-		int month = calendar.get(Calendar.MONTH) + 1;
-		int day = calendar.get(Calendar.DAY_OF_MONTH);
-		int hour = calendar.get(Calendar.HOUR_OF_DAY);
-		int minute = calendar.get(Calendar.MINUTE);
-		int second = calendar.get(Calendar.SECOND);
+		int year = CALENDAR.get(Calendar.YEAR);
+		int month = CALENDAR.get(Calendar.MONTH) + 1;
+		int day = CALENDAR.get(Calendar.DAY_OF_MONTH);
+		int hour = CALENDAR.get(Calendar.HOUR_OF_DAY);
+		int minute = CALENDAR.get(Calendar.MINUTE);
+		int second = CALENDAR.get(Calendar.SECOND);
 
 		return formatDateTime(year, month, day, hour, minute, second);
 	}
@@ -188,15 +191,14 @@ public class RandomUtil {
 	 *   e.g. "2011-10-21T20:55:58.379+03:00"^^xsd:dateTime
 	 */	
 	public String dateTimeString(Date date) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
+		CALENDAR.setTime(date);
 		
-		int year = calendar.get(Calendar.YEAR);
-		int month = calendar.get(Calendar.MONTH) + 1;
-		int day = calendar.get(Calendar.DAY_OF_MONTH);
-		int hour = calendar.get(Calendar.HOUR);
-		int minute = calendar.get(Calendar.MINUTE);
-		int second = calendar.get(Calendar.SECOND);
+		int year = CALENDAR.get(Calendar.YEAR);
+		int month = CALENDAR.get(Calendar.MONTH) + 1;
+		int day = CALENDAR.get(Calendar.DAY_OF_MONTH);
+		int hour = CALENDAR.get(Calendar.HOUR);
+		int minute = CALENDAR.get(Calendar.MINUTE);
+		int second = CALENDAR.get(Calendar.SECOND);
 		
 		return formatDateTime(year, month, day, hour, minute, second);
 	}
@@ -205,8 +207,6 @@ public class RandomUtil {
 	 * Produces a random Date object with a fixed offset of YEARS_OFFSET years from now
 	 */
 	public Date randomDateTime() {
-		Calendar calendar = Calendar.getInstance();
-		
 		int year = seedYear;
 		if ((dataGenerationPeriodYears - 1) > 0) {
 			year += nextInt(dataGenerationPeriodYears);
@@ -229,30 +229,28 @@ public class RandomUtil {
 		int second = nextInt(0, 59 + 1);
 		int millisecond = nextInt(0, 999 + 1);
 
-		calendar.set(year, month - 1, day, hour, minute, second);
-		calendar.set(Calendar.MILLISECOND, millisecond);
+		CALENDAR.set(year, month - 1, day, hour, minute, second);
+		CALENDAR.set(Calendar.MILLISECOND, millisecond);
 		
-		return calendar.getTime();
+		return CALENDAR.getTime();
 	}
 	
 	/**
 	 * Produces a random Date object starting with 1.1.seedYear and a random offset of maxDaysAfterSeedYear
 	 */
 	public Date randomDateTime(int maxDaysAfter) {
-		Calendar calendar = Calendar.getInstance();
-		
 		int year = seedYear;
 		if ((dataGenerationPeriodYears - 1) > 0) {
 			year += nextInt(dataGenerationPeriodYears);
 		}
 		
-		calendar.set(year, 0, 1, nextInt(23 + 1), nextInt(59 + 1), nextInt(59 + 1));
+		CALENDAR.set(year, 0, 1, nextInt(23 + 1), nextInt(59 + 1), nextInt(59 + 1));
 		
 		int offset = nextInt(maxDaysAfter + 1);
 		
-		calendar.add(Calendar.DAY_OF_YEAR, offset);
+		CALENDAR.add(Calendar.DAY_OF_YEAR, offset);
 		
-		return calendar.getTime();
+		return CALENDAR.getTime();
 	}
 
 	/**
@@ -261,8 +259,6 @@ public class RandomUtil {
 	 * Using maxMonth - Jan=1, Dec=12 
 	 */
 	public Date randomDateTime(int maxYear, int maxMonth) {
-		Calendar calendar = Calendar.getInstance();
-		
 		int year = maxYear;
 		
 		if (maxYear < 0) {
@@ -295,9 +291,9 @@ public class RandomUtil {
 		int minute = nextInt(0, 59 + 1);
 		int second = nextInt(0, 59 + 1);
 
-		calendar.set(year, month - 1, day, hour, minute, second);
+		CALENDAR.set(year, month - 1, day, hour, minute, second);
 		
-		return calendar.getTime();
+		return CALENDAR.getTime();
 	}	
 	
 	/**
