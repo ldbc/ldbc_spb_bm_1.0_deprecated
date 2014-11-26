@@ -20,7 +20,7 @@ Apache Ant build tool is required.
 
 ```
 # builds the benchmark driver with basic query mix, standard SPARQL 1.1 compliance
-$ *ant build-basic-querymix*
+$ ant build-basic-querymix
 
 # builds the benchmark driver with advanced query mix, standard SPARQL 1.1 compliance
 $ ant build-advanced-querymix
