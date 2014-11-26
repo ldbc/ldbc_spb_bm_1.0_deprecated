@@ -20,7 +20,7 @@ Apache Ant build tool is required.
 
 ```
 # builds the benchmark driver with basic query mix, standard SPARQL 1.1 compliance
-$ ant build-basic-querymix
+$ *ant build-basic-querymix*
 
 # builds the benchmark driver with advanced query mix, standard SPARQL 1.1 compliance
 $ ant build-advanced-querymix
@@ -38,7 +38,7 @@ $ ant build-basic-querymix-virtuoso
 $ ant build-advanced-querymix-virtuoso
 ```
 
-Result of the build process is saved to a distribution folder: _'dist/'_ : 
+Result of build process is saved to a distribution folder: _'dist/'_ : 
 * ***semantic_publishing_benchmark.jar*** - the benchmark test driver
 * ***data/*** - folder containing all necessary data to run the benchmark
 * ***test.properties*** - a configuration file with parameters for configuring the benchmark driver
