@@ -340,12 +340,12 @@ To build the LDBC Semantic Publishing Benchmark, execute :
 		ant build-advanced-querymix          - builds the benchmark driver with advanced query mix, standard SPARQL 1.1 compliance
 		
     GraphDB:
-		ant build-basic-querymix-graphdb     - builds the benchmark driver with basic query mix and optimized queries for GraphDB
-		ant build-advanced-querymix-graphdb  - builds the benchmark driver with advanced query mix and optimized queries for GraphDB
+		ant build-basic-querymix-graphdb     - builds the benchmark driver with basic query mix and queries optimized for GraphDB
+		ant build-advanced-querymix-graphdb  - builds the benchmark driver with advanced query mix and queries optimized for GraphDB
     	
 	Virtuoso: 
-		ant build-basic-querymix-virtuoso    - builds the benchmark driver with basic query mix and optimized queries for Virtuoso
-		ant build-advanced-querymix-virtuoso - builds the benchmark driver with advanced query mix and optimized queries for Virtuoso
+		ant build-basic-querymix-virtuoso    - builds the benchmark driver with basic query mix and queries optimized for Virtuoso
+		ant build-advanced-querymix-virtuoso - builds the benchmark driver with advanced query mix and queries optimized for Virtuoso
 -------------------------------------------------------------------------------------------------------------------------------------
     </echo>
 	</target>

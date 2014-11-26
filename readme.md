@@ -19,16 +19,22 @@ Aggregation operations consist of a wide range of queries, e.g. _search, aggrega
 Apache Ant build tool is required.
 
 ```
-# build a standard version of the benchmark, compliant to SPARQL 1.1 standard
+# builds the benchmark driver with basic query mix, standard SPARQL 1.1 compliance
 $ ant build-basic-querymix
 
-# build a standard version of the benchmark, compliant to SPARQL 1.1 standard with extended query mix
+# builds the benchmark driver with advanced query mix, standard SPARQL 1.1 compliance
 $ ant build-advanced-querymix
 
-# build a version of the benchmark customized for Virtuoso Database
+# builds the benchmark driver with basic query mix and queries optimized for GraphDB
 $ ant build-basic-querymix-virtuoso
 
-# build a version of the benchmark customized for Virtuoso Database with extended query mix
+# builds the benchmark driver with advanced query mix and queries optimized for GraphDB
+$ ant build-advanced-querymix-virtuoso
+
+# builds the benchmark driver with basic query mix and queries optimized for Virtuoso
+$ ant build-basic-querymix-virtuoso
+
+# builds the benchmark driver with advanced query mix and queries optimized for Virtuoso
 $ ant build-advanced-querymix-virtuoso
 ```
 
@@ -54,8 +60,8 @@ Various properties are used to configure the behaviour of the SPB Test Driver or
   * Enable text indexing (if available)
   * Enable geo-spatial indexing (if available)
 
-* ***Actions*** are the essential tasks that the benchmark driver can perform e.g. Generate synthetic data, Validate operations or measure performance.  
-Actions are described here: https://github.com/ldbc/ldbc_spb_bm/wiki/Benchmark-Actions. Each action consists of a set of operational phases (https://github.com/ldbc/ldbc_spb_bm/wiki/Operational-Phases) that are executed sequentially.  
+* ***Benchmark Actions*** are the essential tasks that the benchmark driver can perform e.g. Generate synthetic data, Validate operations or measure performance.  
+Descriptions of the essential becnhmark actions can be found here: https://github.com/ldbc/ldbc_spb_bm/wiki/Benchmark-Actions. Each action consists of a set of operational phases (https://github.com/ldbc/ldbc_spb_bm/wiki/Operational-Phases) that are executed sequentially.  
 
   
 * ***Configuration options:*** https://github.com/ldbc/ldbc_spb_bm/wiki/Configuration-Options
