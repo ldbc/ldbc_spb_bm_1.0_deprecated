@@ -40,6 +40,7 @@ PREFIX inst:<http://www.ontotext.com/connectors/lucene/instance#>
 #  A Full text search query. Requires enabled GraphDB Lucene Connector.
 
 #  To enable GraphDB Lucene Connector : 
+#  GraphDB-EE version is required, execute query: 
 #
 #  PREFIX luceneConnector: <http://www.ontotext.com/connectors/lucene#>
 #  PREFIX inst: <http://www.ontotext.com/connectors/lucene/instance#>
@@ -73,6 +74,35 @@ PREFIX inst:<http://www.ontotext.com/connectors/lucene/instance#>
 #  }
 #  ''' .
 #  }
+#
+# Management of GraphDB Lucene Connector
+# DROP CONNECTOR
+# ---------------------
+# PREFIX luceneConnector:<http://www.ontotext.com/connectors/lucene#>
+# PREFIX inst: <http://www.ontotext.com/connectors/lucene/instance#>
+# INSERT DATA {
+#  inst:cwLuceneConnectorIndex luceneConnector:dropConnector "" .
+# }
+#
+# LIST CONNECTORS
+# ----------------------
+# PREFIX luceneConnector:<http://www.ontotext.com/connectors/lucene#>
+# SELECT ?cntUri ?cntStr {
+#  ?cntUri luceneConnector:listConnectors ?cntStr .
+# }
+#
+# CONNECTOR STATUS CHECK
+# ----------------------
+# PREFIX luceneConnector:<http://www.ontotext.com/connectors/lucene#> 
+# SELECT ?cntUri ?cntStatus {
+#   ?cntUri luceneConnector:connectorStatus ?cntStatus .
+# }
+
+#  Choke Points : 
+#    - OPTIONAL clauses (treated by query optimizer as nested sub-queries)
+#      Optimizer should decide to put optional triples on top of the join tree 
+#      (i.e. delay their execution to the last possible moment) because OPTIONALs are treated as a left join
+#    - A possibility for optimizing the full-text search by using appropriate index
 
 CONSTRUCT { 
   ?cWork a cwork:CreativeWork ; 

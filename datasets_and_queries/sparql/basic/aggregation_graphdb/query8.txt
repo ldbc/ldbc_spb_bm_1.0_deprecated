@@ -39,12 +39,13 @@ PREFIX inst:<http://www.ontotext.com/connectors/lucene/instance#>
 #  Retrieve creative works and their properties, which contain a a certain word in their title or description. 
 #  A Full text search query. Requires enabled GraphDB Lucene Connector.
 
-#  To enable GraphDB Lucene Connector : 
+#  To enable GraphDB Lucene Connector :
+#  GraphDB-EE version is required, execute query: 
 #
 #  PREFIX luceneConnector: <http://www.ontotext.com/connectors/lucene#>
 #  PREFIX inst: <http://www.ontotext.com/connectors/lucene/instance#>
 #  INSERT DATA {
-#      inst:cwLuceneIndex luceneConnector:createConnector '''
+#      inst:cwLuceneConnectorIndex luceneConnector:createConnector '''
 #  {
 #    "types": [
 #      "http://www.bbc.co.uk/ontologies/creativework/CreativeWork"
@@ -73,14 +74,34 @@ PREFIX inst:<http://www.ontotext.com/connectors/lucene/instance#>
 #  }
 #  ''' .
 #  }
-
+#
+# Management of GraphDB Lucene Connector
+# DROP CONNECTOR
+# ---------------------
+# PREFIX luceneConnector:<http://www.ontotext.com/connectors/lucene#>
+# PREFIX inst: <http://www.ontotext.com/connectors/lucene/instance#>
+# INSERT DATA {
+#  inst:cwLuceneConnectorIndex luceneConnector:dropConnector "" .
+# }
+#
+# LIST CONNECTORS
+# ----------------------
+# PREFIX luceneConnector:<http://www.ontotext.com/connectors/lucene#>
+# SELECT ?cntUri ?cntStr {
+#  ?cntUri luceneConnector:listConnectors ?cntStr .
+# }
+#
+# CONNECTOR STATUS CHECK
+# ----------------------
+# PREFIX luceneConnector:<http://www.ontotext.com/connectors/lucene#> 
+# SELECT ?cntUri ?cntStatus {
+#   ?cntUri luceneConnector:connectorStatus ?cntStatus .
+# }
 
 #  Choke Points : 
 #    - OPTIONAL clauses (treated by query optimizer as nested sub-queries)
 #      Optimizer should decide to put optional triples on top of the join tree 
 #      (i.e. delay their execution to the last possible moment) because OPTIONALs are treated as a left join
-#    - Optimizer should be able to split the FILTER conditions into conjunction of conditions and
-#      start their execution as soon as possible thus eliminating intermediate results
 #    - A possibility for optimizing the full-text search by using appropriate index
 
 CONSTRUCT { 
@@ -98,7 +119,7 @@ CONSTRUCT {
 WHERE { 
   {
   SELECT * {
-        ?search a inst:cwLuceneIndex ;
+        ?search a inst:cwLuceneConnectorIndex ;
             luceneConnector:query "title:{{{word}}} description:{{{word}}}" ;
             luceneConnector:orderBy "-dateModified" ;
             luceneConnector:entities ?cWork .
