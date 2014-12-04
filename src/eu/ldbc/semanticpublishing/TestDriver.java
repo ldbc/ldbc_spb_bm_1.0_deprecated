@@ -277,7 +277,7 @@ public class TestDriver {
 		Collections.sort(scriptFiles);
 		
 		for( File file : scriptFiles ) {
-			System.out.print("\texecuting " + scriptsSubFolder + " script: " + file.getName());
+			System.out.println("\texecuting " + scriptsSubFolder + " script: " + file.getName());
 			ShellUtil.execute(sciptsPath, file.getName(), true);
 		}	
 	}
