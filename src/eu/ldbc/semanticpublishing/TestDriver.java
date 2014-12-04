@@ -276,6 +276,10 @@ public class TestDriver {
 		FileUtils.collectFilesList2(sciptsPath, scriptFiles, (FileUtils.isWindowsOS() ? "bat" : "sh"), true);		
 		Collections.sort(scriptFiles);
 		
+		if (scriptFiles.size() > 0) {
+			System.out.println("Executing custom scripts (" + scriptsSubFolder + ")...");
+		}
+		
 		for( File file : scriptFiles ) {
 			System.out.println("\texecuting " + scriptsSubFolder + " script: " + file.getName());
 			ShellUtil.execute(sciptsPath, file.getName(), true);
