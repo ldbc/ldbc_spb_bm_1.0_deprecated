@@ -271,9 +271,9 @@ public class TestDriver {
 	}
 	
 	private void executeScripts(String scriptsSubFolder) throws IOException, InterruptedException {
-		String sciptsPath = configuration.getString(Configuration.SCRIPTS_PATH);
+		String sciptsPath = configuration.getString(Configuration.SCRIPTS_PATH) + File.separator + scriptsSubFolder;
 		List<File> scriptFiles = new ArrayList<File>();
-		FileUtils.collectFilesList2(sciptsPath + File.separator + scriptsSubFolder, scriptFiles, (FileUtils.isWindowsOS() ? "bat" : "sh"), true);		
+		FileUtils.collectFilesList2(sciptsPath, scriptFiles, (FileUtils.isWindowsOS() ? "bat" : "sh"), true);		
 		Collections.sort(scriptFiles);
 		
 		for( File file : scriptFiles ) {
