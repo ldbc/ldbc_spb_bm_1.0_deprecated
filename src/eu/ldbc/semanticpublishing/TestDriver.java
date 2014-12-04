@@ -270,6 +270,18 @@ public class TestDriver {
 		}
 	}
 	
+	private void executeScripts(String scriptsSubFolder) throws IOException, InterruptedException {
+		String sciptsPath = configuration.getString(Configuration.SCRIPTS_PATH);
+		List<File> scriptFiles = new ArrayList<File>();
+		FileUtils.collectFilesList2(sciptsPath + File.separator + scriptsSubFolder, scriptFiles, (FileUtils.isWindowsOS() ? "bat" : "sh"), true);		
+		Collections.sort(scriptFiles);
+		
+		for( File file : scriptFiles ) {
+			System.out.print("\texecuting " + scriptsSubFolder + " script: " + file.getName());
+			ShellUtil.execute(sciptsPath, file.getName(), true);
+		}	
+	}
+	
 	private void generateCreativeWorks(boolean enable) throws IOException, InterruptedException {
 		if (enable) {
 			System.out.println("Generating Creative Works data files...");
@@ -670,7 +682,7 @@ public class TestDriver {
 						message = "Starting incremental backup (incremental_backup_start)...";
 						System.out.println(message);
 						LOGGER.info(message);							
-						ShellUtil.execute(StringUtil.normalizePath(configuration.getString(Configuration.ENTERPRISE_FEATURES_PATH)) + File.separator + "scripts", ReplicationAndBackupHelper.INCREMENTAL_BACKUP_START + (FileUtils.isWindowsOS() ? ".bat" : ".sh"), true);
+						ShellUtil.execute(StringUtil.normalizePath(configuration.getString(Configuration.SCRIPTS_PATH) + File.separator + "enterprise"), ReplicationAndBackupHelper.INCREMENTAL_BACKUP_START + (FileUtils.isWindowsOS() ? ".bat" : ".sh"), true);
 					}
 				}
 			} catch (IOException ioe) {
@@ -686,7 +698,7 @@ public class TestDriver {
 			message = "Shutting down the database (system_shutdown)...";
 			System.out.println(message);
 			LOGGER.info(message);
-			ShellUtil.execute(StringUtil.normalizePath(configuration.getString(Configuration.ENTERPRISE_FEATURES_PATH)) + File.separator + "scripts", ReplicationAndBackupHelper.SYSTEM_SHUTDOWN + (FileUtils.isWindowsOS() ? ".bat" : ".sh"), true);
+			ShellUtil.execute(StringUtil.normalizePath(configuration.getString(Configuration.SCRIPTS_PATH) + File.separator + "enterprise"), ReplicationAndBackupHelper.SYSTEM_SHUTDOWN + (FileUtils.isWindowsOS() ? ".bat" : ".sh"), true);
 			
 			//update query timeout value to allow longer timeouts for milestone validation queries. In cases when startup of the database requires extra time to recover.
 			replicationHelper.updateQueryExecutionTimeout(48*60*60*1000);
@@ -694,7 +706,7 @@ public class TestDriver {
 			message = "Starting up the database (system_startup)...";
 			System.out.println(message);
 			LOGGER.info(message);
-			ShellUtil.execute(StringUtil.normalizePath(configuration.getString(Configuration.ENTERPRISE_FEATURES_PATH)) + File.separator + "scripts", ReplicationAndBackupHelper.SYSTEM_START + (FileUtils.isWindowsOS() ? ".bat" : ".sh"), true);
+			ShellUtil.execute(StringUtil.normalizePath(configuration.getString(Configuration.SCRIPTS_PATH) + File.separator + "enterprise"), ReplicationAndBackupHelper.SYSTEM_START + (FileUtils.isWindowsOS() ? ".bat" : ".sh"), true);
 
 			message = "Verifying that milestone point exists";
 			System.out.println(message);
@@ -729,22 +741,22 @@ public class TestDriver {
 			message = "Verifying milestone points...\nShutting down the database (system_shutdown)...";
 			System.out.println(message);
 			LOGGER.info(message);
-			ShellUtil.execute(StringUtil.normalizePath(configuration.getString(Configuration.ENTERPRISE_FEATURES_PATH)) + File.separator + "scripts", ReplicationAndBackupHelper.SYSTEM_SHUTDOWN + (FileUtils.isWindowsOS() ? ".bat" : ".sh"), true);
+			ShellUtil.execute(StringUtil.normalizePath(configuration.getString(Configuration.SCRIPTS_PATH) + File.separator + "enterprise"), ReplicationAndBackupHelper.SYSTEM_SHUTDOWN + (FileUtils.isWindowsOS() ? ".bat" : ".sh"), true);
 						
 			message = "Starting up the database (system_startup)...";
 			System.out.println(message);
 			LOGGER.info(message);
-			ShellUtil.execute(StringUtil.normalizePath(configuration.getString(Configuration.ENTERPRISE_FEATURES_PATH)) + File.separator + "scripts", ReplicationAndBackupHelper.SYSTEM_START + (FileUtils.isWindowsOS() ? ".bat" : ".sh"), true);
+			ShellUtil.execute(StringUtil.normalizePath(configuration.getString(Configuration.SCRIPTS_PATH) + File.separator + "enterprise"), ReplicationAndBackupHelper.SYSTEM_START + (FileUtils.isWindowsOS() ? ".bat" : ".sh"), true);
 			
 			message = "Restoring state from full backup (before the warmup and benchmarking phases) (full_backup_restore)...";
 			System.out.println(message);
 			LOGGER.info(message);
-			ShellUtil.execute(StringUtil.normalizePath(configuration.getString(Configuration.ENTERPRISE_FEATURES_PATH)) + File.separator + "scripts", ReplicationAndBackupHelper.FULL_BACKUP_RESTORE + (FileUtils.isWindowsOS() ? ".bat" : ".sh"), true);
+			ShellUtil.execute(StringUtil.normalizePath(configuration.getString(Configuration.SCRIPTS_PATH) + File.separator + "enterprise"), ReplicationAndBackupHelper.FULL_BACKUP_RESTORE + (FileUtils.isWindowsOS() ? ".bat" : ".sh"), true);
 
 			message = "Starting up the database (system_startup)...";
 			System.out.println(message);
 			LOGGER.info(message);
-			ShellUtil.execute(StringUtil.normalizePath(configuration.getString(Configuration.ENTERPRISE_FEATURES_PATH)) + File.separator + "scripts", ReplicationAndBackupHelper.SYSTEM_START + (FileUtils.isWindowsOS() ? ".bat" : ".sh"), true);
+			ShellUtil.execute(StringUtil.normalizePath(configuration.getString(Configuration.SCRIPTS_PATH) + File.separator + "enterprise"), ReplicationAndBackupHelper.SYSTEM_START + (FileUtils.isWindowsOS() ? ".bat" : ".sh"), true);
 			
 			message = "Verifying that current state of the database doesn't contain the milestone point";
 			System.out.println(message);
@@ -864,6 +876,7 @@ public class TestDriver {
 		loadDatasets(configuration.getBoolean(Configuration.LOAD_REFERENCE_DATASETS));
 		generateCreativeWorks(configuration.getBoolean(Configuration.GENERATE_CREATIVE_WORKS));
 		loadCreativeWorks(configuration.getBoolean(Configuration.LOAD_CREATIVE_WORKS));
+		executeScripts("postLoad");
 		generateQuerySubstitutionParameters(configuration.getBoolean(Configuration.GENERATE_QUERY_SUBSTITUTION_PARAMETERS));
 		initializeQuerySubstitutionParameters(configuration.getBoolean(Configuration.WARM_UP) || configuration.getBoolean(Configuration.RUN_BENCHMARK) || configuration.getBoolean(Configuration.RUN_BENCHMARK_ONLINE_REPlICATION_AND_BACKUP));
 		validateQueryResults(configuration.getBoolean(Configuration.VALIDATE_QUERY_RESULTS));

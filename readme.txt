@@ -30,10 +30,12 @@ Build :
   Currently two versions of the Benchmark exist : a basic version - containing a reduced query-mix with 9 queries and advanced version with 25 queries,
   use appropriate ant-tasks to build them, e.g.
   
-  $ ant build-basic-querymix          //builds the standard benchmark driver compliant to SPARQL 1.1
-  $ ant build-advanced-querymix          //builds the standard benchmark driver compliant to SPARQL 1.1 with extended query mix
-  $ ant build-basic-querymix-virtuoso //builds a custom version of the driver customized for Virtuoso's small deviation in SPARQL queries
-  $ ant build-advanced-querymix-virtuoso //builds a custom version of the driver customized for Virtuoso's small deviation in SPARQL queries with extended query mix
+  $ ant build-basic-querymix          //builds the benchmark driver with basic query mix, standard SPARQL 1.1 compliance
+  $ ant build-advanced-querymix          //builds the benchmark driver with advanced query mix, standard SPARQL 1.1 compliance
+  $ ant build-basic-querymix-graphdb //builds the benchmark driver with basic query mix and queries optimized for GraphDB
+  $ ant build-advanced-querymix-graphdb //builds the benchmark driver with advanced query mix and queries optimized for GraphDB
+  $ ant build-basic-querymix-virtuoso //builds the benchmark driver with basic query mix and queries optimized for Virtuoso
+  $ ant build-advanced-querymix-virtuoso //builds the benchmark driver with advanced query mix and queries optimized for Virtuoso
 
 
 
@@ -54,7 +56,7 @@ Benchmark Phases :
     - loadDatasets          		          		: load the reference datasets (from the 'data/datasets' folder) into database. It can be done manually by uploading all .ttl files located at : /data/ontologies into the database
     - generateCreativeWorks 		          		: using uploaded data from previous two phases, generates Creative Works and saves them to files. Generated files need to be loaded into database manually (or automatically if file format is n-quads)
                                               			Note: Requires phases : loadOntologies, loadDatasets.
-    - loadCreativeWorks	  		            		: load generated creative works into database (It is advisable to use serialization format : N-Quads)
+    - loadCreativeWorks	  		            		: load generated creative works into database (It is advisable to use serialization format : N-Quads). The benchmark driver will attempt to start all executable script files (files with extension .sh or .bat) saved in folder '/data/scripts/postLoad'. It is not necessary to provide such scripts.
     - generateQuerySubstitutionParameters 		: Controls generation of query substitution parameters which later can be used during the warmup and benchmark phases. For each query a substitution parameters file is created and saved into 'creativeWorksPath' location. 
                                               			Note : If no files are found at that location, queries executed during warmup and benchmark phases will use randomly generated parameters.
                                               			Note2: Requires phases : loadOntologies, loadDatasets, generateCreativeWorks, loadCreativeWorks.
@@ -65,7 +67,7 @@ Benchmark Phases :
     - benchmarkOnlineReplicationAndBackup 		: benchmark is measuring performance under currently ongoing backup process. Verifies that certain conditions are met such as milestone points at which backup has been started. 
                                             			Note : Requires phases : loadOntologies, loadDatasets, generateCreativeWorks, loadCreativeWorks, warmUp (optional). Phases that should be disabled : benchmark.
                                             			Note2: Requires all necessary enterprise script files (data/enterprise/scripts) to have DB Engie's commands added (Commands for : starting, shutting down, backing up, etc).
-                                            			Note3: Required to set the full path for property 'enterpriseFeaturesPath' in test.properties file and all scripts need to have an execution permission enabled.  
+                                            			Note3: Required to set the full path for property 'scriptsPath' in test.properties file and all scripts need to have an execution permission enabled.  
     - checkConformance                    		: executes predefined queries (from folder 'data/sparql/conformance'. Checking for OWL2-RL : prp-irp, prp-asyp, prp-pdw, prp-adp, cax-dw, cax-adc, cls-maxc1, prp-key, prp-spo2, prp-inv1)  
                                               			Note : Requires phase : loadOntologies.
     - cleanup               		          		: optional, the benchmark can be set to clear all data from database
@@ -146,6 +148,7 @@ How to run the benchmark :
     - querySubstitutionParameters       (number substitution parameters that will be generated for each query, default value is 100000)
     - benchmarkByQueryRuns				      (sets the amount of aggregate queries which the benchmark phase will execute. If value is greater than zero then parameter 'benchmarkRunPeriodSeconds' is ignored. e.g. if set to 100, benchmark will measure the time to execute 100 aggregate operations.)
     - benchmarkByQueryMixRuns           (sets the count of query mixes that will be executed by the benchmark. If value is zero, then execution of query mixes will not be controlled by this parameter, default:0)    
+    - scriptsPath                       (sets the path to scripts participating in various benchmark actions. e.g. scripts can be executed after the load process has completed.)
     - minUpdateRateThresholdOps        	  (defines the minimum rate of editorial operations per second which should be reached during the first 15% of benchmark time and should be kept during the rest of the benchmark run in order to have a valid result. If set to zero, update rate threshold is ignored.
                                          e.g. if required update rate is set to 6.3 update operations per second, then benchmark will consider that value during its benchmark run and will report invalid results if that rate drops below the threshold)
     - minUpdateRateThresholdReachTimePercent (defines the time frame during which the defined value in property 'minUpdateRateThresholdOps' should be reached. Default value is 0.1 (10%)

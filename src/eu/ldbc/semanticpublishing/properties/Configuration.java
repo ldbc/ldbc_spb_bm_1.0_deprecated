@@ -58,7 +58,7 @@ public class Configuration {
 	public static final String BENCHMARK_BY_QUERY_RUNS = "benchmarkByQueryRuns";
 	public static final String BENCHMARK_BY_QUERY_MIX_RUNS = "benchmarkByQueryMixRuns";
 	public static final String RUN_BENCHMARK_ONLINE_REPlICATION_AND_BACKUP = "runBenchmarkOnlineReplicationAndBackup";
-	public static final String ENTERPRISE_FEATURES_PATH = "enterpriseFeaturesPath";
+	public static final String SCRIPTS_PATH = "scriptsPath";
 	public static final String MIN_UPDATE_RATE_THRESHOLD_OPS = "minUpdateRateThresholdOps";
 	public static final String MIN_UPDATE_RATE_THRESHOLD_REACH_TIME_PERCENT = "minUpdateRateThresholdReachTimePercent";
 	public static final String MAX_UPDATE_RATE_THRESHOLD_OPS = "maxUpdateRateThresholdOps";
@@ -110,7 +110,7 @@ public class Configuration {
 		properties.setProperty(VALIDATION_ITERATIONS, "1");
 		properties.setProperty(BENCHMARK_BY_QUERY_RUNS, "0");
 		properties.setProperty(RUN_BENCHMARK_ONLINE_REPlICATION_AND_BACKUP, "false");
-		properties.setProperty(ENTERPRISE_FEATURES_PATH, "./data/enterprise");
+		properties.setProperty(SCRIPTS_PATH, "./data/scripts");
 		properties.setProperty(MIN_UPDATE_RATE_THRESHOLD_OPS, "0.0");
 		properties.setProperty(MIN_UPDATE_RATE_THRESHOLD_REACH_TIME_PERCENT, "0.1");
 		properties.setProperty(ENABLE_LOGS, "true");

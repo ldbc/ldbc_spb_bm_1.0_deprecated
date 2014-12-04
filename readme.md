@@ -26,10 +26,10 @@ $ ant build-basic-querymix
 $ ant build-advanced-querymix
 
 # builds the benchmark driver with basic query mix and queries optimized for GraphDB
-$ ant build-basic-querymix-graphdb
+$ ant build-basic-querymix-virtuoso
 
 # builds the benchmark driver with advanced query mix and queries optimized for GraphDB
-$ ant build-advanced-querymix-graphdb
+$ ant build-advanced-querymix-virtuoso
 
 # builds the benchmark driver with basic query mix and queries optimized for Virtuoso
 $ ant build-basic-querymix-virtuoso
@@ -38,7 +38,7 @@ $ ant build-basic-querymix-virtuoso
 $ ant build-advanced-querymix-virtuoso
 ```
 
-Result of build process is saved to folder: _'dist/'_ : 
+Result of build process is saved to a distribution folder: _'dist/'_ : 
 * ***semantic_publishing_benchmark.jar*** - the benchmark test driver
 * ***data/*** - folder containing all necessary data to run the benchmark
 * ***test.properties*** - a configuration file with parameters for configuring the benchmark driver

@@ -97,11 +97,16 @@
 		</copy>
 		<unzip src="./datasets_and_queries/validation/data/${validation.data.archive.name}.zip" dest="./data-temp/validation/"/>
   	
-		<mkdir dir="./data-temp/enterprise/scripts"/>
-		<copy todir="./data-temp/enterprise/scripts">
-			<fileset dir="datasets_and_queries/enterprise/scripts"/>
+		<mkdir dir="./data-temp/scripts/enterprise"/>
+		<copy todir="./data-temp/scripts/enterprise">
+			<fileset dir="datasets_and_queries/scripts/enterprise"/>
 		</copy>  	
-  	
+		
+    	<mkdir dir="./data-temp/scripts/postLoad"/>
+		<copy todir="./data-temp/scripts/postLoad">
+			<fileset dir="datasets_and_queries/scripts/postLoad" includes="${customization}*.*"/>
+		</copy>
+		  	
 	  	<mkdir dir="./data-temp/dictionaries"/>
 		<copy file="datasets_and_queries/dictionaries/WordsDictionary.txt" todir="./data-temp/dictionaries"/>
 
@@ -286,7 +291,7 @@
 	
 	<!-- SVN -->
 	<!-- This target requires that an svn client is installed -->
-	<!--
+    <!--
 	<target name="build.release.version">
 		<exec executable="svn" outputproperty="revision.number">
 			<arg line="info"/>
@@ -307,7 +312,7 @@
 	
 	<!-- Git -->
     <available file=".git" type="dir" property="git.present"/>	
-  
+
     <target name="build.release.version" description="Store git revision in ${revision.number}" if="git.present">
         <exec executable="git" outputproperty="git.revision" failifexecutionfails="false" errorproperty="">
             <arg value="describe"/>
