@@ -45,7 +45,7 @@ PREFIX inst:<http://www.ontotext.com/connectors/lucene/instance#>
 #  PREFIX luceneConnector: <http://www.ontotext.com/connectors/lucene#>
 #  PREFIX inst: <http://www.ontotext.com/connectors/lucene/instance#>
 #  INSERT DATA {
-#      inst:cwLuceneIndex luceneConnector:createConnector '''
+#      inst:cwLuceneConnectorIndex luceneConnector:createConnector '''
 #  {
 #    "types": [
 #      "http://www.bbc.co.uk/ontologies/creativework/CreativeWork"
@@ -119,7 +119,7 @@ CONSTRUCT {
 WHERE { 
   {
   SELECT * {
-        ?search a inst:cwLuceneIndex ;
+        ?search a inst:cwLuceneConnectorIndex ;
             luceneConnector:query "title:{{{word}}} description:{{{word}}}" ;
             luceneConnector:orderBy "-dateModified" ;
             luceneConnector:entities ?cWork .
