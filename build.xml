@@ -104,7 +104,7 @@
 		
     	<mkdir dir="./data-temp/scripts/postLoad"/>
 		<copy todir="./data-temp/scripts/postLoad">
-			<fileset dir="datasets_and_queries/scripts/postLoad" includes="${customization}*.*"/>
+			<fileset dir="datasets_and_queries/scripts/postLoad" includes="${customization}*.* *.txt"/>
 		</copy>
 		  	
 	  	<mkdir dir="./data-temp/dictionaries"/>
