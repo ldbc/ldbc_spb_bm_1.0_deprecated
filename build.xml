@@ -172,7 +172,7 @@
 	</target>
 	
 	<target name="build-jar">
-		<jar destfile="${dir.dist}\${jar.file.name}-${querymix}.jar" basedir="${dir.bin}">
+		<jar destfile="${dir.dist}\${jar.file.name}-${querymix}-${customization}.jar" basedir="${dir.bin}">
 			<manifest>
 				<attribute name="Main-Class" value="eu.ldbc.semanticpublishing.TestDriver"/>
 				<attribute name="Benchmark-Release-Version" value="${version.number.major}.${version.number.minor}.${revision.number}"/>
