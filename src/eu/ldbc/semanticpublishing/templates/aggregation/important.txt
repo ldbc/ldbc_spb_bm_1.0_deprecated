@@ -1,3 +1,4 @@
-Important : before compiling with build.xml, make sure that all modified or new templates are first added to the corresponding .zip file.
-            Build process will extract contents of base.zip or full.zip and will override your changes!!!
-            Also make sure that corresponding extension (if any : .standard and .virtuoso) has been modified related benchmark driver customization : virtuoso or standard
+Important note: before compiling with build.xml, make sure that all modified or new java files are first updated in their corresponding .zip archive,
+                otherwise the build process will extract (basic.zip or advanced.zip) and will override your changes!!!
+                Also make sure that corresponding custom extensions (if any : .standard, .graphdb or .virtuoso) have been modified for each corresponding driver
+                version : standard, graphdb or virtuoso

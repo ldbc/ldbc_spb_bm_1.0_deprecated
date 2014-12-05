@@ -1,2 +1,2 @@
 Important : before compiling with build.xml, make sure that changes in file Statistics.java are first merged with existing .basic or .advanced version.
-            Build process will use contents of Statistics.basic or Statistics.full and advanced override your changes!!!
+            Build process will use Statistics.basic or Statistics.advanced and will override your changes!!!

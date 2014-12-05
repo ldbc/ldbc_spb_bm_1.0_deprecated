@@ -882,7 +882,7 @@ public class TestDriver {
 		loadDatasets(configuration.getBoolean(Configuration.LOAD_REFERENCE_DATASETS));
 		generateCreativeWorks(configuration.getBoolean(Configuration.GENERATE_CREATIVE_WORKS));
 		loadCreativeWorks(configuration.getBoolean(Configuration.LOAD_CREATIVE_WORKS));
-		executeScripts(configuration.getBoolean(Configuration.LOAD_CREATIVE_WORKS), "postLoad");
+		executeScripts(configuration.getBoolean(Configuration.LOAD_CREATIVE_WORKS) || configuration.getBoolean(Configuration.VALIDATE_QUERY_RESULTS), "postLoad");
 		generateQuerySubstitutionParameters(configuration.getBoolean(Configuration.GENERATE_QUERY_SUBSTITUTION_PARAMETERS));
 		initializeQuerySubstitutionParameters(configuration.getBoolean(Configuration.WARM_UP) || configuration.getBoolean(Configuration.RUN_BENCHMARK) || configuration.getBoolean(Configuration.RUN_BENCHMARK_ONLINE_REPlICATION_AND_BACKUP));
 		validateQueryResults(configuration.getBoolean(Configuration.VALIDATE_QUERY_RESULTS));
