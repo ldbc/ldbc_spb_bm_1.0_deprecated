@@ -270,20 +270,22 @@ public class TestDriver {
 		}
 	}
 	
-	private void executeScripts(String scriptsSubFolder) throws IOException, InterruptedException {
-		String sciptsPath = configuration.getString(Configuration.SCRIPTS_PATH) + File.separator + scriptsSubFolder;
-		List<File> scriptFiles = new ArrayList<File>();
-		FileUtils.collectFilesList2(sciptsPath, scriptFiles, (FileUtils.isWindowsOS() ? "bat" : "sh"), true);		
-		Collections.sort(scriptFiles);
-		
-		if (scriptFiles.size() > 0) {
-			System.out.println("Executing custom scripts (" + scriptsSubFolder + ")...");
+	private void executeScripts(boolean enable, String scriptsSubFolder) throws IOException, InterruptedException {
+		if (enable) {
+			String sciptsPath = configuration.getString(Configuration.SCRIPTS_PATH) + File.separator + scriptsSubFolder;
+			List<File> scriptFiles = new ArrayList<File>();
+			FileUtils.collectFilesList2(sciptsPath, scriptFiles, (FileUtils.isWindowsOS() ? "bat" : "sh"), true);		
+			Collections.sort(scriptFiles);
+			
+			if (scriptFiles.size() > 0) {
+				System.out.println("Executing custom scripts (" + scriptsSubFolder + ")...");
+			}
+			
+			for( File file : scriptFiles ) {
+				System.out.println("\texecuting " + scriptsSubFolder + " script: " + file.getName());
+				ShellUtil.execute(sciptsPath, file.getName(), true);
+			}
 		}
-		
-		for( File file : scriptFiles ) {
-			System.out.println("\texecuting " + scriptsSubFolder + " script: " + file.getName());
-			ShellUtil.execute(sciptsPath, file.getName(), true);
-		}	
 	}
 	
 	private void generateCreativeWorks(boolean enable) throws IOException, InterruptedException {
@@ -880,7 +882,7 @@ public class TestDriver {
 		loadDatasets(configuration.getBoolean(Configuration.LOAD_REFERENCE_DATASETS));
 		generateCreativeWorks(configuration.getBoolean(Configuration.GENERATE_CREATIVE_WORKS));
 		loadCreativeWorks(configuration.getBoolean(Configuration.LOAD_CREATIVE_WORKS));
-		executeScripts("postLoad");
+		executeScripts(configuration.getBoolean(Configuration.LOAD_CREATIVE_WORKS), "postLoad");
 		generateQuerySubstitutionParameters(configuration.getBoolean(Configuration.GENERATE_QUERY_SUBSTITUTION_PARAMETERS));
 		initializeQuerySubstitutionParameters(configuration.getBoolean(Configuration.WARM_UP) || configuration.getBoolean(Configuration.RUN_BENCHMARK) || configuration.getBoolean(Configuration.RUN_BENCHMARK_ONLINE_REPlICATION_AND_BACKUP));
 		validateQueryResults(configuration.getBoolean(Configuration.VALIDATE_QUERY_RESULTS));
