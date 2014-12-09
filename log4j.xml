@@ -10,7 +10,7 @@
     <param name="bufferedIO" value="false" />
     <param name="MaxFileSize" value="250MB"/>
     <layout class="org.apache.log4j.PatternLayout">  
-      <param name="ConversionPattern" value="%d{HH:mm:ss.SSS} : %m\n" />  
+      <param name="ConversionPattern" value="%r : %m\n" />  
     </layout>  
   </appender> 
 
@@ -22,7 +22,7 @@
     <param name="bufferedIO" value="false" />
     <param name="MaxFileSize" value="250MB"/>
     <layout class="org.apache.log4j.PatternLayout">  
-      <param name="ConversionPattern" value=">> %d{HH:mm:ss.SSS} [%c{1}:%t] : %m\n" />  
+      <param name="ConversionPattern" value=">> %r [%c{1}:%t] : %m\n" />  
     </layout>  
   </appender> 
 
@@ -34,7 +34,7 @@
     <param name="bufferedIO" value="false" />
     <param name="MaxFileSize" value="250MB"/>
     <layout class="org.apache.log4j.PatternLayout">  
-      <param name="ConversionPattern" value="%d{HH:mm:ss.SSS} : %m\n" />  
+      <param name="ConversionPattern" value="%r : %m\n" />  
     </layout>  
   </appender> 
 
