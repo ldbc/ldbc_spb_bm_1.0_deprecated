@@ -270,20 +270,26 @@ public class TestDriver {
 		}
 	}
 	
-	private void executeScripts(boolean enable, String scriptsSubFolder) throws IOException, InterruptedException {
+	private void executeScripts(boolean enable, String scriptsSubFolder) {
 		if (enable) {
-			String sciptsPath = configuration.getString(Configuration.SCRIPTS_PATH) + File.separator + scriptsSubFolder;
-			List<File> scriptFiles = new ArrayList<File>();
-			FileUtils.collectFilesList2(sciptsPath, scriptFiles, (FileUtils.isWindowsOS() ? "bat" : "sh"), true);		
-			Collections.sort(scriptFiles);
+			try {
+				String sciptsPath = configuration.getString(Configuration.SCRIPTS_PATH) + File.separator + scriptsSubFolder;
+				List<File> scriptFiles = new ArrayList<File>();
+				FileUtils.collectFilesList2(sciptsPath, scriptFiles, (FileUtils.isWindowsOS() ? "bat" : "sh"), true);		
+				Collections.sort(scriptFiles);
+				
+				if (scriptFiles.size() > 0) {
+					System.out.println("Executing custom scripts (" + scriptsSubFolder + ")...");
+				}
 			
-			if (scriptFiles.size() > 0) {
-				System.out.println("Executing custom scripts (" + scriptsSubFolder + ")...");
-			}
-			
-			for( File file : scriptFiles ) {
-				System.out.println("\texecuting " + scriptsSubFolder + " script: " + file.getName());
-				ShellUtil.execute(sciptsPath, file.getName(), true);
+				for( File file : scriptFiles ) {
+					System.out.println("\texecuting " + scriptsSubFolder + " script: " + file.getName());
+					ShellUtil.execute(sciptsPath, file.getName(), true);
+				}
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			} catch (InterruptedException ie) {
+				ie.printStackTrace();
 			}
 		}
 	}
