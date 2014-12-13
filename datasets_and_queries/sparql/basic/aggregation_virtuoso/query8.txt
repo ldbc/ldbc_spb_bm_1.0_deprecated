@@ -86,5 +86,5 @@ WHERE {
     }
   }
 }
-ORDER BY DESC(?dateModified)
+#ORDER BY DESC(?dateModified)
 LIMIT {{{randomLimit}}}
