@@ -61,7 +61,7 @@ Various properties are used to configure the behaviour of the SPB Test Driver or
   * Enable geo-spatial indexing (optional)
 
 * ***Benchmark Actions*** are the essential tasks that the benchmark driver can perform e.g. Generate synthetic data, Validate operations or measure performance.  
-Descriptions of the essential becnhmark actions can be found here: https://github.com/ldbc/ldbc_spb_bm/wiki/Benchmark-Actions. Each action consists of a set of operational phases (https://github.com/ldbc/ldbc_spb_bm/wiki/Operational-Phases) that are executed sequentially.  
+Available becnhmark actions: https://github.com/ldbc/ldbc_spb_bm/wiki/Benchmark-Actions. Each action executes a sequence of operational phases (https://github.com/ldbc/ldbc_spb_bm/wiki/Operational-Phases). 
 
   
 * ***Configuration options:*** https://github.com/ldbc/ldbc_spb_bm/wiki/Configuration-Options
