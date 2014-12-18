@@ -286,7 +286,9 @@ public class TestDriver {
 					System.out.println("\texecuting " + scriptsSubFolder + " script: " + file.getName());
 					ShellUtil.execute(sciptsPath, file.getName(), true);
 				}
-			} catch (IOException ioe) {
+			} catch (NullPointerException npe) {
+				npe.printStackTrace();
+			} catch (IOException ioe) {			
 				ioe.printStackTrace();
 			} catch (InterruptedException ie) {
 				ie.printStackTrace();
