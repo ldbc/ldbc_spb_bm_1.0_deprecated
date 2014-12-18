@@ -56,9 +56,9 @@ Various properties are used to configure the behaviour of the SPB Test Driver or
 
 * ***RDF Repository configuration***
   * Use RDFS rule-set
-  * Enable context indexing (if available)
-  * Enable text indexing (if available)
-  * Enable geo-spatial indexing (if available)
+  * Enable context indexing
+  * Enable text indexing (optional)
+  * Enable geo-spatial indexing (optional)
 
 * ***Benchmark Actions*** are the essential tasks that the benchmark driver can perform e.g. Generate synthetic data, Validate operations or measure performance.  
 Descriptions of the essential becnhmark actions can be found here: https://github.com/ldbc/ldbc_spb_bm/wiki/Benchmark-Actions. Each action consists of a set of operational phases (https://github.com/ldbc/ldbc_spb_bm/wiki/Operational-Phases) that are executed sequentially.  
