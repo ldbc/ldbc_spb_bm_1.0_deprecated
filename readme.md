@@ -26,10 +26,10 @@ $ ant build-basic-querymix
 $ ant build-advanced-querymix
 
 # builds the benchmark driver with basic query mix and queries optimized for GraphDB
-$ ant build-basic-querymix-virtuoso
+$ ant build-basic-querymix-graphdb
 
 # builds the benchmark driver with advanced query mix and queries optimized for GraphDB
-$ ant build-advanced-querymix-virtuoso
+$ ant build-advanced-querymix-graphdb
 
 # builds the benchmark driver with basic query mix and queries optimized for Virtuoso
 $ ant build-basic-querymix-virtuoso
