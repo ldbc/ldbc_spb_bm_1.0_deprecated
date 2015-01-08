@@ -287,8 +287,8 @@ public class TestDriver {
 					ShellUtil.execute(sciptsPath, file.getName(), true);
 				}
 			} catch (NullPointerException npe) {
-				System.out.println("Possible wrong configuration, see value of property 'scriptsPath' in test.properties...");
-				npe.printStackTrace();
+				System.out.println("Warning : Possible wrong configuration for property 'scriptsPath' (test.properties)...");
+//				npe.printStackTrace();
 			} catch (IOException ioe) {			
 				ioe.printStackTrace();
 			} catch (InterruptedException ie) {
