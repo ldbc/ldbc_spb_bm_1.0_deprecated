@@ -195,7 +195,7 @@ public class EditorialAgent extends AbstractAsynchronousAgent {
 	
 	private void logBrief(String queryNameId, QueryType queryType, String queryResult, String appendString, long queryExecutionTimeMs) {
 		StringBuilder reportSb = new StringBuilder();
-		reportSb.append(String.format("\t[%s] Query executed, execution time : %d ms %s", queryNameId, queryExecutionTimeMs, appendString));
+		reportSb.append(String.format("\t[%s, %s] Query executed, execution time : %d ms %s", queryNameId, Thread.currentThread().getName(), queryExecutionTimeMs, appendString));
 //		if (queryType == QueryType.SELECT || queryType == QueryType.CONSTRUCT || queryType == QueryType.DESCRIBE) {
 //			reportSb.append(", characters returned : " + queryResult.length());
 //		}
