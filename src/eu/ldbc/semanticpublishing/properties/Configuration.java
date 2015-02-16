@@ -87,7 +87,7 @@ public class Configuration {
 		
 		properties.setProperty(LOAD_ONTOLOGIES, "true");
 		properties.setProperty(ONTOLOGIES_PATH, "./data/ontologies");
-		properties.setProperty(ADJUST_REF_DATASETS_SIZES, "true");
+		properties.setProperty(ADJUST_REF_DATASETS_SIZES, "false");
 		properties.setProperty(LOAD_REFERENCE_DATASETS, "true");
 		properties.setProperty(REFERENCE_DATASETS_PATH, "./data/datasets");
 		properties.setProperty(GENERATE_CREATIVE_WORKS, "true");
