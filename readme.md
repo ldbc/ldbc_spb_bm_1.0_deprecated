@@ -2,7 +2,7 @@
 Semantic Publishing Benchmark v1.0
 ----------------------------------
 
-This benchmark is deprecated, please use the [Semantic Publishing Benchmark v2.0](https://github.com/ldbc/ldbc_spb_bm_2.0) for new experiments.
+:warning: This benchmark is deprecated, please use the [Semantic Publishing Benchmark v2.0](https://github.com/ldbc/ldbc_spb_bm_2.0) for new experiments.
 
 ### Introduction
 
